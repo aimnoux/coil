@@ -1,27 +1,16 @@
+import SwiftData
 import SwiftUI
 
 @main
 struct CoilApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @AppStorage(SettingsKey.theme) private var theme = AppTheme.system
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HabitListView()
+                .preferredColorScheme(theme.colorScheme)
         }
+        .modelContainer(Persistence.shared)
     }
-}
-
-struct ContentView: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView(
-                "No habits yet",
-                systemImage: "circle.dashed",
-                description: Text("Coil is under construction.")
-            )
-            .navigationTitle("Habits")
-        }
-    }
-}
-
-#Preview {
-    ContentView()
 }
