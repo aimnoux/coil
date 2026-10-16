@@ -32,8 +32,8 @@ iOS-трекер привычек. Цель v1 — функционально п
 ```bash
 xcodegen                                   # сгенерировать Coil.xcodeproj
 open Coil.xcodeproj                        # открыть в Xcode
-xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 17' build
-xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 17' test
+xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build build
+xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 18 Pro' -derivedDataPath build test
 ```
 
 ## Процесс
