@@ -1,5 +1,9 @@
 name: Coil
 
+include:
+  - path: widgets.yml
+    enable: ${COIL_WIDGETS}
+
 options:
   bundleIdPrefix: com.maxouni
   deploymentTarget:

@@ -71,6 +71,7 @@ enum SampleData {
              target: 2, targetType: .atMost, days: 45) { offset, r in
             EntryRecord(state: .yes, amount: Double(Int(r.next() * 4)))
         }
+        try? context.save()
     }
 }
 

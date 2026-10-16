@@ -3,8 +3,11 @@ import SwiftData
 
 enum Persistence {
     /// Flip to `true` once the app has the iCloud capability (paid Apple Developer Program).
-    /// See ICLOUD.md for the full checklist.
+    /// See docs/ICLOUD.md for the full checklist.
     static let iCloudSyncEnabled = false
+
+    /// Shared with the widget extension when the app is built with widgets (see docs/WIDGETS.md).
+    nonisolated static let appGroupID = "group.com.maxouni.coil"
 
     /// Launch with `-sampleData` to use a throwaway in-memory store filled with demo habits.
     static let usesSampleData = ProcessInfo.processInfo.arguments.contains("-sampleData")
@@ -13,19 +16,52 @@ enum Persistence {
 
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
         let schema = Schema([Habit.self, Entry.self])
-        let configuration = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: inMemory,
-            cloudKitDatabase: iCloudSyncEnabled && !inMemory ? .automatic : .none
-        )
+        let configuration: ModelConfiguration
+        if inMemory {
+            configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
+        } else {
+            configuration = ModelConfiguration(
+                schema: schema,
+                url: storeURL,
+                cloudKitDatabase: iCloudSyncEnabled ? .automatic : .none
+            )
+        }
         do {
             let container = try ModelContainer(for: schema, configurations: configuration)
-            if inMemory && usesSampleData {
+            let seedsStore = ProcessInfo.processInfo.arguments.contains("-seedSampleData")
+            if (inMemory && usesSampleData)
+                || (seedsStore && (try? container.mainContext.fetchCount(FetchDescriptor<Habit>())) == 0) {
+                // `-seedSampleData` fills an empty on-disk store, e.g. to try widgets in the simulator.
                 SampleData.insert(into: container.mainContext)
             }
             return container
         } catch {
             fatalError("Could not create the habit store: \(error)")
+        }
+    }
+
+    /// The store lives in the App Group container when the app has one (so widgets can read it),
+    /// otherwise in Application Support.
+    static var storeURL: URL {
+        let local = URL.applicationSupportDirectory.appending(path: "default.store")
+        guard let group = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            return local
+        }
+        let shared = group.appending(path: "Coil.store")
+        moveStoreIfNeeded(from: local, to: shared)
+        return shared
+    }
+
+    /// Moves an existing local store into the App Group the first time widgets are enabled.
+    private static func moveStoreIfNeeded(from source: URL, to destination: URL) {
+        let fm = FileManager.default
+        guard !fm.fileExists(atPath: destination.path), fm.fileExists(atPath: source.path) else { return }
+        for suffix in ["", "-shm", "-wal"] {
+            let from = URL(fileURLWithPath: source.path + suffix)
+            let to = URL(fileURLWithPath: destination.path + suffix)
+            if fm.fileExists(atPath: from.path) {
+                try? fm.copyItem(at: from, to: to)
+            }
         }
     }
 

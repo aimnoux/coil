@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import WidgetKit
 
 @main
 struct CoilApp: App {
@@ -10,6 +11,10 @@ struct CoilApp: App {
         WindowGroup {
             HabitListView()
                 .preferredColorScheme(theme.colorScheme)
+                .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { _ in
+                    // Keep home screen widgets in step with changes made in the app.
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
         }
         .modelContainer(Persistence.shared)
     }

@@ -1,0 +1,41 @@
+# Home Screen widgets. They need an App Group, which requires a paid Apple Developer account,
+# so they are opt-in: generate the project with `COIL_WIDGETS=true xcodegen`.
+# See docs/WIDGETS.md.
+targets:
+  Coil:
+    entitlements:
+      path: Coil/Coil.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.maxouni.coil
+    dependencies:
+      - target: CoilWidgets
+
+  CoilWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+      - Coil/Domain
+      - Coil/Model
+      - Coil/Support
+      - Coil/Intents
+      - Coil/Views/Components/ScoreRing.swift
+      - Coil/Resources/Localizable.xcstrings
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Coil
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widgets/CoilWidgets.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.maxouni.coil
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.maxouni.coil.widgets
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
