@@ -3,7 +3,7 @@ import Foundation
 import UniformTypeIdentifiers
 
 /// A CSV file that can be shared with `ShareLink`.
-struct CSVFile: Transferable {
+nonisolated struct CSVFile: Transferable, Sendable {
     let name: String
     let text: String
 
@@ -83,7 +83,7 @@ enum CSVExport {
         }
     }
 
-    static func isoDate(_ day: Day) -> String {
+    nonisolated static func isoDate(_ day: Day) -> String {
         let c = day.components
         return String(format: "%04d-%02d-%02d", c.year, c.month, c.day)
     }
