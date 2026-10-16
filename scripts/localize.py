@@ -241,6 +241,7 @@ RU = {
     "Tells you a habit's strength and current streak.": "Сообщает силу привычки и текущую серию.",
     "Toggle Habit": "Переключить привычку",
     "Wake up early": "Ранний подъём",
+    "See how a habit's strength changes over time.": "Следите, как меняется сила привычки.",
     # Day notes
     "Note": "Заметка",
     "How did it go?": "Как всё прошло?",

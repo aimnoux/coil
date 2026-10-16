@@ -1947,6 +1947,17 @@
         }
       }
     },
+    "See how a habit's strength changes over time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Следите, как меняется сила привычки."
+          }
+        }
+      }
+    },
     "Set a reminder for each habit in its settings. From a reminder you can check off the habit or ask to be reminded later.": {
       "extractionState": "manual",
       "localizations": {

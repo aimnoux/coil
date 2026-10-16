@@ -6,5 +6,6 @@ struct CoilWidgets: WidgetBundle {
     var body: some Widget {
         HabitWidget()
         HabitsListWidget()
+        HabitChartWidget()
     }
 }
