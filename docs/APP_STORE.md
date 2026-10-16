@@ -135,23 +135,29 @@ Settings → Import Backup accepts a Coil backup or a database exported by the A
 
 ## Скриншоты
 
-Нужны скриншоты для iPhone 6.9" (например, iPhone 18 Pro Max, 1320×2868): от 3 до 10 штук на каждый язык.
-Демо-данные включаются аргументом `-sampleData` и не трогают настоящую базу.
+Готовые скриншоты для iPhone 6.9" (1320×2868) лежат в [docs/screenshots](screenshots):
+по 5 штук на русском (`ru/`) и английском (`en/`) — главный экран, экран привычки,
+измеримая привычка, редактирование, тёмная тема. Их можно сразу загружать в App Store Connect.
+
+Как переснять (например, после изменений интерфейса):
 
 ```bash
 xcodegen
 xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 18 Pro Max' -derivedDataPath build build
-xcrun simctl boot "iPhone 18 Pro Max"
-xcrun simctl install "iPhone 18 Pro Max" build/Build/Products/Debug-iphonesimulator/Coil.app
-# Красивая строка состояния: 9:41, полная батарея
-xcrun simctl status_bar "iPhone 18 Pro Max" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4
-# Русская версия (для английской уберите -AppleLanguages и -AppleLocale)
-xcrun simctl launch "iPhone 18 Pro Max" com.maxouni.coil -sampleData -AppleLanguages "(ru)" -AppleLocale ru_RU
-xcrun simctl io "iPhone 18 Pro Max" screenshot 01-list.png
+D="iPhone 18 Pro Max"
+xcrun simctl boot "$D"
+xcrun simctl install "$D" build/Build/Products/Debug-iphonesimulator/Coil.app
+xcrun simctl status_bar "$D" override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4
+# Русская версия (для английской: -AppleLanguages "(en)" -AppleLocale en_US)
+xcrun simctl launch "$D" com.maxouni.coil -sampleData -AppleLanguages "(ru)" -AppleLocale ru_RU
+xcrun simctl io "$D" screenshot 01-habits.png
 ```
 
-Что снять: главный экран, экран привычки (обзор и график), календарь и серии, создание привычки,
-тёмную тему (Настройки → Тема → Тёмная).
+Отладочные аргументы (работают только в Debug-сборке):
+- `-sampleData` — демо-привычки во временной базе;
+- `-screenshotHabit 0` — сразу открыть экран первой привычки (`2` — измеримая «Чтение»);
+- `-screenshotEditor YES` — открыть редактирование первой привычки;
+- тёмная тема: `xcrun simctl ui "$D" appearance dark`.
 
 ## Чек-лист перед отправкой
 
