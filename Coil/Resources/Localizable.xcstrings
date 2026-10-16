@@ -4,6 +4,9 @@
     " ": {
       "shouldTranslate": false
     },
+    "%@": {
+      "shouldTranslate": false
+    },
     "%@ %@": {
       "shouldTranslate": false
     },
@@ -12,6 +15,17 @@
     },
     "%@.csv": {
       "shouldTranslate": false
+    },
+    "%@: strength %@, streak %lld days. %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: сила %2$@, серия %3$lld дн. %4$@"
+          }
+        }
+      }
     },
     "%lld days": {
       "extractionState": "manual",
@@ -219,6 +233,17 @@
         }
       }
     },
+    "Add a habit in Coil": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте привычку в Coil"
+          }
+        }
+      }
+    },
     "Added %lld habits, updated %lld, imported %lld entries.": {
       "extractionState": "manual",
       "localizations": {
@@ -263,6 +288,17 @@
         }
       }
     },
+    "Already done today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня уже выполнено."
+          }
+        }
+      }
+    },
     "Amber": {
       "extractionState": "manual",
       "localizations": {
@@ -270,6 +306,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Янтарный"
+          }
+        }
+      }
+    },
+    "Amount": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Значение"
           }
         }
       }
@@ -384,6 +431,17 @@
         }
       }
     },
+    "Call parents": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Звонок родителям"
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -406,6 +464,28 @@
         }
       }
     },
+    "Check off a habit and see its strength.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечайте привычку и следите за её силой."
+          }
+        }
+      }
+    },
+    "Check off today's habits from the Home Screen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечайте привычки прямо с экрана «Домой»."
+          }
+        }
+      }
+    },
     "Checkmarks": {
       "extractionState": "manual",
       "localizations": {
@@ -417,6 +497,39 @@
         }
       }
     },
+    "Checks off a habit for today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмечает привычку как выполненную сегодня."
+          }
+        }
+      }
+    },
+    "Choose Habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать привычку"
+          }
+        }
+      }
+    },
+    "Choose the habit to show.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите привычку для виджета."
+          }
+        }
+      }
+    },
     "Clear Entry": {
       "extractionState": "manual",
       "localizations": {
@@ -424,6 +537,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Удалить отметку"
+          }
+        }
+      }
+    },
+    "Coffee": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кофе"
           }
         }
       }
@@ -593,6 +717,17 @@
         }
       }
     },
+    "Did you call your parents?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Звонили родителям?"
+          }
+        }
+      }
+    },
     "Did you exercise today?": {
       "extractionState": "manual",
       "localizations": {
@@ -600,6 +735,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Занимались сегодня спортом?"
+          }
+        }
+      }
+    },
+    "Did you meditate today?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Медитировали сегодня?"
+          }
+        }
+      }
+    },
+    "Did you wake up before 7?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Встали раньше семи?"
           }
         }
       }
@@ -622,6 +779,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Выполнено за период"
+          }
+        }
+      }
+    },
+    "Done! %@ streak: %lld days.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово! Серия «%1$@»: %2$lld дн."
+          }
+        }
+      }
+    },
+    "Drink water": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пить воду"
           }
         }
       }
@@ -811,6 +990,17 @@
         }
       }
     },
+    "For measurable habits: the value to record.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Для измеримых привычек: значение, которое нужно записать."
+          }
+        }
+      }
+    },
     "Frequency": {
       "extractionState": "manual",
       "localizations": {
@@ -818,6 +1008,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Частота"
+          }
+        }
+      }
+    },
+    "Get Habit Status": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Узнать статус привычки"
           }
         }
       }
@@ -862,6 +1063,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Группировать"
+          }
+        }
+      }
+    },
+    "Habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Привычка"
+          }
+        }
+      }
+    },
+    "Habit ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID привычки"
+          }
+        }
+      }
+    },
+    "Habit Status": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статус привычки"
           }
         }
       }
@@ -954,6 +1188,28 @@
         }
       }
     },
+    "How many cups of coffee?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сколько чашек кофе?"
+          }
+        }
+      }
+    },
+    "How many glasses of water?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сколько стаканов воды?"
+          }
+        }
+      }
+    },
     "How many pages did you read today?": {
       "extractionState": "manual",
       "localizations": {
@@ -961,6 +1217,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сколько страниц вы прочитали сегодня?"
+          }
+        }
+      }
+    },
+    "How many pages did you read?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сколько страниц прочитали?"
           }
         }
       }
@@ -1086,6 +1353,39 @@
         }
       }
     },
+    "Mark ${habit} as done": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить ${habit} как выполненную"
+          }
+        }
+      }
+    },
+    "Mark Habit as Done": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить привычку"
+          }
+        }
+      }
+    },
+    "Mark as Done": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить"
+          }
+        }
+      }
+    },
     "Measurable": {
       "extractionState": "manual",
       "localizations": {
@@ -1093,6 +1393,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Измеримая"
+          }
+        }
+      }
+    },
+    "Meditate": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Медитация"
           }
         }
       }
@@ -1192,6 +1503,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Не выполнено"
+          }
+        }
+      }
+    },
+    "Not done yet today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня ещё не выполнено."
           }
         }
       }
@@ -1691,6 +2013,17 @@
         }
       }
     },
+    "Strength %@ · %lld days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сила %1$@ · %2$lld дн."
+          }
+        }
+      }
+    },
     "System": {
       "extractionState": "manual",
       "localizations": {
@@ -1742,6 +2075,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Бирюзовый"
+          }
+        }
+      }
+    },
+    "Tells you a habit's strength and current streak.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сообщает силу привычки и текущую серию."
           }
         }
       }
@@ -1944,6 +2288,17 @@
         }
       }
     },
+    "Toggle Habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переключить привычку"
+          }
+        }
+      }
+    },
     "Total": {
       "extractionState": "manual",
       "localizations": {
@@ -2006,6 +2361,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Версия"
+          }
+        }
+      }
+    },
+    "Wake up early": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ранний подъём"
           }
         }
       }
@@ -2087,6 +2453,17 @@
         }
       }
     },
+    "cups": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "чаш."
+          }
+        }
+      }
+    },
     "every %lld days": {
       "extractionState": "manual",
       "localizations": {
@@ -2140,6 +2517,17 @@
         }
       }
     },
+    "glasses": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "стак."
+          }
+        }
+      }
+    },
     "iCloud Sync": {
       "extractionState": "manual",
       "localizations": {
@@ -2147,6 +2535,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Синхронизация iCloud"
+          }
+        }
+      }
+    },
+    "pages": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "стр."
           }
         }
       }

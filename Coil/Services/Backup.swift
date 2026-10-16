@@ -170,9 +170,20 @@ enum Backup {
             habit.isArchived = item.isArchived
             habit.createdAt = min(habit.createdAt, item.createdAt)
 
+            // Look entries up by day once instead of scanning the relationship per entry.
+            var existingEntries = habit.entriesByDay
             for entry in item.entries {
                 guard let day = parseDate(entry.date), let state = EntryState(rawValue: entry.state) else { continue }
-                habit.setRecord(EntryRecord(state: state, amount: entry.amount), on: day, in: context)
+                let record = EntryRecord(state: state, amount: entry.amount)
+                if let existing = existingEntries[day] {
+                    existing.record = record
+                    existing.updatedAt = Date()
+                } else {
+                    let newEntry = Entry(day: day, record: record)
+                    context.insert(newEntry)
+                    newEntry.habit = habit
+                    existingEntries[day] = newEntry
+                }
                 result.entriesImported += 1
             }
             ReminderScheduler.reschedule(habit)

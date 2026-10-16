@@ -43,31 +43,31 @@ enum SampleData {
             }
         }
 
-        make("Meditate", question: "Did you meditate today?", color: 12, days: 160, reminder: (7, 30)) { offset, r in
+        make(String(localized: "Meditate"), question: String(localized: "Did you meditate today?"), color: 12, days: 160, reminder: (7, 30)) { offset, r in
             offset == 0 ? nil : (r.next() < (offset < 40 ? 0.9 : 0.65) ? .yes : nil)
         }
-        make("Exercise", question: "Did you exercise today?", color: 6, frequency: Frequency(3, 7), days: 200) { offset, r in
+        make(String(localized: "Exercise"), question: String(localized: "Did you exercise today?"), color: 6, frequency: Frequency(3, 7), days: 200) { offset, r in
             [1, 3, 5].contains(Day.today().advanced(by: -offset).weekday - 1) && r.next() < 0.85 ? .yes : nil
         }
-        make("Read", question: "How many pages did you read?", color: 3, kind: .measurable,
-             unit: "pages", target: 20, days: 120) { offset, r in
+        make(String(localized: "Read"), question: String(localized: "How many pages did you read?"), color: 3, kind: .measurable,
+             unit: String(localized: "pages"), target: 20, days: 120) { offset, r in
             let x = r.next()
             if x < 0.15 { return nil }
             return EntryRecord(state: .yes, amount: (Double(Int(x * 45)) + 5))
         }
-        make("Wake up early", question: "Did you wake up before 7?", color: 10, days: 90, reminder: (6, 45)) { offset, r in
+        make(String(localized: "Wake up early"), question: String(localized: "Did you wake up before 7?"), color: 10, days: 90, reminder: (6, 45)) { offset, r in
             let x = r.next()
             if offset == 3 { return .skip }
             return x < 0.7 ? .yes : (x < 0.8 ? .no : nil)
         }
-        make("Drink water", question: "How many glasses of water?", color: 9, kind: .measurable,
-             unit: "glasses", target: 8, days: 60) { offset, r in
+        make(String(localized: "Drink water"), question: String(localized: "How many glasses of water?"), color: 9, kind: .measurable,
+             unit: String(localized: "glasses"), target: 8, days: 60) { offset, r in
             offset == 0 ? EntryRecord(state: .yes, amount: 5) : EntryRecord(state: .yes, amount: Double(4 + Int(r.next() * 7)))
         }
-        make("Call parents", question: "Did you call your parents?", color: 14, frequency: .weekly, days: 150) { offset, r in
+        make(String(localized: "Call parents"), question: String(localized: "Did you call your parents?"), color: 14, frequency: .weekly, days: 150) { offset, r in
             offset % 7 == 2 && r.next() < 0.8 ? .yes : nil
         }
-        make("Coffee", question: "How many cups of coffee?", color: 16, kind: .measurable, unit: "cups",
+        make(String(localized: "Coffee"), question: String(localized: "How many cups of coffee?"), color: 16, kind: .measurable, unit: String(localized: "cups"),
              target: 2, targetType: .atMost, days: 45) { offset, r in
             EntryRecord(state: .yes, amount: Double(Int(r.next() * 4)))
         }

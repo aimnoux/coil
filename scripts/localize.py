@@ -11,11 +11,11 @@ import glob
 import json
 import sys
 
-STRINGSDATA = "build/Build/Intermediates.noindex/Coil.build/Debug-iphonesimulator/Coil.build/Objects-normal/arm64/*.stringsdata"
+STRINGSDATA = "build/Build/Intermediates.noindex/Coil.build/Debug-iphonesimulator/*.build/Objects-normal/arm64/*.stringsdata"
 OUTPUT = "Coil/Resources/Localizable.xcstrings"
 
 # Keys that are identical in every language and need no translation.
-UNTRANSLATED = {" ", "%@ %@", "%@ / %@ %@", "%@.csv", "0", "—"}
+UNTRANSLATED = {" ", "%@", "%@ %@", "%@ / %@ %@", "%@.csv", "0", "—"}
 
 
 def plural(**forms):
@@ -216,6 +216,44 @@ RU = {
     "per month": "в месяц",
     "per week": "в неделю",
     "strength": "сила",
+    # Intents and widgets
+    "%@: strength %@, streak %lld days. %@": "%1$@: сила %2$@, серия %3$lld дн. %4$@",
+    "Add a habit in Coil": "Добавьте привычку в Coil",
+    "Already done today.": "Сегодня уже выполнено.",
+    "Amount": "Значение",
+    "Check off a habit and see its strength.": "Отмечайте привычку и следите за её силой.",
+    "Check off today's habits from the Home Screen.": "Отмечайте привычки прямо с экрана «Домой».",
+    "Checks off a habit for today.": "Отмечает привычку как выполненную сегодня.",
+    "Choose Habit": "Выбрать привычку",
+    "Choose the habit to show.": "Выберите привычку для виджета.",
+    "Done! %@ streak: %lld days.": "Готово! Серия «%1$@»: %2$lld дн.",
+    "For measurable habits: the value to record.": "Для измеримых привычек: значение, которое нужно записать.",
+    "Get Habit Status": "Узнать статус привычки",
+    "Habit": "Привычка",
+    "Habit ID": "ID привычки",
+    "Habit Status": "Статус привычки",
+    "Mark ${habit} as done": "Отметить ${habit} как выполненную",
+    "Mark Habit as Done": "Отметить привычку",
+    "Mark as Done": "Отметить",
+    "Meditate": "Медитация",
+    "Not done yet today.": "Сегодня ещё не выполнено.",
+    "Strength %@ · %lld days": "Сила %1$@ · %2$lld дн.",
+    "Tells you a habit's strength and current streak.": "Сообщает силу привычки и текущую серию.",
+    "Toggle Habit": "Переключить привычку",
+    "Wake up early": "Ранний подъём",
+    # Sample data
+    "Did you meditate today?": "Медитировали сегодня?",
+    "How many pages did you read?": "Сколько страниц прочитали?",
+    "Did you wake up before 7?": "Встали раньше семи?",
+    "Drink water": "Пить воду",
+    "How many glasses of water?": "Сколько стаканов воды?",
+    "Call parents": "Звонок родителям",
+    "Did you call your parents?": "Звонили родителям?",
+    "Coffee": "Кофе",
+    "How many cups of coffee?": "Сколько чашек кофе?",
+    "pages": "стр.",
+    "glasses": "стак.",
+    "cups": "чаш.",
 }
 
 # English plural forms for keys that need them.
@@ -241,6 +279,8 @@ def localization(value):
 def main():
     keys = set()
     for path in glob.glob(STRINGSDATA):
+        if "CoilTests" in path:
+            continue
         data = json.load(open(path))
         for item in data.get("tables", {}).get("Localizable", []):
             keys.add(item["key"])
