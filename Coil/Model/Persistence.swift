@@ -2,9 +2,13 @@ import Foundation
 import SwiftData
 
 enum Persistence {
-    /// Flip to `true` once the app has the iCloud capability (paid Apple Developer Program).
-    /// See docs/ICLOUD.md for the full checklist.
+    /// On when the project is generated with `COIL_ICLOUD=true xcodegen` (needs a paid
+    /// Apple Developer account). See docs/ICLOUD.md for the full checklist.
+    #if ICLOUD
+    static let iCloudSyncEnabled = true
+    #else
     static let iCloudSyncEnabled = false
+    #endif
 
     /// Shared with the widget extension when the app is built with widgets (see docs/WIDGETS.md).
     nonisolated static let appGroupID = "group.com.maxouni.coil"
@@ -27,7 +31,15 @@ enum Persistence {
             )
         }
         do {
-            let container = try ModelContainer(for: schema, configurations: configuration)
+            let container: ModelContainer
+            do {
+                container = try ModelContainer(for: schema, configurations: configuration)
+            } catch where !inMemory && iCloudSyncEnabled {
+                // A misconfigured iCloud container shouldn't lock people out of their habits:
+                // fall back to the same store without sync.
+                let local = ModelConfiguration(schema: schema, url: storeURL, cloudKitDatabase: .none)
+                container = try ModelContainer(for: schema, configurations: local)
+            }
             let seedsStore = ProcessInfo.processInfo.arguments.contains("-seedSampleData")
             if (inMemory && usesSampleData)
                 || (seedsStore && (try? container.mainContext.fetchCount(FetchDescriptor<Habit>())) == 0) {

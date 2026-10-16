@@ -1,0 +1,20 @@
+# iCloud sync through CloudKit. Requires a paid Apple Developer account, so it is opt-in:
+# generate the project with `COIL_ICLOUD=true xcodegen`. See docs/ICLOUD.md.
+targets:
+  Coil:
+    entitlements:
+      path: Coil/Coil.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.maxouni.coil
+        com.apple.developer.icloud-services:
+          - CloudKit
+        aps-environment: development
+    info:
+      path: Coil/Info.plist
+      properties:
+        UIBackgroundModes:
+          - remote-notification
+    settings:
+      base:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) ICLOUD

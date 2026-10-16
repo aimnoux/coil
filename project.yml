@@ -3,6 +3,8 @@ name: Coil
 include:
   - path: widgets.yml
     enable: ${COIL_WIDGETS}
+  - path: icloud.yml
+    enable: ${COIL_ICLOUD}
 
 options:
   bundleIdPrefix: com.maxouni
