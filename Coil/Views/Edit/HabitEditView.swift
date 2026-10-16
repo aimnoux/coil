@@ -44,6 +44,7 @@ struct HabitEditView: View {
                 reminderSection
                 notesSection
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(isNew ? "New Habit" : "Edit Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

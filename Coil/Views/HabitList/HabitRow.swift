@@ -57,7 +57,12 @@ struct HabitRow: View {
             if longPressToToggle { onHint() } else { onTap(day) }
         } label: {
             Group {
-                if habit.isMeasurable {
+                if day < stats.start && habit.record(on: day) == nil {
+                    // Before the habit existed: nothing to show, but still tappable for backfilling.
+                    Circle()
+                        .fill(Color(.quaternaryLabel))
+                        .frame(width: 4, height: 4)
+                } else if habit.isMeasurable {
                     AmountLabel(
                         amount: stats.amount(on: day),
                         unit: habit.unit,
