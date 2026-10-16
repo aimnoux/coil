@@ -101,6 +101,29 @@ nonisolated struct HabitStats: Sendable {
             }
         }
 
+        // A day is automatically done when it falls inside any window of `denominator` days
+        // that already has `numerator` repetitions, e.g. every day of a week with three workouts
+        // for a "3 times per week" habit. Computed with prefix sums and a difference array.
+        var covered = [Bool](repeating: false, count: count)
+        if data.kind == .yesNo && window > 1 {
+            var prefix = [Int](repeating: 0, count: count + 1)
+            for i in 0..<count { prefix[i + 1] = prefix[i] + (manualYes[i] ? 1 : 0) }
+            var diff = [Int](repeating: 0, count: count + 1)
+            for end in 0..<(count + window - 1) {
+                let lo = max(0, end - window + 1)
+                let hi = min(count - 1, end)
+                if prefix[hi + 1] - prefix[lo] >= numerator {
+                    diff[lo] += 1
+                    diff[hi + 1] -= 1
+                }
+            }
+            var running = 0
+            for i in 0..<count {
+                running += diff[i]
+                covered[i] = running > 0
+            }
+        }
+
         var performance = [Double](repeating: 0, count: count)
         var checkmarks = [Checkmark](repeating: .unknown, count: count)
         var rollingYes = 0
@@ -120,7 +143,7 @@ nonisolated struct HabitStats: Sendable {
                 case .yes: checkmarks[i] = .yesManual
                 case .skip: checkmarks[i] = .skip
                 case .no: checkmarks[i] = .no
-                case nil: checkmarks[i] = rollingYes >= numerator ? .yesAuto : .unknown
+                case nil: checkmarks[i] = covered[i] || rollingYes >= numerator ? .yesAuto : .unknown
                 }
             case .measurable:
                 performance[i] = HabitStats.measurablePerformance(

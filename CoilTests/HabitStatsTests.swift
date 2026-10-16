@@ -36,12 +36,31 @@ struct HabitStatsTests {
         #expect(s.checkmark(on: day(-3)) == .unknown)
     }
 
-    @Test func weeklyHabitFillsRestOfWindow() {
+    @Test func weeklyHabitFillsItsWindow() {
         let s = stats([-3: .yes], frequency: .weekly)
-        #expect(s.checkmark(on: day(-4)) == .unknown)
+        #expect(s.checkmark(on: day(-10)) == .unknown)
+        #expect(s.checkmark(on: day(-9)) == .yesAuto)
         #expect(s.checkmark(on: day(-3)) == .yesManual)
         #expect(s.checkmark(on: day(-2)) == .yesAuto)
         #expect(s.checkmark(on: day(0)) == .yesAuto)
+    }
+
+    @Test func autoCheckmarksNeverPrecedeTheHabit() {
+        let s = stats([0: .yes], frequency: .weekly, createdOffset: 0)
+        #expect(s.start == day(0))
+        #expect(s.checkmark(on: day(-1)) == .unknown)
+    }
+
+    @Test func threeTimesAWeekKeepsTheStreakBetweenWorkouts() {
+        // Monday, Wednesday and Friday for four weeks.
+        var entries: [Int: EntryRecord] = [:]
+        for week in 0..<4 {
+            for weekday in [0, 2, 4] { entries[-27 + week * 7 + weekday] = .yes }
+        }
+        let s = stats(entries, frequency: Frequency(3, 7), createdOffset: -27)
+        #expect(s.checkmark(on: day(-26)) == .yesAuto) // Tuesday between workouts
+        #expect(s.streaks.count == 1)
+        #expect(s.streaks[0].start == day(-27))
     }
 
     @Test func autoCheckmarkNeedsFullNumerator() {
@@ -49,6 +68,8 @@ struct HabitStatsTests {
         #expect(s.checkmark(on: day(-2)) == .unknown)
         let s2 = stats([-5: .yes, -3: .yes, -2: .yes], frequency: Frequency(3, 7))
         #expect(s2.checkmark(on: day(-1)) == .yesAuto)
+        #expect(s2.checkmark(on: day(-8)) == .yesAuto)
+        #expect(s2.checkmark(on: day(-9)) == .unknown)
     }
 
     // MARK: Score
