@@ -65,6 +65,53 @@ struct HabitModelTests {
     }
 }
 
+extension HabitModelTests {
+    @Test func syncDuplicatesKeepBothNoteAndCheckmark() {
+        let habit = makeHabit()
+        // Device A wrote a note, device B checked the same day; the note is newer.
+        let check = Entry(day: today, record: .yes)
+        check.updatedAt = Date(timeIntervalSince1970: 1)
+        let note = Entry(day: today, record: .yes)
+        note.stateRaw = Entry.noState
+        note.note = "Before work"
+        note.updatedAt = Date(timeIntervalSince1970: 2)
+        [check, note].forEach { context.insert($0); $0.habit = habit }
+
+        #expect(habit.record(on: today)?.state == .yes)
+        #expect(habit.note(on: today) == "Before work")
+
+        // Editing the day merges the duplicates instead of losing one of them.
+        habit.setNote("Before work, 30 min", on: today, in: context)
+        #expect(habit.liveEntries.count == 1)
+        #expect(habit.record(on: today)?.state == .yes)
+    }
+}
+
+struct ImportHelpersTests {
+    @Test func stableUUIDIsStable() {
+        #expect(LoopImporter.stableUUID("loop-1-Run") == LoopImporter.stableUUID("loop-1-Run"))
+        #expect(LoopImporter.stableUUID("loop-1-Run") != LoopImporter.stableUUID("loop-2-Run"))
+    }
+
+    @Test func parseDateRejectsNonsense() {
+        #expect(Backup.parseDate("2026-10-17") == Day(year: 2026, month: 10, day: 17))
+        #expect(Backup.parseDate("2026-02-30") == nil)
+        #expect(Backup.parseDate("99999999-01-01") == nil)
+        #expect(Backup.parseDate("garbage") == nil)
+    }
+
+    @Test func csvEscapesLineBreaks() {
+        #expect(CSVExport.escape("a\r\nb") == "\"a\r\nb\"")
+        #expect(CSVExport.escape("say \"hi\"") == "\"say \"\"hi\"\"\"")
+        #expect(CSVExport.escape("plain") == "plain")
+    }
+
+    @Test func frequencyNeverExceedsItsPeriod() {
+        #expect(Frequency(10, 7) == Frequency(7, 7))
+        #expect(Frequency(0, 0) == .daily)
+    }
+}
+
 struct EntryCycleTests {
     @Test func cycleWithSkipAndQuestionMarks() {
         #expect(EntryCycle.next(after: .unknown, skipEnabled: true, showQuestionMarks: true) == .yes)

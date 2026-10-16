@@ -56,6 +56,7 @@ struct AmountEntrySheet: View {
                     if skipEnabled {
                         Button("Skip This Day", systemImage: "arrow.turn.up.right") {
                             habit.setRecord(.skip, on: day, in: context)
+                            habit.setNote(note, on: day, in: context)
                             dismiss()
                         }
                     }

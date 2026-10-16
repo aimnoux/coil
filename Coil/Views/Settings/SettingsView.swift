@@ -20,6 +20,7 @@ struct SettingsView: View {
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var importing = false
     @State private var importMessage: ImportMessage?
+    @State private var sharedFiles: SharedFiles?
 
     var body: some View {
         NavigationStack {
@@ -45,6 +46,10 @@ struct SettingsView: View {
             )
             .alert(item: $importMessage) { message in
                 Alert(title: Text(message.title), message: Text(message.body))
+            }
+            .sheet(item: $sharedFiles) { files in
+                ShareSheet(files: files)
+                    .presentationDetents([.medium, .large])
             }
             .task(id: scenePhase) {
                 notificationStatus = await ReminderScheduler.authorizationStatus()
@@ -120,14 +125,20 @@ struct SettingsView: View {
 
     private var dataSection: some View {
         Section {
-            ShareLink(
-                items: [CSVExport.habitsFile(habits), CSVExport.checkmarksFile(habits)],
-                preview: { file in SharePreview(file.name) }
-            ) {
+            Button {
+                let files = [CSVExport.habitsFile(habits), CSVExport.checkmarksFile(habits)]
+                if let urls = try? files.map({ try $0.write() }) {
+                    sharedFiles = SharedFiles(urls: urls)
+                }
+            } label: {
                 Label("Export as CSV", systemImage: "tablecells")
             }
             .disabled(habits.isEmpty)
-            ShareLink(item: Backup.make(from: habits), preview: SharePreview(Backup.fileName())) {
+            Button {
+                if let url = try? Backup.make(from: habits).write() {
+                    sharedFiles = SharedFiles(urls: [url])
+                }
+            } label: {
                 Label("Export Full Backup", systemImage: "externaldrive")
             }
             .disabled(habits.isEmpty)

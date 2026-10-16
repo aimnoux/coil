@@ -195,14 +195,19 @@ struct HabitEditView: View {
 
     private var reminderSection: some View {
         Section {
-            Toggle("Reminder", isOn: $reminderEnabled.animation())
-                .onChange(of: reminderEnabled) { _, enabled in
+            // Ask for notification permission only when the user turns a reminder on,
+            // not when an existing habit with a reminder is loaded.
+            Toggle("Reminder", isOn: Binding(
+                get: { reminderEnabled },
+                set: { enabled in
+                    withAnimation { reminderEnabled = enabled }
                     guard enabled else { return }
                     Task {
                         let granted = await ReminderScheduler.requestAuthorization()
                         notificationsDenied = !granted
                     }
                 }
+            ))
             if reminderEnabled {
                 DatePicker("Time", selection: $reminderTime, displayedComponents: .hourAndMinute)
                 WeekdayPicker(mask: $reminderDays, tint: HabitColor(index: colorIndex).color)

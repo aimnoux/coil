@@ -65,6 +65,9 @@ struct HabitListView: View {
             today = .today()
         }
         .onOpenURL(perform: handle)
+        #if DEBUG
+        .task { openScreenForScreenshots() }
+        #endif
         .onChange(of: Router.shared.habitToOpen, initial: true) { _, id in
             guard let id, let habit = habits.first(where: { $0.id == id }) else { return }
             path = [habit]
@@ -342,6 +345,23 @@ struct HabitRowData: Identifiable {
     let stats: HabitStats
     var id: UUID { habit.id }
 }
+
+#if DEBUG
+extension HabitListView {
+    /// `-screenshotHabit <n>` opens the n-th habit, `-screenshotEditor YES` edits the first habit.
+    /// Used to take App Store screenshots from the command line (see docs/APP_STORE.md).
+    fileprivate func openScreenForScreenshots() {
+        let arguments = UserDefaults.standard
+        if arguments.object(forKey: "screenshotHabit") != nil {
+            let index = arguments.integer(forKey: "screenshotHabit")
+            if habits.indices.contains(index) { path = [habits[index]] }
+        }
+        if arguments.bool(forKey: "screenshotEditor") {
+            editorHabit = HabitEditorTarget(habit: habits.first)
+        }
+    }
+}
+#endif
 
 /// A habit to edit, or `nil` to create a new one.
 struct HabitEditorTarget: Identifiable {

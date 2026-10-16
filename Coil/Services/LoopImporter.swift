@@ -23,7 +23,10 @@ enum LoopImporter {
             let id = row.int("id")
             let isMeasurable = row.int("type") == 1
             let reminderHour = row.optionalInt("reminder_hour")
-            let uuid = row.string("uuid").flatMap(uuid(fromHex:)) ?? UUID()
+            // Older Loop databases have no uuid column; derive a stable one so that
+            // importing the same file twice updates the habits instead of duplicating them.
+            let uuid = row.string("uuid").flatMap(uuid(fromHex:))
+                ?? stableUUID("loop-\(id)-\(row.string("name") ?? "")")
             // Before database version 23, the question was stored in `description`.
             let question = columns.contains("question") ? row.string("question") ?? "" : row.string("description") ?? ""
             let notes = columns.contains("question") ? row.string("description") ?? "" : ""
@@ -65,10 +68,14 @@ enum LoopImporter {
             let note = row.string("notes")?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             var entry: BackupFile.BackupEntry?
             if habit.kind == HabitKind.measurable.rawValue {
-                // Amounts are stored multiplied by 1000.
-                entry = value >= 0
-                    ? BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: EntryState.yes.rawValue, amount: Double(value) / 1000)
-                    : nil
+                // Amounts are stored multiplied by 1000; the raw value 3 marks a skipped day.
+                if value == 3 {
+                    entry = BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: EntryState.skip.rawValue, amount: 0)
+                } else if value >= 0 {
+                    entry = BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: EntryState.yes.rawValue, amount: Double(value) / 1000)
+                } else {
+                    entry = nil
+                }
             } else {
                 switch value {
                 case 2: entry = BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: EntryState.yes.rawValue, amount: 0)
@@ -109,6 +116,18 @@ enum LoopImporter {
             result |= 1 << (weekday - 1)
         }
         return result
+    }
+
+    /// A UUID derived from a string with FNV-1a, stable across launches (unlike `Hasher`).
+    static func stableUUID(_ string: String) -> UUID {
+        var a: UInt64 = 0xcbf2_9ce4_8422_2325
+        var b: UInt64 = 0x8422_2325_cbf2_9ce4
+        for byte in string.utf8 {
+            a = (a ^ UInt64(byte)) &* 0x100_0000_01b3
+            b = (b ^ UInt64(byte)) &* 0x100_0000_01b3 &+ 7
+        }
+        let hex = String(format: "%016llx%016llx", a, b)
+        return uuid(fromHex: hex) ?? UUID()
     }
 
     /// Loop stores UUIDs as 32 hex characters without dashes.

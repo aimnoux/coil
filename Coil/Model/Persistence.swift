@@ -21,7 +21,9 @@ enum Persistence {
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
         let schema = Schema([Habit.self, Entry.self])
         let configuration: ModelConfiguration
-        if inMemory {
+        if inMemory || (isExtension && !FileManager.default.fileExists(atPath: storeURL.path)) {
+            // A widget must never create the shared store: if it did before the app moved its
+            // existing data into the App Group, the app would find an empty store and skip the move.
             configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         } else {
             configuration = ModelConfiguration(
@@ -60,9 +62,14 @@ enum Persistence {
             return local
         }
         let shared = group.appending(path: "Coil.store")
-        moveStoreIfNeeded(from: local, to: shared)
+        if !isExtension {
+            moveStoreIfNeeded(from: local, to: shared)
+        }
         return shared
     }
+
+    /// True inside the widget extension, which only reads and toggles existing data.
+    static let isExtension = Bundle.main.bundlePath.hasSuffix(".appex")
 
     /// Moves an existing local store into the App Group the first time widgets are enabled.
     private static func moveStoreIfNeeded(from source: URL, to destination: URL) {

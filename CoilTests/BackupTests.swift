@@ -81,12 +81,13 @@ struct BackupTests {
         #expect(water.isArchived)
         #expect(!water.reminderEnabled)
         #expect(water.entries.first?.amount == 6.5)
+        #expect(water.entries.last?.state == EntryState.skip.rawValue)
 
         let container = Persistence.makeContainer(inMemory: true)
         let context = container.mainContext
         let result = try Backup.restore(backup, into: context)
         #expect(result.habitsAdded == 2)
-        #expect(result.entriesImported == 5)
+        #expect(result.entriesImported == 6)
     }
 
     @Test func loopReminderDaysStartOnSaturday() {
@@ -122,6 +123,7 @@ struct BackupTests {
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (1, \(base + 3 * day), 1);
         INSERT INTO Repetitions (habit, timestamp, value, notes) VALUES (1, \(base + 4 * day), -1, 'Travel day');
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (2, \(base), 6500);
+        INSERT INTO Repetitions (habit, timestamp, value) VALUES (2, \(base + day), 3);
         """
         try #require(sqlite3_exec(db, sql, nil, nil, nil) == SQLITE_OK)
     }

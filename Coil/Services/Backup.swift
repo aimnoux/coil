@@ -1,4 +1,3 @@
-import CoreTransferable
 import Foundation
 import SwiftData
 import UniformTypeIdentifiers
@@ -39,17 +38,6 @@ nonisolated struct BackupFile: Codable, Sendable {
         var state: Int
         var amount: Double
         var note: String? = nil
-    }
-}
-
-nonisolated extension BackupFile: Transferable {
-    static var transferRepresentation: some TransferRepresentation {
-        FileRepresentation(exportedContentType: .json) { backup in
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(Backup.fileName())
-            try Backup.encode(backup).write(to: url, options: .atomic)
-            return SentTransferredFile(url)
-        }
-        .suggestedFileName { _ in Backup.fileName() }
     }
 }
 
@@ -98,14 +86,14 @@ enum Backup {
                 position: habit.position,
                 isArchived: habit.isArchived,
                 createdAt: habit.createdAt,
-                entries: habit.entriesByDay
+                entries: habit.dayRecords
                     .sorted { $0.key < $1.key }
-                    .map { day, entry in
+                    .map { day, item in
                         BackupFile.BackupEntry(
                             date: CSVExport.isoDate(day),
-                            state: entry.stateRaw,
-                            amount: entry.amount,
-                            note: entry.note.isEmpty ? nil : entry.note
+                            state: item.record?.state.rawValue ?? Entry.noState,
+                            amount: item.record?.amount ?? 0,
+                            note: item.note.isEmpty ? nil : item.note
                         )
                     }
             )
@@ -210,7 +198,11 @@ enum Backup {
 
     static func parseDate(_ string: String) -> Day? {
         let parts = string.split(separator: "-").compactMap { Int($0) }
-        guard parts.count == 3 else { return nil }
+        guard parts.count == 3,
+              (1900...2200).contains(parts[0]),
+              (1...12).contains(parts[1]),
+              (1...Day.daysInMonth(year: parts[0], month: parts[1])).contains(parts[2])
+        else { return nil }
         return Day(year: parts[0], month: parts[1], day: parts[2])
     }
 }

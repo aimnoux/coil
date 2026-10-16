@@ -32,8 +32,10 @@ nonisolated struct HabitProvider: AppIntentTimelineProvider {
         let id = configuration.habit?.id
         let habits = await MainActor.run {
             let all = WidgetTimeline.load()
-            if let id, let match = all.first(where: { $0.id == id }) { return [match] }
-            return Array(all.prefix(1))
+            // A habit that was picked but is now archived or deleted shows the empty state,
+            // so the check button never toggles a different habit.
+            guard let id else { return Array(all.prefix(1)) }
+            return all.filter { $0.id == id }
         }
         return HabitsEntry(date: .now, habits: habits)
     }

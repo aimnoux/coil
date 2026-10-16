@@ -14,6 +14,7 @@ struct HabitDetailView: View {
     @State private var confirmingDelete = false
     @State private var amountTarget: AmountEntryTarget?
     @State private var noteTarget: DayNoteTarget?
+    @State private var sharedFiles: SharedFiles?
 
     var body: some View {
         let stats = habit.stats(today: today)
@@ -62,8 +63,10 @@ struct HabitDetailView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    ShareLink(item: CSVExport.habitFile(habit), preview: SharePreview("\(habit.name).csv")) {
-                        Label("Export CSV", systemImage: "square.and.arrow.up")
+                    Button("Export CSV", systemImage: "square.and.arrow.up") {
+                        if let url = try? CSVExport.habitFile(habit).write() {
+                            sharedFiles = SharedFiles(urls: [url])
+                        }
                     }
                     Button(habit.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox") {
                         habit.isArchived.toggle()
@@ -86,6 +89,10 @@ struct HabitDetailView: View {
         }
         .sheet(item: $noteTarget) { target in
             DayNoteSheet(habit: target.habit, day: target.day)
+        }
+        .sheet(item: $sharedFiles) { files in
+            ShareSheet(files: files)
+                .presentationDetents([.medium, .large])
         }
         .confirmationDialog("Delete this habit?", isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button("Delete \(habit.name)", role: .destructive) {

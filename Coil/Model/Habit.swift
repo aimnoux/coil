@@ -81,6 +81,20 @@ final class Habit {
         return result
     }
 
+    /// What was recorded on each day. Duplicates from sync are merged field by field:
+    /// the newest checkmark and the newest non-empty note both survive.
+    var dayRecords: [Day: DayRecord] {
+        var result: [Day: DayRecord] = [:]
+        for entry in liveEntries.sorted(by: { $0.updatedAt < $1.updatedAt }) {
+            let day = Day(index: entry.day)
+            var merged = result[day] ?? DayRecord()
+            if let record = entry.storedRecord { merged.record = record }
+            if !entry.note.isEmpty { merged.note = entry.note }
+            result[day] = merged
+        }
+        return result
+    }
+
     var data: HabitData {
         HabitData(
             kind: kind,
@@ -88,7 +102,7 @@ final class Habit {
             targetValue: targetValue,
             targetType: targetType,
             createdDay: createdDay,
-            entries: entriesByDay.compactMapValues(\.storedRecord)
+            entries: dayRecords.compactMapValues(\.record)
         )
     }
 
@@ -97,16 +111,16 @@ final class Habit {
     }
 
     func record(on day: Day) -> EntryRecord? {
-        entriesByDay[day]?.storedRecord
+        dayRecords[day]?.record
     }
 
     func note(on day: Day) -> String {
-        entriesByDay[day]?.note ?? ""
+        dayRecords[day]?.note ?? ""
     }
 
     /// Days that have a note, newest first.
     var notedDays: [(day: Day, note: String)] {
-        entriesByDay
+        dayRecords
             .filter { !$0.value.note.isEmpty }
             .map { (day: $0.key, note: $0.value.note) }
             .sorted { $0.day > $1.day }
@@ -157,13 +171,23 @@ final class Habit {
         (entries ?? []).filter { !$0.isDeleted }
     }
 
-    /// The entry for a day after deleting duplicates (keeping the newest), or `nil`.
+    /// The entry for a day after merging duplicates into the newest one, or `nil`.
     private func uniqueEntry(on day: Day, in context: ModelContext) -> Entry? {
         let existing = liveEntries
             .filter { $0.day == day.index }
             .sorted { $0.updatedAt > $1.updatedAt }
-        existing.dropFirst().forEach(context.delete)
-        return existing.first
+        guard let newest = existing.first else { return nil }
+        for duplicate in existing.dropFirst() {
+            // Keep what only the older copy knows before deleting it.
+            if newest.storedRecord == nil, let record = duplicate.storedRecord {
+                newest.record = record
+            }
+            if newest.note.isEmpty, !duplicate.note.isEmpty {
+                newest.note = duplicate.note
+            }
+            context.delete(duplicate)
+        }
+        return newest
     }
 
     private func insertEntry(on day: Day, in context: ModelContext) -> Entry {
@@ -172,6 +196,12 @@ final class Habit {
         entry.habit = self
         return entry
     }
+}
+
+/// The merged contents of one day: an optional checkmark and a note.
+nonisolated struct DayRecord: Hashable, Sendable {
+    var record: EntryRecord?
+    var note: String = ""
 }
 
 @Model

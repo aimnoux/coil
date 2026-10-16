@@ -32,7 +32,9 @@ enum ReminderScheduler {
 
     @discardableResult
     static func requestAuthorization() async -> Bool {
-        (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+        let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+        if granted { registerCategories() }
+        return granted
     }
 
     static func authorizationStatus() async -> UNAuthorizationStatus {

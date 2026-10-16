@@ -72,7 +72,7 @@ RU = {
     "Done": "Готово",
     "Done for this period": "Выполнено за период",
     "Edit": "Изменить",
-    "Edit Habit": "Изменить привычку",
+    "Edit Habit": "Изменение",
     "Every": "Каждые",
     "Every %lld days": plural(one="Каждый %lld день", few="Каждые %lld дня", many="Каждые %lld дней", other="Каждые %lld дня"),
     "Every day": "Каждый день",

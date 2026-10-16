@@ -6,8 +6,9 @@ nonisolated struct Frequency: Hashable, Codable, Sendable {
     var denominator: Int
 
     init(_ numerator: Int, _ denominator: Int) {
-        self.numerator = max(1, numerator)
         self.denominator = max(1, denominator)
+        // More repetitions than days could never be completed.
+        self.numerator = min(max(1, numerator), self.denominator)
     }
 
     static let daily = Frequency(1, 1)

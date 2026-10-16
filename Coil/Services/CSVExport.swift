@@ -1,20 +1,9 @@
-import CoreTransferable
 import Foundation
-import UniformTypeIdentifiers
 
-/// A CSV file that can be shared with `ShareLink`.
-nonisolated struct CSVFile: Transferable, Sendable {
+/// A CSV file's name and contents, written to disk only when the user exports it.
+nonisolated struct CSVFile: Sendable {
     let name: String
     let text: String
-
-    static var transferRepresentation: some TransferRepresentation {
-        FileRepresentation(exportedContentType: .commaSeparatedText) { file in
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(file.name)
-            try file.text.write(to: url, atomically: true, encoding: .utf8)
-            return SentTransferredFile(url)
-        }
-        .suggestedFileName { $0.name }
-    }
 }
 
 /// Spreadsheet exports, in a format close to Loop's: one row per day.
@@ -22,10 +11,11 @@ enum CSVExport {
     /// Date, value and habit strength for every day of one habit, newest first.
     static func habitFile(_ habit: Habit) -> CSVFile {
         let stats = habit.stats()
+        let records = habit.dayRecords
         var lines = ["Date,Value,Strength,Note"]
         var day = stats.today
         while day >= stats.start {
-            let note = escape(habit.note(on: day))
+            let note = escape(records[day]?.note ?? "")
             lines.append("\(isoDate(day)),\(value(for: habit, stats: stats, day: day)),\(format(stats.score(on: day))),\(note)")
             day = day.advanced(by: -1)
         }
@@ -72,7 +62,7 @@ enum CSVExport {
 
     private static func value(for habit: Habit, stats: HabitStats, day: Day) -> String {
         if habit.isMeasurable {
-            if habit.record(on: day)?.state == .skip { return "SKIP" }
+            if stats.checkmark(on: day) == .skip { return "SKIP" }
             return stats.amount(on: day).map(format) ?? ""
         }
         switch stats.checkmark(on: day) {
@@ -94,7 +84,7 @@ enum CSVExport {
     }
 
     static func escape(_ field: String) -> String {
-        guard field.contains(where: { $0 == "," || $0 == "\"" || $0 == "\n" }) else { return field }
+        guard field.contains(where: { $0 == "," || $0 == "\"" || $0.isNewline }) else { return field }
         return "\"" + field.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }
 

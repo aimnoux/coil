@@ -27,9 +27,7 @@ struct HabitEntity: AppEntity, Identifiable {
 struct HabitQuery: EntityQuery, EntityStringQuery {
     @MainActor
     func entities(for identifiers: [HabitEntity.ID]) async throws -> [HabitEntity] {
-        try HabitStore.activeHabits()
-            .filter { identifiers.contains($0.id) }
-            .map(HabitEntity.init)
+        try identifiers.compactMap { try HabitStore.habit(id: $0) }.map(HabitEntity.init)
     }
 
     @MainActor
@@ -104,7 +102,7 @@ struct MarkHabitDoneIntent: AppIntent {
     @Parameter(title: "Habit")
     var habit: HabitEntity
 
-    @Parameter(title: "Amount", description: "For measurable habits: the value to record.")
+    @Parameter(title: "Amount", description: "For measurable habits: how much to add to today's value.")
     var amount: Double?
 
     static var parameterSummary: some ParameterSummary {
@@ -122,8 +120,11 @@ struct MarkHabitDoneIntent: AppIntent {
         }
         let today = Day.today()
         if model.isMeasurable {
-            let value = amount ?? model.targetValue
-            model.setRecord(EntryRecord(state: .yes, amount: value), on: today, in: HabitStore.context)
+            // Add to what is already recorded, e.g. "I drank a glass of water" several times a day.
+            // Without an amount, record one day's share of the target.
+            let added = amount ?? model.targetValue / Double(model.frequency.denominator)
+            let current = model.record(on: today).flatMap { $0.state == .yes ? $0.amount : nil } ?? 0
+            model.setRecord(EntryRecord(state: .yes, amount: current + added), on: today, in: HabitStore.context)
         } else {
             model.setRecord(.yes, on: today, in: HabitStore.context)
         }

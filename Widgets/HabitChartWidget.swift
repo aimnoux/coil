@@ -51,7 +51,8 @@ nonisolated struct HabitChartProvider: AppIntentTimelineProvider {
         let id = configuration.habit?.id
         return await MainActor.run {
             let habits = (try? HabitStore.activeHabits()) ?? []
-            guard let habit = habits.first(where: { $0.id == id }) ?? habits.first else {
+            let selected = id.map { id in habits.first { $0.id == id } } ?? habits.first
+            guard let habit = selected else {
                 return ChartEntry(date: .now, habit: nil, points: [])
             }
             let today = Day.today()
