@@ -18,6 +18,8 @@ struct HabitListView: View {
     @State private var path: [Habit] = []
     @State private var today = Day.today()
     @State private var columnCount = 5
+    /// How many days the checkmark columns are scrolled back from today.
+    @State private var dayOffset = 0
     @State private var editMode: EditMode = .inactive
     @State private var editorHabit: HabitEditorTarget?
     @State private var amountTarget: AmountEntryTarget?
@@ -91,9 +93,13 @@ struct HabitListView: View {
                     }
                     .onMove { move(from: $0, to: $1) }
                 } header: {
-                    DayHeader(days: visibleDays, today: today)
-                        .padding(.trailing, 8)
-                        .listRowInsets(EdgeInsets())
+                    DayHeader(days: visibleDays, today: today, isScrolledBack: dayOffset > 0) {
+                        withAnimation(.snappy) { dayOffset = 0 }
+                    }
+                    .padding(.trailing, 8)
+                    .listRowInsets(EdgeInsets())
+                    .contentShape(Rectangle())
+                    .gesture(daySwipe)
                 }
                 if rows.isEmpty {
                     emptyFilterMessage
@@ -216,8 +222,22 @@ struct HabitListView: View {
 
     // MARK: - Data
 
+    /// Swiping the day header pages through older days, like in Loop.
+    private var daySwipe: some Gesture {
+        DragGesture(minimumDistance: 20)
+            .onEnded { value in
+                guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                // Older days lie to the right when today is on the left, and vice versa.
+                let towardsPast = todayOnRight ? value.translation.width > 0 : value.translation.width < 0
+                withAnimation(.snappy) {
+                    dayOffset = max(0, dayOffset + (towardsPast ? columnCount : -columnCount))
+                }
+            }
+    }
+
     private var visibleDays: [Day] {
-        let days = (0..<columnCount).map { today.advanced(by: -$0) }
+        let newest = today.advanced(by: -dayOffset)
+        let days = (0..<columnCount).map { newest.advanced(by: -$0) }
         return todayOnRight ? days.reversed() : days
     }
 
