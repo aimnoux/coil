@@ -17,7 +17,9 @@ struct HabitListView: View {
 
     @State private var path: [Habit] = []
     @State private var today = Day.today()
-    @State private var columnCount = 5
+    @State private var listWidth: CGFloat = 400
+    /// Room kept for the habit name; grows with Dynamic Type so names stay readable.
+    @ScaledMetric(relativeTo: .body) private var nameWidth: CGFloat = 120
     /// How many days the checkmark columns are scrolled back from today.
     @State private var dayOffset = 0
     @State private var editMode: EditMode = .inactive
@@ -108,9 +110,7 @@ struct HabitListView: View {
             .listStyle(.plain)
             .environment(\.editMode, $editMode)
             .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width in
-                // Leave room for the score ring and the habit name.
-                let available = width - 170
-                columnCount = max(3, min(8, Int(available / checkmarkColumnWidth)))
+                listWidth = width
             }
         }
     }
@@ -221,6 +221,12 @@ struct HabitListView: View {
     }
 
     // MARK: - Data
+
+    /// How many day columns fit next to the score ring and the habit name.
+    private var columnCount: Int {
+        let available = listWidth - 50 - nameWidth
+        return max(2, min(8, Int(available / checkmarkColumnWidth)))
+    }
 
     /// Swiping the day header pages through older days, like in Loop.
     private var daySwipe: some Gesture {
