@@ -13,6 +13,7 @@ struct HabitDetailView: View {
     @State private var editing = false
     @State private var confirmingDelete = false
     @State private var amountTarget: AmountEntryTarget?
+    @State private var noteTarget: DayNoteTarget?
 
     var body: some View {
         let stats = habit.stats(today: today)
@@ -28,13 +29,18 @@ struct HabitDetailView: View {
                 }
                 ScoreChartCard(stats: stats, color: color, firstWeekday: firstWeekday)
                 HistoryChartCard(stats: stats, color: color, firstWeekday: firstWeekday, isMeasurable: habit.isMeasurable)
-                CalendarCard(habit: habit, stats: stats, firstWeekday: firstWeekday) { day in
-                    if habit.isMeasurable {
-                        amountTarget = AmountEntryTarget(habit: habit, day: day)
-                    }
-                }
+                CalendarCard(
+                    habit: habit,
+                    stats: stats,
+                    firstWeekday: firstWeekday,
+                    onEditAmount: { day in amountTarget = AmountEntryTarget(habit: habit, day: day) },
+                    onEditNote: { day in noteTarget = DayNoteTarget(habit: habit, day: day) }
+                )
                 StreaksCard(stats: stats, color: color)
                 FrequencyCard(stats: stats, color: color, firstWeekday: firstWeekday)
+                DayNotesCard(habit: habit) { day in
+                    noteTarget = DayNoteTarget(habit: habit, day: day)
+                }
                 if !habit.notes.isEmpty {
                     Card("Notes") {
                         Text(habit.notes)
@@ -77,6 +83,9 @@ struct HabitDetailView: View {
         }
         .sheet(item: $amountTarget) { target in
             AmountEntrySheet(habit: target.habit, day: target.day)
+        }
+        .sheet(item: $noteTarget) { target in
+            DayNoteSheet(habit: target.habit, day: target.day)
         }
         .confirmationDialog("Delete this habit?", isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button("Delete \(habit.name)", role: .destructive) {

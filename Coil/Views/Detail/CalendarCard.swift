@@ -8,6 +8,7 @@ struct CalendarCard: View {
     let firstWeekday: Int
     /// Called for measurable habits, which need a value instead of a toggle.
     let onEditAmount: (Day) -> Void
+    let onEditNote: (Day) -> Void
 
     @Environment(\.modelContext) private var context
     @AppStorage(SettingsKey.skipEnabled) private var skipEnabled = false
@@ -17,12 +18,13 @@ struct CalendarCard: View {
     private let gap: CGFloat = 4
 
     var body: some View {
+        let notes = Dictionary(habit.notedDays.map { ($0.day, $0.note) }, uniquingKeysWith: { first, _ in first })
         Card("Calendar") {
             HStack(alignment: .top, spacing: gap) {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .top, spacing: gap) {
                         ForEach(weeks, id: \.self) { weekStart in
-                            column(weekStart)
+                            column(weekStart, notes: notes)
                         }
                     }
                     .scrollTargetLayout()
@@ -30,7 +32,9 @@ struct CalendarCard: View {
                 .defaultScrollAnchor(.trailing)
                 weekdayLabels
             }
-            Text(habit.isMeasurable ? "Tap a day to change its value." : "Tap a day to change it.")
+            Text(habit.isMeasurable
+                ? "Tap a day to change its value. Press and hold to add a note."
+                : "Tap a day to change it. Press and hold to add a note.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -57,7 +61,7 @@ struct CalendarCard: View {
         }
     }
 
-    private func column(_ weekStart: Day) -> some View {
+    private func column(_ weekStart: Day, notes: [Day: String]) -> some View {
         VStack(spacing: gap) {
             // Month label on the week that contains the 1st.
             let firstOfMonth = (0..<7).map { weekStart.advanced(by: $0) }.first { $0.dayOfMonth == 1 }
@@ -67,13 +71,13 @@ struct CalendarCard: View {
                 .fixedSize()
                 .frame(width: cell, alignment: .leading)
             ForEach(0..<7, id: \.self) { row in
-                dayCell(weekStart.advanced(by: row))
+                dayCell(weekStart.advanced(by: row), note: notes[weekStart.advanced(by: row)])
             }
         }
     }
 
     @ViewBuilder
-    private func dayCell(_ day: Day) -> some View {
+    private func dayCell(_ day: Day, note: String?) -> some View {
         if day > stats.today {
             Color.clear.frame(width: cell, height: cell)
         } else {
@@ -97,6 +101,14 @@ struct CalendarCard: View {
                             .font(.system(size: 11, weight: day == stats.today ? .bold : .medium, design: .rounded))
                             .foregroundStyle(style.foreground)
                     }
+                    .overlay(alignment: .bottom) {
+                        if note != nil {
+                            Circle()
+                                .fill(style.foreground)
+                                .frame(width: 4, height: 4)
+                                .padding(.bottom, 3)
+                        }
+                    }
                     .overlay {
                         if day == stats.today {
                             RoundedRectangle(cornerRadius: 7, style: .continuous)
@@ -106,9 +118,28 @@ struct CalendarCard: View {
                     .frame(width: cell, height: cell)
             }
             .buttonStyle(.plain)
+            .contextMenu {
+                Button(note != nil ? "Edit Note" : "Add Note", systemImage: "note.text") {
+                    onEditNote(day)
+                }
+            } preview: {
+                notePreview(day, note: note)
+            }
             .accessibilityLabel(Text(Formatting.fullDate(day)))
             .accessibilityValue(Text(checkmark.accessibilityDescription))
+            .accessibilityAction(named: Text("Add Note")) { onEditNote(day) }
         }
+    }
+
+    private func notePreview(_ day: Day, note: String?) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(Formatting.fullDate(day))
+                .font(.headline)
+            Text(note ?? String(localized: "No note"))
+                .foregroundStyle(note == nil ? .secondary : .primary)
+        }
+        .padding()
+        .frame(width: 260, alignment: .leading)
     }
 
     private func fill(for day: Day, checkmark: Checkmark) -> (background: Color, foreground: Color) {

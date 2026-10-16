@@ -60,7 +60,11 @@ struct FrequencyCard: View {
 
     var body: some View {
         let counts = stats.weekdayFrequency()
-        let months = (0..<12).reversed().map { stats.today.firstOfMonth.addingMonths(-$0) }
+        // Up to the last 12 months, but not before the habit started.
+        let startMonth = stats.start.firstOfMonth
+        let months = (0..<12).reversed()
+            .map { stats.today.firstOfMonth.addingMonths(-$0) }
+            .filter { $0 >= startMonth }
         let maxCount = max(1, counts.values.flatMap(\.values).max() ?? 1)
         Card("Frequency") {
             Grid(horizontalSpacing: 0, verticalSpacing: 6) {

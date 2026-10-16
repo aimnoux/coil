@@ -51,13 +51,19 @@ enum LoopImporter {
             order.append(id)
         }
 
-        try query(db, "SELECT habit, timestamp, value FROM Repetitions ORDER BY timestamp") { row in
+        // Notes on checkmarks were added in Loop's database version 25.
+        let hasNotes = columnNames(of: "Repetitions", in: db).contains("notes")
+        let sql = hasNotes
+            ? "SELECT habit, timestamp, value, notes FROM Repetitions ORDER BY timestamp"
+            : "SELECT habit, timestamp, value FROM Repetitions ORDER BY timestamp"
+        try query(db, sql) { row in
             let habitID = row.int("habit")
             guard var habit = habits[habitID] else { return }
             // Timestamps are milliseconds at UTC midnight.
             let day = Day(index: Int(row.int("timestamp") / 86_400_000) - 11_323)
             let value = row.int("value")
-            let entry: BackupFile.BackupEntry?
+            let note = row.string("notes")?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            var entry: BackupFile.BackupEntry?
             if habit.kind == HabitKind.measurable.rawValue {
                 // Amounts are stored multiplied by 1000.
                 entry = value >= 0
@@ -70,6 +76,11 @@ enum LoopImporter {
                 case 0: entry = BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: EntryState.no.rawValue, amount: 0)
                 default: entry = nil // automatic or unknown values are recomputed by Coil
                 }
+            }
+            if !note.isEmpty {
+                // A note on a day without a checkmark is kept as a note-only entry.
+                entry = entry ?? BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: Entry.noState, amount: 0)
+                entry?.note = note
             }
             if let entry {
                 habit.entries.append(entry)

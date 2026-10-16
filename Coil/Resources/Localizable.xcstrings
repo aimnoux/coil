@@ -233,6 +233,17 @@
         }
       }
     },
+    "Add Note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить заметку"
+          }
+        }
+      }
+    },
     "Add a habit in Coil": {
       "extractionState": "manual",
       "localizations": {
@@ -673,6 +684,17 @@
         }
       }
     },
+    "Day Notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заметки по дням"
+          }
+        }
+      }
+    },
     "Delete": {
       "extractionState": "manual",
       "localizations": {
@@ -702,6 +724,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Удалить привычку"
+          }
+        }
+      }
+    },
+    "Delete Note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить заметку"
           }
         }
       }
@@ -823,6 +856,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Изменить привычку"
+          }
+        }
+      }
+    },
+    "Edit Note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменить заметку"
           }
         }
       }
@@ -1166,6 +1210,17 @@
         }
       }
     },
+    "Hard to focus today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня было трудно сосредоточиться."
+          }
+        }
+      }
+    },
     "Hide Completed": {
       "extractionState": "manual",
       "localizations": {
@@ -1184,6 +1239,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "История"
+          }
+        }
+      }
+    },
+    "How did it go?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Как всё прошло?"
           }
         }
       }
@@ -1485,6 +1551,17 @@
         }
       }
     },
+    "No note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет заметки"
+          }
+        }
+      }
+    },
     "No streaks yet. Check off the habit on consecutive days to start one.": {
       "extractionState": "manual",
       "localizations": {
@@ -1514,6 +1591,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сегодня ещё не выполнено."
+          }
+        }
+      }
+    },
+    "Note": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Заметка"
           }
         }
       }
@@ -1881,6 +1969,17 @@
         }
       }
     },
+    "Show All (%lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать все (%lld)"
+          }
+        }
+      }
+    },
     "Show Archived": {
       "extractionState": "manual",
       "localizations": {
@@ -2035,24 +2134,24 @@
         }
       }
     },
-    "Tap a day to change it.": {
+    "Tap a day to change it. Press and hold to add a note.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Нажмите на день, чтобы изменить отметку."
+            "value": "Нажмите на день, чтобы изменить отметку. Удерживайте, чтобы добавить заметку."
           }
         }
       }
     },
-    "Tap a day to change its value.": {
+    "Tap a day to change its value. Press and hold to add a note.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Нажмите на день, чтобы изменить значение."
+            "value": "Нажмите на день, чтобы изменить значение. Удерживайте, чтобы добавить заметку."
           }
         }
       }
@@ -2317,6 +2416,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Записывайте число каждый день. Например: сколько страниц вы прочитали?"
+          }
+        }
+      }
+    },
+    "Twenty minutes in the park, very calm.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Двадцать минут в парке, очень спокойно."
           }
         }
       }

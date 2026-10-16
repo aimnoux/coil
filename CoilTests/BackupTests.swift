@@ -17,6 +17,8 @@ struct BackupTests {
         let today = Day.today()
         habit.setRecord(EntryRecord(state: .yes, amount: 12.5), on: today, in: source)
         habit.setRecord(.skip, on: today.advanced(by: -1), in: source)
+        habit.setNote("Felt great", on: today, in: source)
+        habit.setNote("Only a note", on: today.advanced(by: -2), in: source)
 
         let data = try Backup.encode(Backup.make(from: [habit]))
         let decoder = JSONDecoder()
@@ -27,7 +29,7 @@ struct BackupTests {
         let target = targetContainer.mainContext
         let result = try Backup.restore(decoded, into: target)
         #expect(result.habitsAdded == 1)
-        #expect(result.entriesImported == 2)
+        #expect(result.entriesImported == 3)
 
         let restored = try #require(try target.fetch(FetchDescriptor<Habit>()).first)
         #expect(restored.id == habit.id)
@@ -36,13 +38,17 @@ struct BackupTests {
         #expect(restored.frequency == .weekly)
         #expect(restored.record(on: today) == EntryRecord(state: .yes, amount: 12.5))
         #expect(restored.record(on: today.advanced(by: -1))?.state == .skip)
+        #expect(restored.note(on: today) == "Felt great")
+        #expect(restored.note(on: today.advanced(by: -2)) == "Only a note")
+        #expect(restored.record(on: today.advanced(by: -2)) == nil)
+        #expect(restored.stats().checkmark(on: today.advanced(by: -2)) == .unknown)
 
         // Importing the same backup again updates instead of duplicating.
         let again = try Backup.restore(decoded, into: target)
         #expect(again.habitsAdded == 0)
         #expect(again.habitsUpdated == 1)
         #expect(try target.fetchCount(FetchDescriptor<Habit>()) == 1)
-        #expect(restored.entries?.count == 2)
+        #expect(restored.liveEntries.count == 3)
     }
 
     @Test func importsLoopDatabase() throws {
@@ -62,9 +68,10 @@ struct BackupTests {
         #expect(meditate.reminderHour == 7)
         #expect(meditate.reminderDays == 0b111_1111)
         #expect(meditate.id == UUID(uuidString: "0123456789ABCDEF0123456789ABCDEF".inserting()))
-        // YES_AUTO (1) and UNKNOWN (-1) are not imported; YES, NO and SKIP are.
-        #expect(meditate.entries.map(\.date) == ["2026-10-14", "2026-10-15", "2026-10-16"])
-        #expect(meditate.entries.map(\.state) == [EntryState.yes.rawValue, EntryState.no.rawValue, EntryState.skip.rawValue])
+        // YES_AUTO (1) and UNKNOWN (-1) are not imported unless they carry a note; YES, NO and SKIP are.
+        #expect(meditate.entries.map(\.date) == ["2026-10-14", "2026-10-15", "2026-10-16", "2026-10-18"])
+        #expect(meditate.entries.map(\.state) == [EntryState.yes.rawValue, EntryState.no.rawValue, EntryState.skip.rawValue, Entry.noState])
+        #expect(meditate.entries.last?.note == "Travel day")
 
         let water = try #require(backup.habits.first { $0.name == "Water" })
         #expect(water.kind == HabitKind.measurable.rawValue)
@@ -79,7 +86,7 @@ struct BackupTests {
         let context = container.mainContext
         let result = try Backup.restore(backup, into: context)
         #expect(result.habitsAdded == 2)
-        #expect(result.entriesImported == 4)
+        #expect(result.entriesImported == 5)
     }
 
     @Test func loopReminderDaysStartOnSaturday() {
@@ -113,7 +120,7 @@ struct BackupTests {
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (1, \(base + day), 0);
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (1, \(base + 2 * day), 3);
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (1, \(base + 3 * day), 1);
-        INSERT INTO Repetitions (habit, timestamp, value) VALUES (1, \(base + 4 * day), -1);
+        INSERT INTO Repetitions (habit, timestamp, value, notes) VALUES (1, \(base + 4 * day), -1, 'Travel day');
         INSERT INTO Repetitions (habit, timestamp, value) VALUES (2, \(base), 6500);
         """
         try #require(sqlite3_exec(db, sql, nil, nil, nil) == SQLITE_OK)

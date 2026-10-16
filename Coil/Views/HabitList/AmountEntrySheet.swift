@@ -18,6 +18,7 @@ struct AmountEntrySheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage(SettingsKey.skipEnabled) private var skipEnabled = false
     @State private var value: Double?
+    @State private var note = ""
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -44,6 +45,11 @@ struct AmountEntrySheet: View {
                         Text(Formatting.target(for: habit))
                     }
                     .frame(maxWidth: .infinity)
+                }
+
+                Section("Note") {
+                    TextField("Note", text: $note, prompt: Text("How did it go?"), axis: .vertical)
+                        .lineLimit(1...4)
                 }
 
                 Section {
@@ -76,6 +82,7 @@ struct AmountEntrySheet: View {
                 if let record = habit.record(on: day), record.state == .yes {
                     value = record.amount
                 }
+                note = habit.note(on: day)
                 focused = true
             }
         }
@@ -99,6 +106,7 @@ struct AmountEntrySheet: View {
     private func save() {
         guard let value else { return }
         habit.setRecord(EntryRecord(state: .yes, amount: max(0, value)), on: day, in: context)
+        habit.setNote(note, on: day, in: context)
         dismiss()
     }
 }

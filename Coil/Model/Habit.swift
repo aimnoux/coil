@@ -73,7 +73,7 @@ final class Habit {
     /// Entries keyed by day. If sync produced duplicates for a day, the newest one wins.
     var entriesByDay: [Day: Entry] {
         var result: [Day: Entry] = [:]
-        for entry in entries ?? [] {
+        for entry in liveEntries {
             let day = Day(index: entry.day)
             if let existing = result[day], existing.updatedAt >= entry.updatedAt { continue }
             result[day] = entry
@@ -88,7 +88,7 @@ final class Habit {
             targetValue: targetValue,
             targetType: targetType,
             createdDay: createdDay,
-            entries: entriesByDay.mapValues(\.record)
+            entries: entriesByDay.compactMapValues(\.storedRecord)
         )
     }
 
@@ -97,25 +97,80 @@ final class Habit {
     }
 
     func record(on day: Day) -> EntryRecord? {
-        entriesByDay[day]?.record
+        entriesByDay[day]?.storedRecord
     }
 
-    /// Sets or clears (`nil`) the record for a day, removing any duplicates.
+    func note(on day: Day) -> String {
+        entriesByDay[day]?.note ?? ""
+    }
+
+    /// Days that have a note, newest first.
+    var notedDays: [(day: Day, note: String)] {
+        entriesByDay
+            .filter { !$0.value.note.isEmpty }
+            .map { (day: $0.key, note: $0.value.note) }
+            .sorted { $0.day > $1.day }
+    }
+
+    /// Sets or clears (`nil`) the record for a day, removing any duplicates. A note on the day is kept.
     func setRecord(_ record: EntryRecord?, on day: Day, in context: ModelContext) {
-        let existing = (entries ?? []).filter { $0.day == day.index }
-        guard let record else {
-            existing.forEach(context.delete)
+        let entry = uniqueEntry(on: day, in: context)
+        if let record {
+            let target = entry ?? insertEntry(on: day, in: context)
+            target.record = record
+            target.updatedAt = Date()
+        } else if let entry {
+            if entry.note.isEmpty {
+                context.delete(entry)
+            } else {
+                entry.stateRaw = Entry.noState
+                entry.updatedAt = Date()
+            }
+        }
+    }
+
+    /// Sets the note for a day; an empty note on a day without a checkmark removes the entry.
+    func setNote(_ note: String, on day: Day, in context: ModelContext) {
+        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        let entry = uniqueEntry(on: day, in: context)
+        if trimmed.isEmpty {
+            guard let entry else { return }
+            if entry.storedRecord == nil {
+                context.delete(entry)
+            } else {
+                entry.note = ""
+                entry.updatedAt = Date()
+            }
             return
         }
-        if let first = existing.first {
-            first.record = record
-            first.updatedAt = Date()
-            existing.dropFirst().forEach(context.delete)
-        } else {
-            let entry = Entry(day: day, record: record)
-            context.insert(entry)
-            entry.habit = self
-        }
+        let target = entry ?? {
+            let new = insertEntry(on: day, in: context)
+            new.stateRaw = Entry.noState
+            return new
+        }()
+        target.note = trimmed
+        target.updatedAt = Date()
+    }
+
+    /// Entries not yet removed. SwiftData keeps deleted objects in the relationship until the next save.
+    var liveEntries: [Entry] {
+        (entries ?? []).filter { !$0.isDeleted }
+    }
+
+    /// The entry for a day after deleting duplicates (keeping the newest), or `nil`.
+    private func uniqueEntry(on day: Day, in context: ModelContext) -> Entry? {
+        let existing = liveEntries
+            .filter { $0.day == day.index }
+            .sorted { $0.updatedAt > $1.updatedAt }
+        existing.dropFirst().forEach(context.delete)
+        return existing.first
+    }
+
+    private func insertEntry(on day: Day, in context: ModelContext) -> Entry {
+        let entry = Entry(day: day, record: .yes)
+        context.insert(entry)
+        entry.habit = self
+        return entry
     }
 }
 
@@ -123,10 +178,15 @@ final class Habit {
 final class Entry {
     /// `Day.index` of the day this entry belongs to.
     var day: Int = 0
+    /// An `EntryState` raw value, or `Entry.noState` for a day that only has a note.
     var stateRaw: Int = EntryState.yes.rawValue
     var amount: Double = 0
+    /// A note for this day, like Loop's checkmark notes.
+    var note: String = ""
     var updatedAt: Date = Date()
     var habit: Habit?
+
+    static let noState = 0
 
     init(day: Day, record: EntryRecord) {
         self.day = day.index
@@ -135,10 +195,15 @@ final class Entry {
     }
 
     var record: EntryRecord {
-        get { EntryRecord(state: EntryState(rawValue: stateRaw) ?? .yes, amount: amount) }
+        get { storedRecord ?? EntryRecord(state: .yes, amount: amount) }
         set {
             stateRaw = newValue.state.rawValue
             amount = newValue.amount
         }
+    }
+
+    /// The checkmark for this day, or `nil` if the entry only holds a note.
+    var storedRecord: EntryRecord? {
+        EntryState(rawValue: stateRaw).map { EntryRecord(state: $0, amount: amount) }
     }
 }

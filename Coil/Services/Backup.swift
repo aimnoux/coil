@@ -35,8 +35,10 @@ nonisolated struct BackupFile: Codable, Sendable {
     struct BackupEntry: Codable, Sendable {
         /// ISO date, e.g. "2026-10-17".
         var date: String
+        /// An `EntryState` raw value, or 0 for a day that only has a note.
         var state: Int
         var amount: Double
+        var note: String? = nil
     }
 }
 
@@ -99,7 +101,12 @@ enum Backup {
                 entries: habit.entriesByDay
                     .sorted { $0.key < $1.key }
                     .map { day, entry in
-                        BackupFile.BackupEntry(date: CSVExport.isoDate(day), state: entry.stateRaw, amount: entry.amount)
+                        BackupFile.BackupEntry(
+                            date: CSVExport.isoDate(day),
+                            state: entry.stateRaw,
+                            amount: entry.amount,
+                            note: entry.note.isEmpty ? nil : entry.note
+                        )
                     }
             )
         })
@@ -173,17 +180,26 @@ enum Backup {
             // Look entries up by day once instead of scanning the relationship per entry.
             var existingEntries = habit.entriesByDay
             for entry in item.entries {
-                guard let day = parseDate(entry.date), let state = EntryState(rawValue: entry.state) else { continue }
-                let record = EntryRecord(state: state, amount: entry.amount)
+                let state = EntryState(rawValue: entry.state)
+                let note = entry.note ?? ""
+                guard let day = parseDate(entry.date), state != nil || !note.isEmpty else { continue }
+                let target: Entry
                 if let existing = existingEntries[day] {
-                    existing.record = record
-                    existing.updatedAt = Date()
+                    target = existing
                 } else {
-                    let newEntry = Entry(day: day, record: record)
-                    context.insert(newEntry)
-                    newEntry.habit = habit
-                    existingEntries[day] = newEntry
+                    target = Entry(day: day, record: .yes)
+                    target.stateRaw = Entry.noState
+                    context.insert(target)
+                    target.habit = habit
+                    existingEntries[day] = target
                 }
+                if let state {
+                    target.record = EntryRecord(state: state, amount: entry.amount)
+                }
+                if !note.isEmpty {
+                    target.note = note
+                }
+                target.updatedAt = Date()
                 result.entriesImported += 1
             }
             ReminderScheduler.reschedule(habit)

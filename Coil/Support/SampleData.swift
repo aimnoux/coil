@@ -71,6 +71,10 @@ enum SampleData {
              target: 2, targetType: .atMost, days: 45) { offset, r in
             EntryRecord(state: .yes, amount: Double(Int(r.next() * 4)))
         }
+        if let meditate = try? context.fetch(FetchDescriptor<Habit>()).first(where: { $0.colorIndex == 12 }) {
+            meditate.setNote(String(localized: "Twenty minutes in the park, very calm."), on: today.advanced(by: -2), in: context)
+            meditate.setNote(String(localized: "Hard to focus today."), on: today.advanced(by: -9), in: context)
+        }
         try? context.save()
     }
 }

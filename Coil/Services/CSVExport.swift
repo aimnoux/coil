@@ -22,10 +22,11 @@ enum CSVExport {
     /// Date, value and habit strength for every day of one habit, newest first.
     static func habitFile(_ habit: Habit) -> CSVFile {
         let stats = habit.stats()
-        var lines = ["Date,Value,Strength"]
+        var lines = ["Date,Value,Strength,Note"]
         var day = stats.today
         while day >= stats.start {
-            lines.append("\(isoDate(day)),\(value(for: habit, stats: stats, day: day)),\(format(stats.score(on: day)))")
+            let note = escape(habit.note(on: day))
+            lines.append("\(isoDate(day)),\(value(for: habit, stats: stats, day: day)),\(format(stats.score(on: day))),\(note)")
             day = day.advanced(by: -1)
         }
         return CSVFile(name: "\(safeFileName(habit.name)).csv", text: lines.joined(separator: "\n") + "\n")
