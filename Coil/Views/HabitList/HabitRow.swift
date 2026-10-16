@@ -9,6 +9,8 @@ struct HabitRow: View {
     let days: [Day]
     let longPressToToggle: Bool
     let showQuestionMarks: Bool
+    /// While the list is in selection mode, a tap selects the row instead of opening the habit.
+    var isEditing = false
     let onOpen: () -> Void
     let onTap: (Day) -> Void
     let onHint: () -> Void
@@ -34,6 +36,8 @@ struct HabitRow: View {
             }
             .contentShape(Rectangle())
             .onTapGesture(perform: onOpen)
+            // In selection mode let the list handle taps so the whole row selects.
+            .allowsHitTesting(!isEditing)
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Shows statistics")

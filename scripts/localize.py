@@ -228,6 +228,7 @@ RU = {
     "Choose the habit to show.": "Выберите привычку для виджета.",
     "Done! %@ streak: %lld days.": "Готово! Серия «%1$@»: %2$lld дн.",
     "For measurable habits: the value to record.": "Для измеримых привычек: значение, которое нужно записать.",
+    "For measurable habits: how much to add to today's value.": "Для измеримых привычек: сколько добавить к сегодняшнему значению.",
     "Get Habit Status": "Узнать статус привычки",
     "Habit": "Привычка",
     "Habit ID": "ID привычки",
@@ -242,6 +243,12 @@ RU = {
     "Toggle Habit": "Переключить привычку",
     "Wake up early": "Ранний подъём",
     "See how a habit's strength changes over time.": "Следите, как меняется сила привычки.",
+    "Delete %lld habits?": plural(one="Удалить %lld привычку?", few="Удалить %lld привычки?", many="Удалить %lld привычек?", other="Удалить %lld привычки?"),
+    "Their whole history will be deleted. This can't be undone.": "Вся их история будет удалена. Это нельзя отменить.",
+    "Habits archived": "Привычки в архиве",
+    "Habits restored": "Привычки восстановлены",
+    "Select and Reorder": "Выбрать и упорядочить",
+    "Select Habits": "Выбрать привычки",
     # Day notes
     "Note": "Заметка",
     "How did it go?": "Как всё прошло?",
@@ -272,6 +279,7 @@ RU = {
 
 # English plural forms for keys that need them.
 EN = {
+    "Delete %lld habits?": plural(one="Delete %lld habit?", other="Delete %lld habits?"),
     "%lld days": plural(one="%lld day", other="%lld days"),
     "Every %lld days": plural(one="Every day", other="Every %lld days"),
     "every %lld days": plural(one="every day", other="every %lld days"),

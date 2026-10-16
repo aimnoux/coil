@@ -23,6 +23,8 @@ struct HabitListView: View {
     /// How many days the checkmark columns are scrolled back from today.
     @State private var dayOffset = 0
     @State private var editMode: EditMode = .inactive
+    @State private var selection = Set<UUID>()
+    @State private var confirmingBulkDelete = false
     @State private var editorHabit: HabitEditorTarget?
     @State private var amountTarget: AmountEntryTarget?
     @State private var habitToDelete: Habit?
@@ -57,6 +59,15 @@ struct HabitListView: View {
         } message: { _ in
             Text("Its whole history will be deleted. This can't be undone.")
         }
+        .confirmationDialog(
+            "Delete \(selection.count) habits?",
+            isPresented: $confirmingBulkDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) { deleteSelected() }
+        } message: {
+            Text("Their whole history will be deleted. This can't be undone.")
+        }
         .overlay(alignment: .bottom) { hintBanner }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { today = .today() }
@@ -90,7 +101,7 @@ struct HabitListView: View {
             }
         } else {
             let rows = displayedRows
-            List {
+            List(selection: $selection) {
                 Section {
                     ForEach(rows) { row in
                         habitRow(row.habit, stats: row.stats)
@@ -125,6 +136,7 @@ struct HabitListView: View {
             days: visibleDays,
             longPressToToggle: longPressToToggle,
             showQuestionMarks: showQuestionMarks,
+            isEditing: editMode.isEditing,
             onOpen: { path.append(habit) },
             onTap: { day in tap(habit, stats: stats, day: day) },
             onHint: { showHint("Press and hold to check off") }
@@ -188,8 +200,35 @@ struct HabitListView: View {
         }
         if editMode.isEditing {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Done") { withAnimation { editMode = .inactive } }
-                    .bold()
+                Button("Done") {
+                    withAnimation { editMode = .inactive }
+                    selection.removeAll()
+                }
+                .bold()
+            }
+            ToolbarItemGroup(placement: .bottomBar) {
+                Button("Archive", systemImage: "archivebox") { archiveSelected() }
+                    .disabled(selection.isEmpty)
+                Menu {
+                    ForEach(HabitColor.all) { color in
+                        Button {
+                            recolorSelected(color.index)
+                        } label: {
+                            Label {
+                                Text(color.name)
+                            } icon: {
+                                Image(systemName: "circle.fill")
+                                    .foregroundStyle(color.color, color.color)
+                            }
+                        }
+                    }
+                } label: {
+                    Label("Color", systemImage: "paintpalette")
+                }
+                .disabled(selection.isEmpty)
+                Spacer()
+                Button("Delete", systemImage: "trash", role: .destructive) { confirmingBulkDelete = true }
+                    .disabled(selection.isEmpty)
             }
         } else {
             ToolbarItem(placement: .topBarTrailing) {
@@ -213,8 +252,11 @@ struct HabitListView: View {
                 Toggle("Show Archived", systemImage: "archivebox", isOn: $showArchived)
                 Toggle("Hide Completed", systemImage: "checkmark.circle", isOn: $hideCompleted)
             }
-            if sortOrder == .manual && !habits.isEmpty {
-                Button("Reorder Habits", systemImage: "arrow.up.arrow.down") {
+            if !habits.isEmpty {
+                Button(
+                    sortOrder == .manual ? "Select and Reorder" : "Select Habits",
+                    systemImage: "checkmark.circle"
+                ) {
                     withAnimation { editMode = .active }
                 }
             }
@@ -245,6 +287,8 @@ struct HabitListView: View {
     }
 
     private var visibleDays: [Day] {
+        // While selecting or reordering, rows show only names, like lists in system apps.
+        if editMode.isEditing { return [] }
         let newest = today.advanced(by: -dayOffset)
         let days = (0..<columnCount).map { newest.advanced(by: -$0) }
         return todayOnRight ? days.reversed() : days
@@ -307,6 +351,41 @@ struct HabitListView: View {
         }
     }
 
+    private var selectedHabits: [Habit] {
+        habits.filter { selection.contains($0.id) }
+    }
+
+    private func archiveSelected() {
+        // Archive the selection, or restore it if every selected habit is already archived.
+        let habits = selectedHabits
+        let archive = habits.contains { !$0.isArchived }
+        withAnimation {
+            for habit in habits {
+                habit.isArchived = archive
+                ReminderScheduler.reschedule(habit)
+            }
+            selection.removeAll()
+        }
+        showHint(archive ? "Habits archived" : "Habits restored")
+    }
+
+    private func recolorSelected(_ colorIndex: Int) {
+        withAnimation {
+            selectedHabits.forEach { $0.colorIndex = colorIndex }
+        }
+    }
+
+    private func deleteSelected() {
+        withAnimation {
+            for habit in selectedHabits {
+                ReminderScheduler.cancel(habit)
+                context.delete(habit)
+            }
+            selection.removeAll()
+            editMode = .inactive
+        }
+    }
+
     private func setArchived(_ habit: Habit, _ archived: Bool) {
         withAnimation {
             habit.isArchived = archived
@@ -348,7 +427,8 @@ struct HabitRowData: Identifiable {
 
 #if DEBUG
 extension HabitListView {
-    /// `-screenshotHabit <n>` opens the n-th habit, `-screenshotEditor YES` edits the first habit.
+    /// `-screenshotHabit <n>` opens the n-th habit, `-screenshotEditor YES` edits the first habit,
+    /// `-screenshotSelect YES` starts selection mode with two habits selected.
     /// Used to take App Store screenshots from the command line (see docs/APP_STORE.md).
     fileprivate func openScreenForScreenshots() {
         let arguments = UserDefaults.standard
@@ -358,6 +438,10 @@ extension HabitListView {
         }
         if arguments.bool(forKey: "screenshotEditor") {
             editorHabit = HabitEditorTarget(habit: habits.first)
+        }
+        if arguments.bool(forKey: "screenshotSelect") {
+            editMode = .active
+            selection = Set(habits.prefix(2).map(\.id))
         }
     }
 }

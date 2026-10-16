@@ -13,9 +13,6 @@
     "%@ / %@ %@": {
       "shouldTranslate": false
     },
-    "%@.csv": {
-      "shouldTranslate": false
-    },
     "%@: strength %@, streak %lld days. %@": {
       "extractionState": "manual",
       "localizations": {
@@ -717,6 +714,59 @@
         }
       }
     },
+    "Delete %lld habits?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Delete %lld habit?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Delete %lld habits?"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалить %lld привычки?"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалить %lld привычек?"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалить %lld привычку?"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалить %lld привычки?"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Delete Habit": {
       "extractionState": "manual",
       "localizations": {
@@ -1034,13 +1084,13 @@
         }
       }
     },
-    "For measurable habits: the value to record.": {
+    "For measurable habits: how much to add to today's value.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Для измеримых привычек: значение, которое нужно записать."
+            "value": "Для измеримых привычек: сколько добавить к сегодняшнему значению."
           }
         }
       }
@@ -1206,6 +1256,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Привычки"
+          }
+        }
+      }
+    },
+    "Habits archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Привычки в архиве"
+          }
+        }
+      }
+    },
+    "Habits restored": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Привычки восстановлены"
           }
         }
       }
@@ -1881,17 +1953,6 @@
         }
       }
     },
-    "Reorder Habits": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Изменить порядок"
-          }
-        }
-      }
-    },
     "Repeat": {
       "extractionState": "manual",
       "localizations": {
@@ -1954,6 +2015,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Следите, как меняется сила привычки."
+          }
+        }
+      }
+    },
+    "Select Habits": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать привычки"
+          }
+        }
+      }
+    },
+    "Select and Reorder": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать и упорядочить"
           }
         }
       }
@@ -2240,6 +2323,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Вопрос показывается в напоминаниях."
+          }
+        }
+      }
+    },
+    "Their whole history will be deleted. This can't be undone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вся их история будет удалена. Это нельзя отменить."
           }
         }
       }
