@@ -4,7 +4,7 @@ import Foundation
 enum EntryCycle {
     static func next(after checkmark: Checkmark, skipEnabled: Bool, showQuestionMarks: Bool) -> EntryRecord? {
         switch checkmark {
-        case .unknown, .yesAuto:
+        case .unknown, .yesAuto, .paused:
             .yes
         case .yesManual:
             skipEnabled ? .skip : .no
@@ -14,5 +14,10 @@ enum EntryCycle {
             // Without question marks "not done" and "unknown" look the same, so go straight back to done.
             showQuestionMarks ? nil : .yes
         }
+    }
+
+    /// For quit habits a tap toggles between a clean day and a slip.
+    static func nextForQuit(after checkmark: Checkmark) -> EntryRecord? {
+        checkmark == .no ? nil : .no
     }
 }

@@ -9,6 +9,8 @@ nonisolated struct HabitData: Sendable {
     /// The day the habit was created. Statistics start at the earlier of this and the first entry.
     var createdDay: Day
     var entries: [Day: EntryRecord]
+    /// Days on which the habit was paused.
+    var pausedDays: Set<Day>
 
     init(
         kind: HabitKind = .yesNo,
@@ -16,7 +18,8 @@ nonisolated struct HabitData: Sendable {
         targetValue: Double = 0,
         targetType: TargetType = .atLeast,
         createdDay: Day,
-        entries: [Day: EntryRecord] = [:]
+        entries: [Day: EntryRecord] = [:],
+        pausedDays: Set<Day> = []
     ) {
         self.kind = kind
         self.frequency = frequency
@@ -24,6 +27,7 @@ nonisolated struct HabitData: Sendable {
         self.targetType = targetType
         self.createdDay = createdDay
         self.entries = entries
+        self.pausedDays = pausedDays
     }
 }
 
@@ -76,6 +80,8 @@ nonisolated struct HabitStats: Sendable {
     /// Performance for each day, 0…1, from the rolling window of `frequency.denominator` days.
     private let performance: [Double]
     private let scores: [Double]
+    /// All streaks, oldest first (computed once).
+    let streaks: [Streak]
 
     init(data: HabitData, today: Day = .today()) {
         self.data = data
@@ -92,6 +98,10 @@ nonisolated struct HabitStats: Sendable {
         var manualYes = [Bool](repeating: false, count: count)
         var amounts = [Double](repeating: 0, count: count)
         var states = [EntryState?](repeating: nil, count: count)
+        var paused = [Bool](repeating: false, count: count)
+        for day in data.pausedDays where day >= start && day <= today {
+            paused[start.distance(to: day)] = true
+        }
         for (day, record) in data.entries where day >= start && day <= today {
             let i = start.distance(to: day)
             states[i] = record.state
@@ -152,6 +162,21 @@ nonisolated struct HabitStats: Sendable {
                 case .skip: checkmarks[i] = .skip
                 default: checkmarks[i] = performance[i] >= 1 ? .yesManual : .no
                 }
+            case .quit:
+                // A clean day unless a slip was recorded.
+                switch states[i] {
+                case .no:
+                    performance[i] = 0
+                    checkmarks[i] = .no
+                case .skip:
+                    checkmarks[i] = .skip
+                default:
+                    performance[i] = 1
+                    checkmarks[i] = .yesAuto
+                }
+            }
+            if paused[i] && states[i] != .yes && !(data.kind == .quit && states[i] == .no) {
+                checkmarks[i] = .paused
             }
         }
 
@@ -159,7 +184,7 @@ nonisolated struct HabitStats: Sendable {
         var scores = [Double](repeating: 0, count: count)
         var previous = 0.0
         for i in 0..<count {
-            if checkmarks[i] != .skip {
+            if !checkmarks[i].isNeutral {
                 previous = previous * multiplier + performance[i] * (1 - multiplier)
             }
             scores[i] = previous
@@ -168,6 +193,8 @@ nonisolated struct HabitStats: Sendable {
         self.checkmarks = checkmarks
         self.performance = performance
         self.scores = scores
+        self.streaks = HabitStats.computeStreaks(
+            data: data, start: start, today: today, checkmarks: checkmarks, performance: performance)
     }
 
     static func measurablePerformance(amount: Double, target: Double, type: TargetType) -> Double {
@@ -190,11 +217,13 @@ nonisolated struct HabitStats: Sendable {
     // MARK: - Per-day values
 
     func checkmark(on day: Day) -> Checkmark {
-        if data.kind == .measurable, data.entries[day] == nil, day <= today {
+        guard let i = offset(day) else {
+            return data.pausedDays.contains(day) ? .paused : .unknown
+        }
+        if data.kind == .measurable, data.entries[day] == nil, checkmarks[i] != .paused {
             // Show measurable days without data as unknown, even if the window is satisfied.
             return .unknown
         }
-        guard let i = offset(day) else { return .unknown }
         return checkmarks[i]
     }
 
@@ -215,9 +244,19 @@ nonisolated struct HabitStats: Sendable {
     var isCompletedToday: Bool {
         let c = checkmarks.last ?? .unknown
         if data.kind == .measurable {
-            return c == .skip || (amount(on: today) != nil && (performance.last ?? 0) >= 1)
+            return c.isNeutral || (amount(on: today) != nil && (performance.last ?? 0) >= 1)
         }
-        return c.isSatisfied || c == .skip
+        return c.isSatisfied || c.isNeutral
+    }
+
+    /// Number of recorded slips for a quit habit.
+    var slipCount: Int {
+        data.entries.values.filter { $0.state == .no }.count
+    }
+
+    /// The most recent slip of a quit habit, if any.
+    var lastSlip: Day? {
+        data.entries.filter { $0.value.state == .no && $0.key <= today }.keys.max()
     }
 
     /// Total number of times done (yes/no) or the total amount (measurable).
@@ -230,20 +269,22 @@ nonisolated struct HabitStats: Sendable {
 
     // MARK: - Streaks
 
-    /// All streaks, oldest first. Skipped days continue a streak but don't add to its length.
-    var streaks: [Streak] {
+    /// All streaks, oldest first. Skipped and paused days continue a streak but don't add to its length.
+    private static func computeStreaks(
+        data: HabitData, start: Day, today: Day, checkmarks: [Checkmark], performance: [Double]
+    ) -> [Streak] {
         var result: [Streak] = []
         var current: Streak?
         for (i, c) in checkmarks.enumerated() {
             let day = start.advanced(by: i)
             let satisfied = data.kind == .measurable
-                ? (c != .skip && performance[i] >= 1 && (data.targetType == .atMost || data.entries[day] != nil))
+                ? (!c.isNeutral && performance[i] >= 1 && (data.targetType == .atMost || data.entries[day] != nil))
                 : c.isSatisfied
             if satisfied {
                 if current == nil { current = Streak(start: day, end: day, length: 0) }
                 current!.end = day
                 current!.length += 1
-            } else if c == .skip, current != nil {
+            } else if c.isNeutral, current != nil {
                 current!.end = day
             } else if let s = current {
                 // Don't break today's streak just because today isn't marked yet.

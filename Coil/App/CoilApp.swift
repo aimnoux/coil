@@ -12,6 +12,10 @@ struct CoilApp: App {
             HabitListView()
                 .fontDesign(.rounded)
                 .preferredColorScheme(theme.colorScheme)
+                .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in
+                    // Changes synced from iCloud or written by the widget bypass `Habit.touch()`.
+                    HabitCache.shared.invalidateAll()
+                }
                 .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { _ in
                     // Keep home screen widgets in step with changes made in the app.
                     WidgetCenter.shared.reloadAllTimelines()

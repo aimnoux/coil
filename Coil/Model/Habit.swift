@@ -26,8 +26,35 @@ final class Habit {
     var isArchived: Bool = false
     var createdAt: Date = Date()
 
+    /// Bumped on every change to entries, so cached statistics know when to recompute.
+    var revision: Int = 0
+    /// An SF Symbol shown next to the name; empty for none.
+    var iconName: String = ""
+    /// Reminder times as minutes after midnight, comma separated ("480,780").
+    /// Empty means the single time in `reminderHour`/`reminderMinute` (older data).
+    var reminderTimesRaw: String = ""
+    /// A challenge: complete the habit for this many days starting at `challengeStartDay`. 0 = none.
+    var challengeDays: Int = 0
+    var challengeStartDay: Int = 0
+    /// Measurable habits in minutes that can be tracked with a stopwatch or timer.
+    var isTimed: Bool = false
+    /// Countdown length for timed habits; 0 means a stopwatch.
+    var timerMinutes: Int = 0
+    /// A `HealthMetric` raw value when the habit is filled from Apple Health; empty otherwise.
+    var healthMetricRaw: String = ""
+    /// For yes/no habits linked to Health: the daily value that counts as done.
+    var healthThreshold: Double = 0
+
+    var group: HabitGroup?
+
     @Relationship(deleteRule: .cascade, inverse: \Entry.habit)
     var entries: [Entry]? = []
+
+    @Relationship(deleteRule: .cascade, inverse: \HabitPause.habit)
+    var pauses: [HabitPause]? = []
+
+    @Relationship(deleteRule: .cascade, inverse: \TimerSession.habit)
+    var sessions: [TimerSession]? = []
 
     init(name: String = "", kind: HabitKind = .yesNo) {
         self.name = name
@@ -56,6 +83,65 @@ final class Habit {
 
     var isMeasurable: Bool { kind == .measurable }
 
+    var isQuit: Bool { kind == .quit }
+
+    var healthMetric: HealthMetric? {
+        get { HealthMetric(rawValue: healthMetricRaw) }
+        set { healthMetricRaw = newValue?.rawValue ?? "" }
+    }
+
+    /// Reminder times as minutes after midnight, sorted.
+    var reminderMinutes: [Int] {
+        get {
+            let parsed = reminderTimesRaw.split(separator: ",").compactMap { Int($0) }
+            return parsed.isEmpty ? [reminderHour * 60 + reminderMinute] : parsed.sorted()
+        }
+        set {
+            let times = Array(Set(newValue.map { min(max($0, 0), 24 * 60 - 1) })).sorted()
+            reminderTimesRaw = times.map(String.init).joined(separator: ",")
+            if let first = times.first {
+                reminderHour = first / 60
+                reminderMinute = first % 60
+            }
+        }
+    }
+
+    /// The challenge's days, if one is set.
+    var challenge: ClosedRange<Day>? {
+        guard challengeDays > 0 else { return nil }
+        let start = Day(index: challengeStartDay)
+        return start...start.advanced(by: challengeDays - 1)
+    }
+
+    /// Every paused day, from all pause ranges.
+    var pausedDays: Set<Day> {
+        var days = Set<Day>()
+        for pause in livePauses {
+            let lo = min(pause.startDay, pause.endDay), hi = max(pause.startDay, pause.endDay)
+            guard hi - lo < 3660 else { continue }
+            for index in lo...hi { days.insert(Day(index: index)) }
+        }
+        return days
+    }
+
+    var livePauses: [HabitPause] {
+        (pauses ?? []).filter { !$0.isDeleted }
+    }
+
+    var liveSessions: [TimerSession] {
+        (sessions ?? []).filter { !$0.isDeleted }
+    }
+
+    /// Whether the habit is paused on a given day.
+    func isPaused(on day: Day) -> Bool {
+        livePauses.contains { min($0.startDay, $0.endDay) <= day.index && day.index <= max($0.startDay, $0.endDay) }
+    }
+
+    /// Marks entries as changed so cached statistics are recomputed.
+    func touch() {
+        revision &+= 1
+    }
+
     var createdDay: Day { Day(createdAt) }
 
     func remindsOn(weekday: Int) -> Bool {
@@ -83,18 +169,36 @@ final class Habit {
 
     /// What was recorded on each day. Duplicates from sync are merged field by field:
     /// the newest checkmark and the newest non-empty note both survive.
+    /// Cached; see `HabitCache`.
+    @MainActor
     var dayRecords: [Day: DayRecord] {
+        HabitCache.shared.dayRecords(for: self)
+    }
+
+    /// Reads every entry once into plain values and merges them by day. Reading SwiftData
+    /// properties is relatively slow, so this touches each property exactly once.
+    func computeDayRecords() -> [Day: DayRecord] {
+        struct Raw {
+            let day: Int, updatedAt: Date, state: Int, amount: Double, note: String
+        }
+        let raws = liveEntries.map {
+            Raw(day: $0.day, updatedAt: $0.updatedAt, state: $0.stateRaw, amount: $0.amount, note: $0.note)
+        }
         var result: [Day: DayRecord] = [:]
-        for entry in liveEntries.sorted(by: { $0.updatedAt < $1.updatedAt }) {
-            let day = Day(index: entry.day)
+        result.reserveCapacity(raws.count)
+        for raw in raws.sorted(by: { $0.updatedAt < $1.updatedAt }) {
+            let day = Day(index: raw.day)
             var merged = result[day] ?? DayRecord()
-            if let record = entry.storedRecord { merged.record = record }
-            if !entry.note.isEmpty { merged.note = entry.note }
+            if let state = EntryState(rawValue: raw.state) {
+                merged.record = EntryRecord(state: state, amount: raw.amount)
+            }
+            if !raw.note.isEmpty { merged.note = raw.note }
             result[day] = merged
         }
         return result
     }
 
+    @MainActor
     var data: HabitData {
         HabitData(
             kind: kind,
@@ -102,23 +206,29 @@ final class Habit {
             targetValue: targetValue,
             targetType: targetType,
             createdDay: createdDay,
-            entries: dayRecords.compactMapValues(\.record)
+            entries: dayRecords.compactMapValues(\.record),
+            pausedDays: pausedDays
         )
     }
 
+    /// Cached; recomputed only when entries or settings change.
+    @MainActor
     func stats(today: Day = .today()) -> HabitStats {
-        HabitStats(data: data, today: today)
+        HabitCache.shared.stats(for: self, today: today)
     }
 
+    @MainActor
     func record(on day: Day) -> EntryRecord? {
         dayRecords[day]?.record
     }
 
+    @MainActor
     func note(on day: Day) -> String {
         dayRecords[day]?.note ?? ""
     }
 
     /// Days that have a note, newest first.
+    @MainActor
     var notedDays: [(day: Day, note: String)] {
         dayRecords
             .filter { !$0.value.note.isEmpty }
@@ -127,11 +237,13 @@ final class Habit {
     }
 
     /// Sets or clears (`nil`) the record for a day, removing any duplicates. A note on the day is kept.
-    func setRecord(_ record: EntryRecord?, on day: Day, in context: ModelContext) {
+    func setRecord(_ record: EntryRecord?, on day: Day, in context: ModelContext, source: EntrySource = .manual) {
+        touch()
         let entry = uniqueEntry(on: day, in: context)
         if let record {
             let target = entry ?? insertEntry(on: day, in: context)
             target.record = record
+            target.source = source.rawValue
             target.updatedAt = Date()
         } else if let entry {
             if entry.note.isEmpty {
@@ -145,6 +257,7 @@ final class Habit {
 
     /// Sets the note for a day; an empty note on a day without a checkmark removes the entry.
     func setNote(_ note: String, on day: Day, in context: ModelContext) {
+        touch()
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
         let entry = uniqueEntry(on: day, in: context)
         if trimmed.isEmpty {
@@ -190,6 +303,11 @@ final class Habit {
         return newest
     }
 
+    /// The entry for a day (after merging duplicates), for code that needs its metadata.
+    func entry(on day: Day, in context: ModelContext) -> Entry? {
+        uniqueEntry(on: day, in: context)
+    }
+
     private func insertEntry(on day: Day, in context: ModelContext) -> Entry {
         let entry = Entry(day: day, record: .yes)
         context.insert(entry)
@@ -214,6 +332,8 @@ final class Entry {
     /// A note for this day, like Loop's checkmark notes.
     var note: String = ""
     var updatedAt: Date = Date()
+    /// An `EntrySource` raw value: who wrote this entry.
+    var source: Int = EntrySource.manual.rawValue
     var habit: Habit?
 
     static let noState = 0
@@ -235,5 +355,70 @@ final class Entry {
     /// The checkmark for this day, or `nil` if the entry only holds a note.
     var storedRecord: EntryRecord? {
         EntryState(rawValue: stateRaw).map { EntryRecord(state: $0, amount: amount) }
+    }
+}
+
+/// Who wrote an entry. Health and timer entries are recalculated automatically;
+/// manual edits are never overwritten.
+nonisolated enum EntrySource: Int, Sendable {
+    case manual = 0
+    case health = 1
+    case timer = 2
+}
+
+/// A named section of the habit list, like "Morning" or "Health".
+@Model
+final class HabitGroup {
+    var id: UUID = UUID()
+    var name: String = ""
+    var position: Int = 0
+    var iconName: String = ""
+
+    @Relationship(deleteRule: .nullify, inverse: \Habit.group)
+    var habits: [Habit]? = []
+
+    init(name: String = "", position: Int = 0) {
+        self.name = name
+        self.position = position
+    }
+}
+
+/// A range of days (inclusive) when a habit is paused, e.g. a vacation.
+@Model
+final class HabitPause {
+    var startDay: Int = 0
+    var endDay: Int = 0
+    var note: String = ""
+    var habit: Habit?
+
+    init(start: Day, end: Day, note: String = "") {
+        startDay = start.index
+        endDay = end.index
+        self.note = note
+    }
+
+    var range: ClosedRange<Day> {
+        Day(index: min(startDay, endDay))...Day(index: max(startDay, endDay))
+    }
+}
+
+/// One stopwatch or timer run for a timed habit. `end == nil` while it is running.
+@Model
+final class TimerSession {
+    var id: UUID = UUID()
+    var start: Date = Date()
+    var end: Date?
+    var note: String = ""
+    var habit: Habit?
+
+    init(start: Date = Date(), end: Date? = nil) {
+        self.start = start
+        self.end = end
+    }
+
+    var isRunning: Bool { end == nil }
+
+    func duration(at now: Date = Date()) -> TimeInterval {
+        max(0, (end ?? now).timeIntervalSince(start))
     }
 }

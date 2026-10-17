@@ -153,6 +153,47 @@ struct HabitStatsTests {
         #expect(s.target(forDays: 7) == 5)
     }
 
+    // MARK: Pauses
+
+    @Test func pausedDaysFreezeStrengthAndKeepStreaks() {
+        let paused: Set<Day> = [day(-3), day(-2)]
+        let data = HabitData(
+            createdDay: day(-30),
+            entries: [day(-5): .yes, day(-4): .yes, day(-1): .yes, day(0): .yes],
+            pausedDays: paused
+        )
+        let s = HabitStats(data: data, today: today)
+        #expect(s.checkmark(on: day(-2)) == .paused)
+        #expect(s.score(on: day(-2)) == s.score(on: day(-4)))
+        #expect(s.streaks.count == 1)
+        #expect(s.streaks[0].length == 4)
+    }
+
+    @Test func checkingAPausedDayCountsIt() {
+        let data = HabitData(createdDay: day(-10), entries: [day(-1): .yes], pausedDays: [day(-1)])
+        #expect(HabitStats(data: data, today: today).checkmark(on: day(-1)) == .yesManual)
+    }
+
+    // MARK: Quit
+
+    @Test func quitHabitCountsCleanDaysAndSlips() {
+        let s = stats([-4: .no, -1: .no], kind: .quit, createdOffset: -10)
+        #expect(s.checkmark(on: day(-5)) == .yesAuto)
+        #expect(s.checkmark(on: day(-4)) == .no)
+        #expect(s.slipCount == 2)
+        #expect(s.lastSlip == day(-1))
+        #expect(s.currentStreak?.start == day(0))
+        #expect(s.bestStreaks().first?.length == 6) // days -10 … -5
+        #expect(s.isCompletedToday)
+    }
+
+    @Test func quitHabitStrengthGrowsWhileClean() {
+        let clean = stats([:], kind: .quit, createdOffset: -60)
+        let slipping = stats([-1: .no, -3: .no, -5: .no], kind: .quit, createdOffset: -60)
+        #expect(clean.currentScore > 0.9)
+        #expect(slipping.currentScore < clean.currentScore)
+    }
+
     // MARK: History
 
     @Test func historyByMonth() {

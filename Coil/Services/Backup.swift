@@ -190,6 +190,7 @@ enum Backup {
                 target.updatedAt = Date()
                 result.entriesImported += 1
             }
+            habit.touch()
             ReminderScheduler.reschedule(habit)
         }
         try context.save()

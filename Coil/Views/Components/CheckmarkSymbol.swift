@@ -8,6 +8,8 @@ struct CheckmarkSymbol: View {
     /// The deeper shade, for glyphs drawn on light tints.
     let ink: Color
     var showQuestionMarks = false
+    /// Quit habits show clean days as wins and slips in soft red.
+    var isQuit = false
     var size: CGFloat = 30
 
     var body: some View {
@@ -17,6 +19,14 @@ struct CheckmarkSymbol: View {
                 Circle().fill(fill)
                 glyph("checkmark", scale: 0.44, weight: .bold)
                     .foregroundStyle(.white)
+            case .yesAuto where isQuit:
+                Circle().fill(fill.opacity(0.85))
+                glyph("checkmark", scale: 0.44, weight: .bold)
+                    .foregroundStyle(.white)
+            case .no where isQuit:
+                Circle().strokeBorder(HabitColor(index: 0).color, lineWidth: 2)
+                glyph("xmark", scale: 0.36, weight: .bold)
+                    .foregroundStyle(HabitColor(index: 0).ink)
             case .yesAuto:
                 Circle().fill(fill.opacity(0.3))
                 glyph("checkmark", scale: 0.4, weight: .semibold)
@@ -27,6 +37,10 @@ struct CheckmarkSymbol: View {
                     .foregroundStyle(ink.opacity(0.8))
             case .no:
                 glyph("xmark", scale: 0.3, weight: .semibold)
+                    .foregroundStyle(Color(.tertiaryLabel))
+            case .paused:
+                Circle().fill(Color(.tertiarySystemFill))
+                glyph("pause.fill", scale: 0.3, weight: .semibold)
                     .foregroundStyle(Color(.tertiaryLabel))
             case .unknown:
                 if showQuestionMarks {
@@ -57,6 +71,7 @@ extension Checkmark {
         case .skip: "Skipped"
         case .no: "Not done"
         case .unknown: "No entry"
+        case .paused: "Paused"
         }
     }
 }

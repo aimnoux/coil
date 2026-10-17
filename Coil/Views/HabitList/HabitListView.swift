@@ -73,7 +73,10 @@ struct HabitListView: View {
         }
         .overlay(alignment: .bottom) { hintBanner }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { today = .today() }
+            if phase == .active {
+                today = .today()
+                HabitCache.shared.invalidateAll()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
             today = .today()

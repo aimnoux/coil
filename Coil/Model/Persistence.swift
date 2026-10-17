@@ -19,7 +19,7 @@ enum Persistence {
     static let shared: ModelContainer = makeContainer(inMemory: usesSampleData)
 
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
-        let schema = Schema([Habit.self, Entry.self])
+        let schema = Schema([Habit.self, Entry.self, HabitGroup.self, HabitPause.self, TimerSession.self])
         let configuration: ModelConfiguration
         if inMemory || (isExtension && !FileManager.default.fileExists(atPath: storeURL.path)) {
             // A widget must never create the shared store: if it did before the app moved its

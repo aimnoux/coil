@@ -157,12 +157,23 @@ struct CalendarCard: View {
             if performance >= 1 { return (color, .white) }
             return (color.opacity(0.15 + 0.45 * performance), ink)
         }
+        if checkmark == .paused {
+            return (Color(.quaternarySystemFill), .secondary)
+        }
+        if habit.isQuit {
+            // Clean days are wins; slips stand out in soft red.
+            switch checkmark {
+            case .no: return (HabitColor(index: 0).color.opacity(0.45), HabitColor(index: 0).ink)
+            case .skip: return (color.opacity(0.15), ink)
+            default: return (color, .white)
+            }
+        }
         switch checkmark {
         case .yesManual: return (color, .white)
         case .yesAuto: return (color.opacity(0.35), ink)
         case .skip: return (color.opacity(0.15), ink)
         case .no: return (Color(.systemFill), .secondary)
-        case .unknown: return (Color(.tertiarySystemFill), .secondary)
+        case .unknown, .paused: return (Color(.tertiarySystemFill), .secondary)
         }
     }
 
@@ -171,7 +182,9 @@ struct CalendarCard: View {
             onEditAmount(day)
             return
         }
-        let next = EntryCycle.next(after: checkmark, skipEnabled: skipEnabled, showQuestionMarks: showQuestionMarks)
+        let next = habit.isQuit
+            ? EntryCycle.nextForQuit(after: checkmark)
+            : EntryCycle.next(after: checkmark, skipEnabled: skipEnabled, showQuestionMarks: showQuestionMarks)
         withAnimation(.snappy) {
             habit.setRecord(next, on: day, in: context)
         }

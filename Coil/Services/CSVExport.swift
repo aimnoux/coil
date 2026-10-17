@@ -65,12 +65,21 @@ enum CSVExport {
             if stats.checkmark(on: day) == .skip { return "SKIP" }
             return stats.amount(on: day).map(format) ?? ""
         }
+        if habit.isQuit {
+            switch stats.checkmark(on: day) {
+            case .no: return "SLIP"
+            case .paused: return "PAUSED"
+            case .skip: return "SKIP"
+            default: return "CLEAN"
+            }
+        }
         switch stats.checkmark(on: day) {
         case .yesManual: return "YES"
         case .yesAuto: return "YES_AUTO"
         case .skip: return "SKIP"
         case .no: return "NO"
         case .unknown: return ""
+        case .paused: return "PAUSED"
         }
     }
 

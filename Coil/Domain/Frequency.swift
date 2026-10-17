@@ -49,6 +49,8 @@ nonisolated struct Frequency: Hashable, Codable, Sendable {
 nonisolated enum HabitKind: Int, Codable, Sendable, CaseIterable {
     case yesNo = 0
     case measurable = 1
+    /// Quitting a bad habit: every day counts as clean unless a slip is recorded (as `.no`).
+    case quit = 2
 }
 
 nonisolated enum TargetType: Int, Codable, Sendable, CaseIterable {
@@ -88,6 +90,11 @@ nonisolated enum Checkmark: Hashable, Sendable {
     /// The user explicitly marked the day as not done.
     case no
     case unknown
+    /// The habit was paused (vacation, sickness): neutral for strength and streaks.
+    case paused
 
     var isSatisfied: Bool { self == .yesManual || self == .yesAuto }
+
+    /// Days that neither count nor break a streak.
+    var isNeutral: Bool { self == .skip || self == .paused }
 }
