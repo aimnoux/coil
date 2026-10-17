@@ -85,7 +85,7 @@ xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
   (только Debug, для скриншотов).
 
 Скрипты:
-- `swift scripts/make-icon.swift Coil/Resources/Assets.xcassets/AppIcon.appiconset` — перерисовать иконку;
+- `python3 scripts/make_icon.py Coil/Resources/Assets.xcassets/AppIcon.appiconset` — перерисовать иконку (нужны numpy и Pillow);
 - `python3 scripts/localize.py` — пересобрать `Localizable.xcstrings` из строк, извлечённых при сборке
   (русские переводы лежат в самом скрипте).
 
