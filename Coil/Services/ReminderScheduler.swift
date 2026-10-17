@@ -63,7 +63,7 @@ enum ReminderScheduler {
                 .map(\.identifier)
                 .filter { $0.hasPrefix("reminder-") }
             center.removePendingNotificationRequests(withIdentifiers: stale)
-            for request in plan { center.add(request) }
+            for request in plan { center.add(request, withCompletionHandler: nil) }
         }
     }
 
