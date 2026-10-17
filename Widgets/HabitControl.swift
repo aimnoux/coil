@@ -32,7 +32,10 @@ nonisolated struct HabitControlProvider: AppIntentControlValueProvider {
         let id = configuration.habit?.id
         return await MainActor.run {
             let habits = (try? HabitStore.activeHabits()) ?? []
-            guard let habit = habits.first(where: { $0.id == id }) ?? habits.first else {
+            let candidates = habits.filter { !$0.isMeasurable }
+            // Only fall back when nothing was picked, so the button never toggles another habit.
+            let match = id.map { id in candidates.first { $0.id == id } } ?? candidates.first
+            guard let habit = match else {
                 return HabitControlValue(id: UUID(), name: String(localized: "Habit"), icon: "checkmark.circle", isDone: false)
             }
             let today = Day.today()

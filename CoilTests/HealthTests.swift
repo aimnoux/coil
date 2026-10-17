@@ -43,3 +43,38 @@ struct HealthTests {
         #expect(habit.record(on: day)?.amount == 6000)
     }
 }
+
+struct ReviewFixTests {
+    let today = Day(year: 2026, month: 10, day: 17)
+
+    @Test func overlappingSleepIsCountedOnce() {
+        let night = Date(timeIntervalSince1970: 1_800_000_000)
+        let merged = HealthSync.mergeOverlaps([
+            DateInterval(start: night, duration: 7 * 3600),
+            DateInterval(start: night.addingTimeInterval(3600), duration: 7 * 3600),
+        ])
+        #expect(merged.count == 1)
+        #expect(merged[0].duration == 8 * 3600)
+    }
+
+    @Test func atMostHabitsCountEmptyDaysEverywhere() {
+        let data = HabitData(kind: .measurable, targetValue: 2, targetType: .atMost,
+                             createdDay: today.advanced(by: -9), entries: [today.advanced(by: -3): EntryRecord(state: .yes, amount: 1)])
+        let stats = HabitStats(data: data, today: today)
+        #expect(stats.isKept(on: today.advanced(by: -5)))
+        let list = AchievementEngine.achievements(for: stats)
+        #expect(list.first { $0.kind == .streak(7) }?.isUnlocked == true)
+        #expect(stats.challengeProgress(today.advanced(by: -9)...today).missed == 0)
+    }
+
+    @Test @MainActor func timerSessionsKeepManualValues() {
+        let container = Persistence.makeContainer(inMemory: true)
+        let context = container.mainContext
+        let habit = Habit(name: "Read", kind: .measurable)
+        habit.isTimed = true
+        context.insert(habit)
+        habit.setRecord(EntryRecord(state: .yes, amount: 30), on: today, in: context)
+        TimerService.addSession(to: habit, start: today.date().addingTimeInterval(3600), end: today.date().addingTimeInterval(4200), in: context)
+        #expect(habit.record(on: today)?.amount == 30)
+    }
+}

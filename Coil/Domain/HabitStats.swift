@@ -250,6 +250,17 @@ nonisolated struct HabitStats: Sendable {
     }
 
     /// How a challenge over `range` is going.
+    /// Whether a day counts as done — the same rule streaks use. For "at most" habits an empty
+    /// day counts (nothing logged means nothing consumed).
+    func isKept(on day: Day) -> Bool {
+        guard let i = offset(day) else { return false }
+        let c = checkmarks[i]
+        if data.kind == .measurable {
+            return !c.isNeutral && performance[i] >= 1 && (data.targetType == .atMost || data.entries[day] != nil)
+        }
+        return c.isSatisfied
+    }
+
     func challengeProgress(_ range: ClosedRange<Day>) -> ChallengeProgress {
         let total = range.lowerBound.distance(to: range.upperBound) + 1
         let lastCounted = min(today, range.upperBound)
@@ -258,7 +269,7 @@ nonisolated struct HabitStats: Sendable {
         var day = range.lowerBound
         while day <= lastCounted {
             let c = checkmark(on: day)
-            if c.isSatisfied || c.isNeutral {
+            if isKept(on: day) || c.isNeutral {
                 kept += 1
             } else if day < today || c == .no {
                 // Today isn't missed until it's over.

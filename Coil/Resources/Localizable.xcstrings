@@ -105,59 +105,6 @@
         }
       }
     },
-    "%lld clean days. Keep going!": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld clean day. Keep going!"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld clean days. Keep going!"
-                }
-              }
-            }
-          }
-        },
-        "ru": {
-          "variations": {
-            "plural": {
-              "few": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld дня без срыва. Так держать!"
-                }
-              },
-              "many": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld дней без срыва. Так держать!"
-                }
-              },
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld день без срыва. Так держать!"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld дня без срыва. Так держать!"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "%lld days": {
       "extractionState": "manual",
       "localizations": {
@@ -4262,6 +4209,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Продержитесь %lld дн. без срыва."
+          }
+        }
+      }
+    },
+    "Stay strong today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Держитесь сегодня."
           }
         }
       }

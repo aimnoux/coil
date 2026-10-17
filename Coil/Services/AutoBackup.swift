@@ -60,9 +60,11 @@ enum AutoBackup {
         let habits = (try? context.fetch(FetchDescriptor<Habit>(sortBy: [SortDescriptor(\.position)]))) ?? []
         let data = try Backup.encode(Backup.make(from: habits))
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        let stamp = now.formatted(.iso8601.year().month().day().dateSeparator(.dash))
-            + " " + now.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
-                .replacingOccurrences(of: ":", with: "")
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .current
+        formatter.dateFormat = "yyyy-MM-dd HHmmss"
+        let stamp = formatter.string(from: now)
         let url = folder.appending(path: "Coil Backup \(stamp).json")
         try data.write(to: url, options: .atomic)
         UserDefaults.standard.set(now, forKey: lastKey)

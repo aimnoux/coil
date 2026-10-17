@@ -64,6 +64,19 @@ enum HealthSync {
         }
     }
 
+    /// Joins overlapping time intervals so the same sleep isn't counted twice.
+    static func mergeOverlaps(_ intervals: [DateInterval]) -> [DateInterval] {
+        var merged: [DateInterval] = []
+        for interval in intervals.sorted(by: { $0.start < $1.start }) {
+            if let last = merged.last, interval.start <= last.end {
+                merged[merged.count - 1] = DateInterval(start: last.start, end: max(last.end, interval.end))
+            } else {
+                merged.append(interval)
+            }
+        }
+        return merged
+    }
+
     #if HEALTHKIT
     private static let store = HKHealthStore()
 
@@ -91,7 +104,11 @@ enum HealthSync {
         for habit in habits {
             guard let metric = habit.healthMetric else { continue }
             if cache[metric] == nil {
-                cache[metric] = await dailyValues(metric, from: start, to: today)
+                guard let fetched = await dailyValues(metric, from: start, to: today) else {
+                    // The query failed: leave existing days alone instead of clearing them.
+                    continue
+                }
+                cache[metric] = fetched
             }
             let values = cache[metric] ?? [:]
             var day = max(start, habit.createdDay)
@@ -103,8 +120,8 @@ enum HealthSync {
         try? context.save()
     }
 
-    /// Daily totals for a metric, keyed by day.
-    static func dailyValues(_ metric: HealthMetric, from start: Day, to end: Day) async -> [Day: Double] {
+    /// Daily totals for a metric, keyed by day; `nil` if Health couldn't be read.
+    static func dailyValues(_ metric: HealthMetric, from start: Day, to end: Day) async -> [Day: Double]? {
         let startDate = start.date()
         let endDate = end.advanced(by: 1).date()
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
@@ -116,7 +133,7 @@ enum HealthSync {
                 anchorDate: startDate,
                 intervalComponents: DateComponents(day: 1)
             )
-            guard let collection = try? await descriptor.result(for: store) else { return [:] }
+            guard let collection = try? await descriptor.result(for: store) else { return nil }
             var result: [Day: Double] = [:]
             collection.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
                 if let sum = statistics.sumQuantity() {
@@ -131,7 +148,7 @@ enum HealthSync {
                 predicates: [.workout(predicate)],
                 sortDescriptors: []
             )
-            let workouts = (try? await descriptor.result(for: store)) ?? []
+            guard let workouts = try? await descriptor.result(for: store) else { return nil }
             return workouts.reduce(into: [:]) { result, workout in
                 result[Day(workout.endDate), default: 0] += 1
             }
@@ -142,8 +159,10 @@ enum HealthSync {
                 predicates: [.categorySample(type: category, predicate: predicate)],
                 sortDescriptors: []
             )
-            let samples = (try? await descriptor.result(for: store)) ?? []
+            guard let samples = try? await descriptor.result(for: store) else { return nil }
             var result: [Day: Double] = [:]
+            // Sleep from several sources (watch, phone, other apps) overlaps: merge intervals first.
+            var asleepIntervals: [DateInterval] = []
             for sample in samples {
                 switch metric {
                 case .standHours:
@@ -159,12 +178,15 @@ enum HealthSync {
                         HKCategoryValueSleepAnalysis.asleepREM.rawValue,
                     ]
                     if asleep.contains(sample.value) {
-                        result[Day(sample.endDate), default: 0] += sample.endDate.timeIntervalSince(sample.startDate) / 3600
+                        asleepIntervals.append(DateInterval(start: sample.startDate, end: max(sample.startDate, sample.endDate)))
                     }
                 default:
                     // Mindful sessions: total minutes.
                     result[Day(sample.startDate), default: 0] += sample.endDate.timeIntervalSince(sample.startDate) / 60
                 }
+            }
+            for interval in mergeOverlaps(asleepIntervals) {
+                result[Day(interval.end), default: 0] += interval.duration / 3600
             }
             return result
         }

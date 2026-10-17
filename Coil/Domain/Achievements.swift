@@ -144,10 +144,7 @@ nonisolated enum AchievementEngine {
     }
 
     private static func satisfied(_ c: Checkmark, stats: HabitStats, day: Day) -> Bool {
-        if stats.data.kind == .measurable {
-            return c.isSatisfied && stats.amount(on: day) != nil
-        }
-        return c.isSatisfied
+        stats.isKept(on: day)
     }
 
     /// Every day of a full calendar month done (neutral days allowed).

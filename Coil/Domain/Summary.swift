@@ -27,11 +27,10 @@ nonisolated enum SummaryEngine {
             defer { day = day.advanced(by: 1) }
             if c.isNeutral { continue }
             // Today only counts once it's done, so an unfinished day doesn't drag the rate down.
-            if day == stats.today && !c.isSatisfied { continue }
+            let isKept = stats.isKept(on: day)
+            if day == stats.today && !isKept { continue }
             considered += 1
-            if c.isSatisfied && (stats.data.kind != .measurable || stats.amount(on: day) != nil) {
-                kept += 1
-            }
+            if isKept { kept += 1 }
         }
         return HabitPeriodResult(considered: considered, kept: kept)
     }
@@ -49,7 +48,7 @@ nonisolated enum SummaryEngine {
         for stats in allStats {
             var day = max(range.lowerBound, stats.start)
             while day <= min(range.upperBound, stats.today) {
-                if stats.checkmark(on: day).isSatisfied { totals[day.weekday, default: 0] += 1 }
+                if stats.isKept(on: day) { totals[day.weekday, default: 0] += 1 }
                 day = day.advanced(by: 1)
             }
         }
@@ -67,7 +66,7 @@ nonisolated enum SummaryEngine {
                 let c = stats.checkmark(on: day)
                 if c.isNeutral { continue }
                 active += 1
-                if c.isSatisfied { done += 1 }
+                if stats.isKept(on: day) { done += 1 }
             }
             if active > 0 { result[day] = Double(done) / Double(active) }
             day = day.advanced(by: 1)

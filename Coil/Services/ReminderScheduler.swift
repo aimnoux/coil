@@ -57,15 +57,21 @@ enum ReminderScheduler {
     static func rescheduleAll(in context: ModelContext, today: Day = .today()) {
         let habits = (try? context.fetch(FetchDescriptor<Habit>())) ?? []
         let plan = makePlan(habits: habits, today: today, now: Date())
-        Task { @MainActor in
+        // Run one reschedule at a time so overlapping calls can't leave stale requests behind.
+        let previous = lastReschedule
+        lastReschedule = Task { @MainActor in
+            await previous?.value
             let center = UNUserNotificationCenter.current()
+            // Also drops weekly repeating reminders left over from version 1 (ids "<uuid>-<weekday>").
             let stale = await center.pendingNotificationRequests()
                 .map(\.identifier)
-                .filter { $0.hasPrefix("reminder-") }
+                .filter { !$0.hasPrefix("snooze-") && !$0.hasPrefix("timer-") }
             center.removePendingNotificationRequests(withIdentifiers: stale)
             for request in plan { center.add(request, withCompletionHandler: nil) }
         }
     }
+
+    private static var lastReschedule: Task<Void, Never>?
 
     /// Call after a habit changed; reschedules everything so the shared budget stays fair.
     static func reschedule(_ habit: Habit) {
@@ -76,8 +82,9 @@ enum ReminderScheduler {
     static func cancel(_ habit: Habit) {
         let prefix = "reminder-\(habit.id.uuidString)"
         let snoozeID = "snooze-\(habit.id.uuidString)"
+        let timerIDs = habit.liveSessions.filter(\.isRunning).map { "timer-\($0.id.uuidString)" }
         center.getPendingNotificationRequests { pending in
-            let ids = pending.map(\.identifier).filter { $0.hasPrefix(prefix) } + [snoozeID]
+            let ids = pending.map(\.identifier).filter { $0.hasPrefix(prefix) } + [snoozeID] + timerIDs
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
         }
         removeDeliveredReminders(for: habit)
@@ -169,10 +176,8 @@ enum ReminderScheduler {
         let content = UNMutableNotificationContent()
         content.title = habit.name
         if habit.isQuit {
-            let clean = habit.stats().currentStreak?.length ?? 0
-            content.body = habit.question.isEmpty
-                ? String(localized: "\(clean) clean days. Keep going!")
-                : habit.question
+            // Scheduled days ahead, so no day count that would be out of date by then.
+            content.body = habit.question.isEmpty ? String(localized: "Stay strong today.") : habit.question
         } else {
             content.body = habit.question.isEmpty
                 ? String(localized: "Time to keep your streak going.")

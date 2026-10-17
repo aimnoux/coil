@@ -98,6 +98,9 @@ enum TimerService {
                 if entry?.source == EntrySource.timer.rawValue {
                     habit.setRecord(nil, on: day, in: context)
                 }
+            } else if entry?.storedRecord != nil && entry?.source == EntrySource.manual.rawValue {
+                // A value typed by hand stays; the sessions are still kept in the history.
+                continue
             } else {
                 let rounded = (minutes * 10).rounded() / 10
                 habit.setRecord(EntryRecord(state: .yes, amount: rounded), on: day, in: context, source: .timer)

@@ -72,6 +72,8 @@ nonisolated struct BackupFile: Codable, Sendable {
         var state: Int
         var amount: Double
         var note: String? = nil
+        /// `EntrySource` raw value (version 2); missing means manual.
+        var source: Int? = nil
     }
 }
 
@@ -102,6 +104,10 @@ enum Backup {
     static func make(from habits: [Habit]) -> BackupFile {
         let groups = Dictionary(habits.compactMap(\.group).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a }).values
         var file = BackupFile(habits: habits.map { habit in
+            let sources = Dictionary(
+                habit.entriesByDay.compactMap { day, entry in entry.source == EntrySource.manual.rawValue ? nil : (day, entry.source) },
+                uniquingKeysWith: { a, _ in a }
+            )
             var item = BackupFile.BackupHabit(
                 id: habit.id,
                 name: habit.name,
@@ -128,7 +134,8 @@ enum Backup {
                             date: CSVExport.isoDate(day),
                             state: item.record?.state.rawValue ?? Entry.noState,
                             amount: item.record?.amount ?? 0,
-                            note: item.note.isEmpty ? nil : item.note
+                            note: item.note.isEmpty ? nil : item.note,
+                            source: sources[day]
                         )
                     }
             )
@@ -284,6 +291,7 @@ enum Backup {
                 }
                 if let state {
                     target.record = EntryRecord(state: state, amount: entry.amount)
+                    target.source = entry.source ?? EntrySource.manual.rawValue
                 }
                 if !note.isEmpty {
                     target.note = note

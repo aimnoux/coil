@@ -491,6 +491,7 @@ RU = {
     "than the month before": "чем месяцем ранее",
     "than the week before": "чем неделей ранее",
     "workouts": "тренировок",
+    "Stay strong today.": "Держитесь сегодня.",
 
 }
 

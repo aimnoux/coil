@@ -407,6 +407,9 @@ struct HabitListView: View {
         undoManager?.setActionName(String(localized: "Checkmark"))
         if next?.state == .yes {
             ReminderScheduler.habitCompleted(habit, on: day)
+        } else if day == today {
+            // Unchecked today: bring back today's remaining reminders.
+            ReminderScheduler.reschedule(habit)
         }
     }
 

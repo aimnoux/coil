@@ -86,6 +86,7 @@ struct ToggleHabitIntent: AppIntent {
         guard let id = UUID(uuidString: habitID), let habit = try HabitStore.habit(id: id) else {
             return .result()
         }
+        guard !habit.isMeasurable else { return .result() }
         let today = Day.today()
         let done = habit.stats(today: today).checkmark(on: today) == .yesManual
         habit.setRecord(done ? nil : .yes, on: today, in: HabitStore.context)
@@ -196,7 +197,7 @@ struct SetHabitDoneIntent: SetValueIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        guard let id = UUID(uuidString: habitID), let habit = try HabitStore.habit(id: id) else {
+        guard let id = UUID(uuidString: habitID), let habit = try HabitStore.habit(id: id), !habit.isMeasurable else {
             return .result()
         }
         let today = Day.today()
