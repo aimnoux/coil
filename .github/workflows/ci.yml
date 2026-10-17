@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ui_tests:
+        description: Run the UI tests too
+        type: boolean
+        default: true
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest Xcode
+        run: |
+          XCODE=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Install XcodeGen and xcbeautify
+        run: brew install xcodegen xcbeautify
+
+      - name: Build with every feature (widgets, iCloud, Health)
+        run: |
+          COIL_WIDGETS=true COIL_ICLOUD=true COIL_HEALTH=true xcodegen
+          xcodebuild build -scheme Coil -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO | xcbeautify || exit ${PIPESTATUS[0]}
+
+      - name: Unit tests
+        run: |
+          xcodegen
+          DEST=$(scripts/ci-destination.sh)
+          echo "Testing on $DEST"
+          xcodebuild test -scheme Coil -destination "$DEST" -derivedDataPath build \
+            -only-testing:CoilTests CODE_SIGNING_ALLOWED=NO | xcbeautify || exit ${PIPESTATUS[0]}
+
+      - name: UI tests
+        if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.ui_tests)
+        run: |
+          DEST=$(scripts/ci-destination.sh)
+          xcodebuild test -scheme Coil -destination "$DEST" -derivedDataPath build \
+            -only-testing:CoilUITests CODE_SIGNING_ALLOWED=NO | xcbeautify || exit ${PIPESTATUS[0]}
