@@ -263,6 +263,10 @@ RU = {
     "Twenty minutes in the park, very calm.": "Двадцать минут в парке, очень спокойно.",
     "Hard to focus today.": "Сегодня было трудно сосредоточиться.",
     # Sample data
+    "No sugar": "Без сахара",
+    "Stayed away from sweets today?": "Обошлись сегодня без сладкого?",
+    "Morning": "Утро",
+    "Health": "Здоровье",
     "Did you meditate today?": "Медитировали сегодня?",
     "How many pages did you read?": "Сколько страниц прочитали?",
     "Did you wake up before 7?": "Встали раньше семи?",

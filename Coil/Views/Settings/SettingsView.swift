@@ -61,6 +61,11 @@ struct SettingsView: View {
 
     private var appearanceSection: some View {
         Section("Appearance") {
+            NavigationLink {
+                GroupsView()
+            } label: {
+                Label("Groups", systemImage: "folder")
+            }
             Picker("Theme", systemImage: "circle.lefthalf.filled", selection: $theme) {
                 ForEach(AppTheme.allCases) { theme in
                     Text(theme.title).tag(theme)

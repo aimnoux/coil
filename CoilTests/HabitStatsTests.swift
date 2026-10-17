@@ -210,3 +210,32 @@ struct HabitStatsTests {
         #expect(series.last?.score == s.currentScore)
     }
 }
+
+struct ChallengeTests {
+    let today = Day(year: 2026, month: 10, day: 17)
+
+    @Test func challengeCountsKeptAndMissedDays() {
+        let start = today.advanced(by: -4)
+        let data = HabitData(
+            createdDay: start,
+            entries: [start: .yes, start.advanced(by: 1): .yes, start.advanced(by: 3): .yes]
+        )
+        let progress = HabitStats(data: data, today: today).challengeProgress(start...start.advanced(by: 29))
+        #expect(progress.day == 5)
+        #expect(progress.kept == 3)
+        #expect(progress.missed == 1) // day 3; today isn't missed yet
+        #expect(!progress.isOver)
+        #expect(progress.isFailed)
+    }
+
+    @Test func finishedChallengeWithEveryDayKeptIsCompleted() {
+        let start = today.advanced(by: -9)
+        var entries: [Day: EntryRecord] = [:]
+        for i in 0..<7 { entries[start.advanced(by: i)] = .yes }
+        let data = HabitData(createdDay: start, entries: entries)
+        let progress = HabitStats(data: data, today: today).challengeProgress(start...start.advanced(by: 6))
+        #expect(progress.isOver)
+        #expect(progress.isCompleted)
+        #expect(progress.fraction == 1)
+    }
+}

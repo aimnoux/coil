@@ -6,6 +6,9 @@ struct HabitListView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
     @Query(sort: \Habit.position) private var habits: [Habit]
+    @Query(sort: \HabitGroup.position) private var groups: [HabitGroup]
+    /// Ids of collapsed groups, comma separated.
+    @AppStorage("collapsedGroups") private var collapsedGroups = ""
 
     @AppStorage(SettingsKey.sortOrder) private var sortOrder = HabitSortOrder.manual
     @AppStorage(SettingsKey.showArchived) private var showArchived = false
@@ -113,25 +116,50 @@ struct HabitListView: View {
                     .buttonStyle(.borderedProminent)
             }
         } else {
-            let rows = displayedRows
+            let sections = self.sections
             List(selection: $selection) {
-                Section {
-                    ForEach(rows) { row in
-                        habitRow(row.habit, stats: row.stats)
-                            .moveDisabled(sortOrder != .manual)
+                ForEach(sections) { section in
+                    Section {
+                        if !isCollapsed(section) {
+                            ForEach(section.rows) { row in
+                                habitRow(row.habit, stats: row.stats)
+                                    .moveDisabled(sortOrder != .manual)
+                            }
+                            .onMove { move(section.rows, from: $0, to: $1) }
+                        }
+                    } header: {
+                        DayHeader(
+                            days: visibleDays,
+                            today: today,
+                            isScrolledBack: dayOffset > 0,
+                            title: section.title,
+                            isCollapsed: isCollapsed(section),
+                            onToggleCollapse: { toggleCollapsed(section) }
+                        )
+                        .padding(.trailing, 8)
+                        .listRowInsets(EdgeInsets())
+                        .contentShape(Rectangle())
+                        .gesture(daySwipe)
                     }
-                    .onMove { move(from: $0, to: $1) }
-                } header: {
-                    DayHeader(days: visibleDays, today: today, isScrolledBack: dayOffset > 0) {
-                        withAnimation(.snappy) { dayOffset = 0 }
-                    }
-                    .padding(.trailing, 8)
-                    .listRowInsets(EdgeInsets())
-                    .contentShape(Rectangle())
-                    .gesture(daySwipe)
                 }
-                if rows.isEmpty {
+                if sections.allSatisfy({ $0.rows.isEmpty }) {
                     emptyFilterMessage
+                }
+            }
+            .overlay(alignment: .bottom) {
+                if dayOffset > 0 {
+                    Button {
+                        withAnimation(.snappy) { dayOffset = 0 }
+                    } label: {
+                        Label("Today", systemImage: "arrow.uturn.backward")
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                    .background(.regularMaterial, in: Capsule())
+                    .padding(.bottom, 20)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .listStyle(.plain)
@@ -338,11 +366,9 @@ struct HabitListView: View {
             amountTarget = AmountEntryTarget(habit: habit, day: day)
             return
         }
-        let next = EntryCycle.next(
-            after: stats.checkmark(on: day),
-            skipEnabled: skipEnabled,
-            showQuestionMarks: showQuestionMarks
-        )
+        let next = habit.isQuit
+            ? EntryCycle.nextForQuit(after: stats.checkmark(on: day))
+            : EntryCycle.next(after: stats.checkmark(on: day), skipEnabled: skipEnabled, showQuestionMarks: showQuestionMarks)
         withAnimation(.snappy) {
             habit.setRecord(next, on: day, in: context)
         }
@@ -351,8 +377,39 @@ struct HabitListView: View {
         }
     }
 
-    private func move(from source: IndexSet, to destination: Int) {
-        var visible = displayedRows.map(\.habit)
+    private struct HabitSection: Identifiable {
+        let id: String
+        let title: String?
+        let rows: [HabitRowData]
+    }
+
+    /// Rows split into the user's groups (in order), then habits without a group.
+    private var sections: [HabitSection] {
+        let rows = displayedRows
+        guard !groups.isEmpty else {
+            return [HabitSection(id: "all", title: nil, rows: rows)]
+        }
+        var result = groups.map { group in
+            HabitSection(id: group.id.uuidString, title: group.name, rows: rows.filter { $0.habit.group?.id == group.id })
+        }
+        let ungrouped = rows.filter { $0.habit.group == nil }
+        result.append(HabitSection(id: "ungrouped", title: String(localized: "Other"), rows: ungrouped))
+        return result.filter { !$0.rows.isEmpty }
+    }
+
+    private func isCollapsed(_ section: HabitSection) -> Bool {
+        section.title != nil && collapsedGroups.split(separator: ",").contains { $0 == section.id }
+    }
+
+    private func toggleCollapsed(_ section: HabitSection) {
+        var ids = Set(collapsedGroups.split(separator: ",").map(String.init))
+        if ids.contains(section.id) { ids.remove(section.id) } else { ids.insert(section.id) }
+        withAnimation(.snappy) { collapsedGroups = ids.sorted().joined(separator: ",") }
+    }
+
+    /// Reorders habits within one section, keeping everyone else's place.
+    private func move(_ sectionRows: [HabitRowData], from source: IndexSet, to destination: Int) {
+        var visible = sectionRows.map(\.habit)
         let slots = visible.compactMap { habits.firstIndex(of: $0) }
         visible.move(fromOffsets: source, toOffset: destination)
         var ordered = habits

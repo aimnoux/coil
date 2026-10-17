@@ -71,6 +71,45 @@ enum SampleData {
              target: 2, targetType: .atMost, days: 45) { offset, r in
             EntryRecord(state: .yes, amount: Double(Int(r.next() * 4)))
         }
+        make(String(localized: "No sugar"), question: String(localized: "Stayed away from sweets today?"), color: 15,
+             kind: .quit, days: 75) { offset, r in
+            [9, 23, 51].contains(offset) ? .no : nil
+        }
+
+        // Icons, groups, a challenge and a short pause, so every feature shows up.
+        let all = (try? context.fetch(FetchDescriptor<Habit>())) ?? []
+        func habit(_ color: Int) -> Habit? { all.first { $0.colorIndex == color } }
+        let morning = HabitGroup(name: String(localized: "Morning"), position: 0)
+        let health = HabitGroup(name: String(localized: "Health"), position: 1)
+        context.insert(morning)
+        context.insert(health)
+        let setup: [(Int, String, HabitGroup)] = [
+            (12, "brain.head.profile", morning),
+            (10, "sunrise", morning),
+            (3, "book", morning),
+            (6, "figure.run", health),
+            (9, "drop", health),
+            (16, "cup.and.saucer", health),
+            (15, "nosign", health),
+            (14, "phone", morning),
+        ]
+        for (color, icon, group) in setup {
+            habit(color)?.iconName = icon
+            habit(color)?.group = group
+        }
+        if let read = habit(3) {
+            read.challengeDays = 30
+            read.challengeStartDay = today.advanced(by: -11).index
+        }
+        if let exercise = habit(6) {
+            let pause = HabitPause(start: today.advanced(by: -30), end: today.advanced(by: -24), note: "Vacation")
+            context.insert(pause)
+            pause.habit = exercise
+        }
+        if let meditate = habit(12) {
+            meditate.reminderMinutes = [7 * 60 + 30, 21 * 60]
+        }
+
         if let meditate = try? context.fetch(FetchDescriptor<Habit>()).first(where: { $0.colorIndex == 12 }) {
             meditate.setNote(String(localized: "Twenty minutes in the park, very calm."), on: today.advanced(by: -2), in: context)
             meditate.setNote(String(localized: "Hard to focus today."), on: today.advanced(by: -9), in: context)

@@ -249,6 +249,27 @@ nonisolated struct HabitStats: Sendable {
         return c.isSatisfied || c.isNeutral
     }
 
+    /// How a challenge over `range` is going.
+    func challengeProgress(_ range: ClosedRange<Day>) -> ChallengeProgress {
+        let total = range.lowerBound.distance(to: range.upperBound) + 1
+        let lastCounted = min(today, range.upperBound)
+        var kept = 0
+        var missed = 0
+        var day = range.lowerBound
+        while day <= lastCounted {
+            let c = checkmark(on: day)
+            if c.isSatisfied || c.isNeutral {
+                kept += 1
+            } else if day < today || c == .no {
+                // Today isn't missed until it's over.
+                missed += 1
+            }
+            day = day.advanced(by: 1)
+        }
+        let elapsed = today < range.lowerBound ? 0 : min(total, range.lowerBound.distance(to: today) + 1)
+        return ChallengeProgress(day: elapsed, total: total, kept: kept, missed: missed, isOver: today > range.upperBound)
+    }
+
     /// Number of recorded slips for a quit habit.
     var slipCount: Int {
         data.entries.values.filter { $0.state == .no }.count
@@ -366,4 +387,18 @@ nonisolated struct HabitStats: Sendable {
             : data.frequency.timesPerDay
         return perDay * Double(days)
     }
+}
+
+nonisolated struct ChallengeProgress: Hashable, Sendable {
+    /// The current day of the challenge, 1-based (0 before it starts).
+    let day: Int
+    let total: Int
+    /// Days kept (done, automatically done, skipped or paused).
+    let kept: Int
+    let missed: Int
+    let isOver: Bool
+
+    var isCompleted: Bool { isOver && missed == 0 }
+    var isFailed: Bool { missed > 0 }
+    var fraction: Double { total > 0 ? Double(kept) / Double(total) : 0 }
 }

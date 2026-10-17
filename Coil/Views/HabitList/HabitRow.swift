@@ -18,18 +18,24 @@ struct HabitRow: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack(spacing: 12) {
-                ScoreRing(score: stats.currentScore, color: fill)
-                    .frame(width: 26, height: 26)
+                HabitBadge(
+                    score: stats.currentScore,
+                    palette: habit.color,
+                    iconName: habit.iconName,
+                    size: habit.iconName.isEmpty ? 26 : 34,
+                    isArchived: habit.isArchived
+                )
+                .frame(width: 34)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(habit.name)
                         .font(.body.weight(.medium))
                         .foregroundStyle(habit.isArchived ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                         .lineLimit(2)
-                    if habit.isArchived {
-                        Label("Archived", systemImage: "archivebox")
+                    if let subtitle {
+                        subtitle
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .labelStyle(.titleAndIcon)
+                            .lineLimit(1)
                     }
                 }
                 Spacer(minLength: 4)
@@ -48,6 +54,31 @@ struct HabitRow: View {
             }
         }
         .padding(.vertical, 4)
+    }
+
+    /// A short status line: archived, paused, clean days of a quit habit, or challenge progress.
+    private var subtitle: Text? {
+        let today = stats.today
+        if habit.isArchived {
+            return Text("\(Image(systemName: "archivebox")) \(String(localized: "Archived"))")
+        }
+        if stats.checkmark(on: today) == .paused {
+            return Text("\(Image(systemName: "pause.circle")) \(String(localized: "Paused"))")
+        }
+        if let challenge = habit.challenge {
+            let progress = stats.challengeProgress(challenge)
+            if progress.isCompleted {
+                return Text("\(Image(systemName: "flag.checkered")) \(String(localized: "Challenge completed"))")
+            }
+            if !progress.isOver && progress.day > 0 {
+                return Text("\(Image(systemName: "flag.checkered")) \(String(localized: "Day \(progress.day) of \(progress.total)"))")
+            }
+        }
+        if habit.isQuit {
+            let clean = stats.currentStreak?.length ?? 0
+            return Text("\(Image(systemName: "leaf")) \(String(localized: "\(clean) days clean"))")
+        }
+        return nil
     }
 
     /// Archived habits are drawn in neutral gray.
@@ -81,7 +112,10 @@ struct HabitRow: View {
                         showQuestionMarks: showQuestionMarks
                     )
                 } else {
-                    CheckmarkSymbol(checkmark: checkmark, fill: fill, ink: ink, showQuestionMarks: showQuestionMarks)
+                    CheckmarkSymbol(
+                        checkmark: checkmark, fill: fill, ink: ink,
+                        showQuestionMarks: showQuestionMarks, isQuit: habit.isQuit
+                    )
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
