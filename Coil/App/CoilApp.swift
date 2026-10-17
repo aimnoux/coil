@@ -26,8 +26,12 @@ struct CoilApp: App {
         .modelContainer(Persistence.shared)
         .onChange(of: scenePhase) { _, phase in
             // Write everything before iOS suspends or closes the app.
-            if phase != .active, Persistence.shared.mainContext.hasChanges {
-                try? Persistence.shared.mainContext.save()
+            if phase != .active {
+                if Persistence.shared.mainContext.hasChanges {
+                    try? Persistence.shared.mainContext.save()
+                }
+                // Widgets show the latest state as soon as the user is back on the Home Screen.
+                WidgetCenter.shared.reloadAllTimelines()
             }
         }
     }
