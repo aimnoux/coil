@@ -4004,6 +4004,17 @@
         }
       }
     },
+    "Sign in to iCloud in the Settings app to sync your habits. Until then they are stored only on this device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Войдите в iCloud в приложении «Настройки», чтобы синхронизировать привычки. Пока они хранятся только на этом устройстве."
+          }
+        }
+      }
+    },
     "Skip This Day": {
       "extractionState": "manual",
       "localizations": {

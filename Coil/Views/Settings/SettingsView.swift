@@ -178,16 +178,22 @@ struct SettingsView: View {
     }
 
     private var syncSection: some View {
-        Section {
+        let signedIn = FileManager.default.ubiquityIdentityToken != nil
+        let syncing = Persistence.iCloudSyncEnabled && signedIn
+        return Section {
             LabeledContent {
-                Text(Persistence.iCloudSyncEnabled ? "On" : "Off")
+                Text(syncing ? "On" : "Off")
             } label: {
                 Label("iCloud Sync", systemImage: "icloud")
             }
         } footer: {
-            Text(Persistence.iCloudSyncEnabled
-                ? "Your habits sync across your devices through your private iCloud account."
-                : "Your habits are stored only on this device. Export a backup from time to time to keep them safe.")
+            if syncing {
+                Text("Your habits sync across your devices through your private iCloud account.")
+            } else if Persistence.iCloudSyncEnabled {
+                Text("Sign in to iCloud in the Settings app to sync your habits. Until then they are stored only on this device.")
+            } else {
+                Text("Your habits are stored only on this device. Export a backup from time to time to keep them safe.")
+            }
         }
     }
 

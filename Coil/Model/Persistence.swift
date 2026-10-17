@@ -29,10 +29,11 @@ enum Persistence {
             // existing data into the App Group, the app would find an empty store and skip the move.
             configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true, cloudKitDatabase: .none)
         } else {
+            let sync = !isExtension && shouldSyncWithICloud()
             configuration = ModelConfiguration(
                 schema: schema,
                 url: storeURL,
-                cloudKitDatabase: iCloudSyncEnabled ? .automatic : .none
+                cloudKitDatabase: sync ? .automatic : .none
             )
         }
         do {
@@ -54,6 +55,46 @@ enum Persistence {
             return container
         } catch {
             fatalError("Could not create the habit store: \(error)")
+        }
+    }
+
+    // MARK: - iCloud safety
+
+    private static let iCloudTokenKey = "lastICloudAccountToken"
+
+    /// Whether to open the store with CloudKit mirroring right now.
+    ///
+    /// Core Data's CloudKit mirroring clears local mirrored data when it starts without an
+    /// iCloud account or after the account changes (the data stays in iCloud). So sync is only
+    /// turned on while an account is signed in, and before the first start with a new account the
+    /// store files are copied aside, so nothing can be lost.
+    static func shouldSyncWithICloud() -> Bool {
+        guard iCloudSyncEnabled else { return false }
+        guard let token = FileManager.default.ubiquityIdentityToken else { return false }
+        let tokenData = try? NSKeyedArchiver.archivedData(withRootObject: token, requiringSecureCoding: true)
+        let previous = UserDefaults.standard.data(forKey: iCloudTokenKey)
+        if tokenData != previous {
+            copyStoreAside(reason: previous == nil ? "before-icloud" : "icloud-account-changed")
+            UserDefaults.standard.set(tokenData, forKey: iCloudTokenKey)
+        }
+        return true
+    }
+
+    /// Copies the store files to Documents/Backups/<reason> <date>/ (visible in the Files app).
+    static func copyStoreAside(reason: String) {
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: storeURL.path) else { return }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HHmmss"
+        let folder = URL.documentsDirectory
+            .appending(path: "Backups/\(reason) \(formatter.string(from: Date()))", directoryHint: .isDirectory)
+        try? fm.createDirectory(at: folder, withIntermediateDirectories: true)
+        for suffix in ["", "-shm", "-wal"] {
+            let from = URL(fileURLWithPath: storeURL.path + suffix)
+            if fm.fileExists(atPath: from.path) {
+                try? fm.copyItem(at: from, to: folder.appending(path: from.lastPathComponent))
+            }
         }
     }
 

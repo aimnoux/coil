@@ -492,6 +492,7 @@ RU = {
     "than the week before": "чем неделей ранее",
     "workouts": "тренировок",
     "Stay strong today.": "Держитесь сегодня.",
+    "Sign in to iCloud in the Settings app to sync your habits. Until then they are stored only on this device.": "Войдите в iCloud в приложении «Настройки», чтобы синхронизировать привычки. Пока они хранятся только на этом устройстве.",
 
 }
 
