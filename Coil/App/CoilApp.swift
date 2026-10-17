@@ -10,6 +10,7 @@ struct CoilApp: App {
     var body: some Scene {
         WindowGroup {
             HabitListView()
+                .overlay(alignment: .bottom) { UndoToast() }
                 .fontDesign(.rounded)
                 .preferredColorScheme(theme.colorScheme)
                 .onReceive(NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)) { _ in

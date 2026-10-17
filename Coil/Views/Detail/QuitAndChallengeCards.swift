@@ -43,7 +43,10 @@ struct QuitCard: View {
         }
         .confirmationDialog("Record a slip today?", isPresented: $confirmingSlip, titleVisibility: .visible) {
             Button("Record Slip", role: .destructive) {
-                withAnimation { habit.setRecord(.no, on: stats.today, in: context) }
+                withAnimation {
+                    UndoCenter.shared.setRecord(.no, on: stats.today, for: habit, in: context,
+                                                message: String(localized: "Slip recorded"))
+                }
             }
         } message: {
             Text("Your clean streak starts again tomorrow. Slips are part of the process.")
@@ -174,11 +177,20 @@ struct PausesCard: View {
                             }
                             Spacer()
                             Button("Delete", systemImage: "trash", role: .destructive) {
+                                let range = pause.range
+                                let note = pause.note
                                 withAnimation {
                                     context.delete(pause)
                                     habit.touch()
                                 }
                                 ReminderScheduler.reschedule(habit)
+                                UndoCenter.shared.offer(String(localized: "Pause removed")) {
+                                    let restored = HabitPause(start: range.lowerBound, end: range.upperBound, note: note)
+                                    context.insert(restored)
+                                    restored.habit = habit
+                                    habit.touch()
+                                    ReminderScheduler.reschedule(habit)
+                                }
                             }
                             .labelStyle(.iconOnly)
                             .buttonStyle(.borderless)

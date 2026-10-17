@@ -78,8 +78,7 @@ struct HabitDetailView: View {
                     }
                     Button("Pause…", systemImage: "pause.circle") { addingPause = true }
                     Button(habit.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox") {
-                        habit.isArchived.toggle()
-                        ReminderScheduler.reschedule(habit)
+                        UndoCenter.shared.setArchived([habit], !habit.isArchived)
                     }
                     Divider()
                     Button("Delete Habit", systemImage: "trash", role: .destructive) {
@@ -108,16 +107,15 @@ struct HabitDetailView: View {
         }
         .confirmationDialog("Delete this habit?", isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button("Delete \(habit.name)", role: .destructive) {
-                ReminderScheduler.cancel(habit)
                 dismiss()
                 // Delete after the pop animation so this screen never renders a deleted habit.
                 Task {
                     try? await Task.sleep(for: .milliseconds(450))
-                    context.delete(habit)
+                    UndoCenter.shared.delete([habit], in: context)
                 }
             }
         } message: {
-            Text("Its whole history will be deleted. This can't be undone.")
+            Text("Its whole history will be deleted. You can undo this for a few seconds.")
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { today = .today() }

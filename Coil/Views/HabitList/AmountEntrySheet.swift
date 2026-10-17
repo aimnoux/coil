@@ -62,7 +62,8 @@ struct AmountEntrySheet: View {
                     }
                     if habit.record(on: day) != nil {
                         Button("Clear Entry", systemImage: "trash", role: .destructive) {
-                            habit.setRecord(nil, on: day, in: context)
+                            UndoCenter.shared.setRecord(nil, on: day, for: habit, in: context,
+                                                        message: String(localized: "Entry cleared"))
                             dismiss()
                         }
                     }

@@ -19,6 +19,19 @@ struct BackupTests {
         habit.setRecord(.skip, on: today.advanced(by: -1), in: source)
         habit.setNote("Felt great", on: today, in: source)
         habit.setNote("Only a note", on: today.advanced(by: -2), in: source)
+        let group = HabitGroup(name: "Morning")
+        source.insert(group)
+        habit.group = group
+        habit.iconName = "book"
+        habit.reminderMinutes = [480, 1260]
+        habit.challengeDays = 30
+        habit.challengeStartDay = today.index
+        let pause = HabitPause(start: today.advanced(by: -10), end: today.advanced(by: -8), note: "Trip")
+        source.insert(pause)
+        pause.habit = habit
+        let session = TimerSession(start: Date(timeIntervalSince1970: 1_000), end: Date(timeIntervalSince1970: 1_600))
+        source.insert(session)
+        session.habit = habit
 
         let data = try Backup.encode(Backup.make(from: [habit]))
         let decoder = JSONDecoder()
@@ -41,6 +54,12 @@ struct BackupTests {
         #expect(restored.note(on: today) == "Felt great")
         #expect(restored.note(on: today.advanced(by: -2)) == "Only a note")
         #expect(restored.record(on: today.advanced(by: -2)) == nil)
+        #expect(restored.group?.name == "Morning")
+        #expect(restored.iconName == "book")
+        #expect(restored.reminderMinutes == [480, 1260])
+        #expect(restored.challengeDays == 30)
+        #expect(restored.livePauses.first?.note == "Trip")
+        #expect(restored.liveSessions.first?.duration() == 600)
         #expect(restored.stats().checkmark(on: today.advanced(by: -2)) == .unknown)
 
         // Importing the same backup again updates instead of duplicating.
@@ -48,6 +67,8 @@ struct BackupTests {
         #expect(again.habitsAdded == 0)
         #expect(again.habitsUpdated == 1)
         #expect(try target.fetchCount(FetchDescriptor<Habit>()) == 1)
+        #expect(restored.livePauses.count == 1)
+        #expect(restored.liveSessions.count == 1)
         #expect(restored.liveEntries.count == 3)
     }
 

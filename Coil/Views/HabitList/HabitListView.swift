@@ -5,6 +5,7 @@ import SwiftUI
 struct HabitListView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.undoManager) private var undoManager
     @Query(sort: \Habit.position) private var habits: [Habit]
     @Query(sort: \HabitGroup.position) private var groups: [HabitGroup]
     /// Ids of collapsed groups, comma separated.
@@ -67,7 +68,7 @@ struct HabitListView: View {
         ) { habit in
             Button("Delete \(habit.name)", role: .destructive) { delete(habit) }
         } message: { _ in
-            Text("Its whole history will be deleted. This can't be undone.")
+            Text("Its whole history will be deleted. You can undo this for a few seconds.")
         }
         .confirmationDialog(
             "Delete \(selection.count) habits?",
@@ -76,7 +77,7 @@ struct HabitListView: View {
         ) {
             Button("Delete", role: .destructive) { deleteSelected() }
         } message: {
-            Text("Their whole history will be deleted. This can't be undone.")
+            Text("Their whole history will be deleted. You can undo this for a few seconds.")
         }
         .overlay(alignment: .bottom) { hintBanner }
         .onChange(of: scenePhase) { _, phase in
@@ -373,9 +374,17 @@ struct HabitListView: View {
         let next = habit.isQuit
             ? EntryCycle.nextForQuit(after: stats.checkmark(on: day))
             : EntryCycle.next(after: stats.checkmark(on: day), skipEnabled: skipEnabled, showQuestionMarks: showQuestionMarks)
+        let previous = habit.record(on: day)
         withAnimation(.snappy) {
             habit.setRecord(next, on: day, in: context)
         }
+        // Shake to undo an accidental tap.
+        undoManager?.registerUndo(withTarget: habit) { habit in
+            MainActor.assumeIsolated {
+                withAnimation(.snappy) { habit.setRecord(previous, on: day, in: habit.modelContext ?? Persistence.shared.mainContext) }
+            }
+        }
+        undoManager?.setActionName(String(localized: "Checkmark"))
         if next?.state == .yes {
             ReminderScheduler.habitCompleted(habit, on: day)
         }
@@ -432,46 +441,35 @@ struct HabitListView: View {
     private func archiveSelected() {
         // Archive the selection, or restore it if every selected habit is already archived.
         let habits = selectedHabits
-        let archive = habits.contains { !$0.isArchived }
-        withAnimation {
-            for habit in habits {
-                habit.isArchived = archive
-                ReminderScheduler.reschedule(habit)
-            }
-            selection.removeAll()
-        }
-        showHint(archive ? "Habits archived" : "Habits restored")
+        UndoCenter.shared.setArchived(habits, habits.contains { !$0.isArchived })
+        selection.removeAll()
     }
 
     private func recolorSelected(_ colorIndex: Int) {
+        let previous = selectedHabits.map { ($0, $0.colorIndex) }
         withAnimation {
             selectedHabits.forEach { $0.colorIndex = colorIndex }
+        }
+        UndoCenter.shared.offer(String(localized: "Color changed")) {
+            withAnimation { for (habit, color) in previous { habit.colorIndex = color } }
         }
     }
 
     private func deleteSelected() {
         withAnimation {
-            for habit in selectedHabits {
-                ReminderScheduler.cancel(habit)
-                context.delete(habit)
-            }
+            UndoCenter.shared.delete(selectedHabits, in: context)
             selection.removeAll()
             editMode = .inactive
         }
     }
 
     private func setArchived(_ habit: Habit, _ archived: Bool) {
-        withAnimation {
-            habit.isArchived = archived
-        }
-        ReminderScheduler.reschedule(habit)
-        showHint(archived ? "Habit archived" : "Habit restored")
+        UndoCenter.shared.setArchived([habit], archived)
     }
 
     private func delete(_ habit: Habit) {
-        ReminderScheduler.cancel(habit)
         withAnimation {
-            context.delete(habit)
+            UndoCenter.shared.delete([habit], in: context)
         }
     }
 

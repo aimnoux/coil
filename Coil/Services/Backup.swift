@@ -5,9 +5,31 @@ import UniformTypeIdentifiers
 /// A complete, versioned copy of all habits and entries as JSON.
 nonisolated struct BackupFile: Codable, Sendable {
     var format = "coil-backup"
-    var version = 1
+    var version = 2
     var exportedAt = Date()
     var habits: [BackupHabit]
+    /// Added in version 2; older backups have none.
+    var groups: [BackupGroup]? = nil
+
+    struct BackupGroup: Codable, Sendable {
+        var id: UUID
+        var name: String
+        var position: Int
+        var iconName: String
+    }
+
+    struct BackupPause: Codable, Sendable {
+        var start: String
+        var end: String
+        var note: String
+    }
+
+    struct BackupSession: Codable, Sendable {
+        var id: UUID
+        var start: Date
+        var end: Date?
+        var note: String
+    }
 
     struct BackupHabit: Codable, Sendable {
         var id: UUID
@@ -29,6 +51,18 @@ nonisolated struct BackupFile: Codable, Sendable {
         var isArchived: Bool
         var createdAt: Date
         var entries: [BackupEntry]
+        // Version 2 fields are optional so version 1 backups still decode.
+        var iconName: String? = nil
+        var groupID: UUID? = nil
+        var reminderTimes: String? = nil
+        var challengeDays: Int? = nil
+        var challengeStartDay: Int? = nil
+        var isTimed: Bool? = nil
+        var timerMinutes: Int? = nil
+        var healthMetric: String? = nil
+        var healthThreshold: Double? = nil
+        var pauses: [BackupPause]? = nil
+        var sessions: [BackupSession]? = nil
     }
 
     struct BackupEntry: Codable, Sendable {
@@ -66,8 +100,9 @@ enum Backup {
     }
 
     static func make(from habits: [Habit]) -> BackupFile {
-        BackupFile(habits: habits.map { habit in
-            BackupFile.BackupHabit(
+        let groups = Dictionary(habits.compactMap(\.group).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a }).values
+        var file = BackupFile(habits: habits.map { habit in
+            var item = BackupFile.BackupHabit(
                 id: habit.id,
                 name: habit.name,
                 question: habit.question,
@@ -97,7 +132,31 @@ enum Backup {
                         )
                     }
             )
+            item.iconName = habit.iconName
+            item.groupID = habit.group?.id
+            item.reminderTimes = habit.reminderTimesRaw
+            item.challengeDays = habit.challengeDays
+            item.challengeStartDay = habit.challengeStartDay
+            item.isTimed = habit.isTimed
+            item.timerMinutes = habit.timerMinutes
+            item.healthMetric = habit.healthMetricRaw
+            item.healthThreshold = habit.healthThreshold
+            item.pauses = habit.livePauses.map {
+                BackupFile.BackupPause(
+                    start: CSVExport.isoDate($0.range.lowerBound),
+                    end: CSVExport.isoDate($0.range.upperBound),
+                    note: $0.note
+                )
+            }
+            item.sessions = habit.liveSessions.map {
+                BackupFile.BackupSession(id: $0.id, start: $0.start, end: $0.end, note: $0.note)
+            }
+            return item
         })
+        file.groups = groups
+            .sorted { $0.position < $1.position }
+            .map { BackupFile.BackupGroup(id: $0.id, name: $0.name, position: $0.position, iconName: $0.iconName) }
+        return file
     }
 
     nonisolated static func encode(_ backup: BackupFile) throws -> Data {
@@ -130,6 +189,20 @@ enum Backup {
 
     static func restore(_ backup: BackupFile, into context: ModelContext) throws -> ImportResult {
         var result = ImportResult()
+
+        // Groups first, so habits can point at them.
+        var groupsByID = Dictionary(
+            try context.fetch(FetchDescriptor<HabitGroup>()).map { ($0.id, $0) },
+            uniquingKeysWith: { a, _ in a }
+        )
+        for item in backup.groups ?? [] where groupsByID[item.id] == nil {
+            let group = HabitGroup(name: item.name, position: item.position)
+            group.id = item.id
+            group.iconName = item.iconName
+            context.insert(group)
+            groupsByID[item.id] = group
+        }
+
         let existing = try context.fetch(FetchDescriptor<Habit>())
         var byID = Dictionary(existing.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         var nextPosition = (existing.map(\.position).max() ?? -1) + 1
@@ -164,6 +237,34 @@ enum Backup {
             habit.reminderDays = item.reminderDays
             habit.isArchived = item.isArchived
             habit.createdAt = min(habit.createdAt, item.createdAt)
+            if let icon = item.iconName { habit.iconName = icon }
+            if let groupID = item.groupID { habit.group = groupsByID[groupID] }
+            if let times = item.reminderTimes { habit.reminderTimesRaw = times }
+            if let days = item.challengeDays {
+                habit.challengeDays = days
+                habit.challengeStartDay = item.challengeStartDay ?? habit.challengeStartDay
+            }
+            if let timed = item.isTimed { habit.isTimed = timed }
+            if let minutes = item.timerMinutes { habit.timerMinutes = minutes }
+            if let metric = item.healthMetric { habit.healthMetricRaw = metric }
+            if let threshold = item.healthThreshold { habit.healthThreshold = threshold }
+
+            let knownPauses = Set(habit.livePauses.map { "\($0.startDay)-\($0.endDay)" })
+            for pause in item.pauses ?? [] {
+                guard let start = parseDate(pause.start), let end = parseDate(pause.end),
+                      !knownPauses.contains("\(start.index)-\(end.index)") else { continue }
+                let model = HabitPause(start: start, end: end, note: pause.note)
+                context.insert(model)
+                model.habit = habit
+            }
+            let knownSessions = Set(habit.liveSessions.map(\.id))
+            for session in item.sessions ?? [] where !knownSessions.contains(session.id) {
+                let model = TimerSession(start: session.start, end: session.end)
+                model.id = session.id
+                model.note = session.note
+                context.insert(model)
+                model.habit = habit
+            }
 
             // Look entries up by day once instead of scanning the relationship per entry.
             var existingEntries = habit.entriesByDay

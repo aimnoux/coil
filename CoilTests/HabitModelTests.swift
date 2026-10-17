@@ -126,3 +126,43 @@ struct EntryCycleTests {
         #expect(EntryCycle.next(after: .yesAuto, skipEnabled: false, showQuestionMarks: false) == .yes)
     }
 }
+
+@MainActor
+struct UndoTests {
+    let container = Persistence.makeContainer(inMemory: true)
+    var context: ModelContext { container.mainContext }
+
+    @Test func undoingADeleteBringsBackTheWholeHabit() throws {
+        let today = Day.today()
+        let habit = Habit(name: "Run")
+        habit.position = 3
+        habit.iconName = "figure.run"
+        context.insert(habit)
+        habit.setRecord(.yes, on: today, in: context)
+        habit.setNote("Park loop", on: today, in: context)
+        let id = habit.id
+
+        UndoCenter.shared.delete([habit], in: context)
+        try context.save()
+        #expect(try context.fetchCount(FetchDescriptor<Habit>()) == 0)
+
+        UndoCenter.shared.undo()
+        let restored = try #require(try context.fetch(FetchDescriptor<Habit>()).first)
+        #expect(restored.id == id)
+        #expect(restored.position == 3)
+        #expect(restored.iconName == "figure.run")
+        #expect(restored.record(on: today)?.state == .yes)
+        #expect(restored.note(on: today) == "Park loop")
+    }
+
+    @Test func undoingArchiveRestoresThePreviousState() {
+        let a = Habit(name: "A"), b = Habit(name: "B")
+        b.isArchived = true
+        context.insert(a); context.insert(b)
+        UndoCenter.shared.setArchived([a, b], true)
+        #expect(a.isArchived && b.isArchived)
+        UndoCenter.shared.undo()
+        #expect(!a.isArchived)
+        #expect(b.isArchived)
+    }
+}
