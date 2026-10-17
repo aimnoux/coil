@@ -35,6 +35,7 @@ struct HabitListView: View {
     @State private var amountTarget: AmountEntryTarget?
     @State private var habitToDelete: Habit?
     @State private var showingSettings = false
+    @State private var addingHabit = false
     @State private var hint: LocalizedStringKey?
 
     var body: some View {
@@ -54,6 +55,9 @@ struct HabitListView: View {
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
+        }
+        .sheet(isPresented: $addingHabit) {
+            TemplatePickerView()
         }
         .confirmationDialog(
             "Delete this habit?",
@@ -112,7 +116,7 @@ struct HabitListView: View {
             } description: {
                 Text("Build good habits by checking them off every day. Your progress turns into habit strength over time.")
             } actions: {
-                Button("Add Habit") { editorHabit = HabitEditorTarget(habit: nil) }
+                Button("Add Habit") { addingHabit = true }
                     .buttonStyle(.borderedProminent)
             }
         } else {
@@ -276,7 +280,7 @@ struct HabitListView: View {
                 filterMenu
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Add Habit", systemImage: "plus") { editorHabit = HabitEditorTarget(habit: nil) }
+                Button("Add Habit", systemImage: "plus") { addingHabit = true }
             }
         }
     }
@@ -508,6 +512,9 @@ extension HabitListView {
         }
         if arguments.bool(forKey: "screenshotEditor") {
             editorHabit = HabitEditorTarget(habit: habits.first)
+        }
+        if arguments.bool(forKey: "screenshotTemplates") {
+            addingHabit = true
         }
         if arguments.bool(forKey: "screenshotSelect") {
             editMode = .active

@@ -5,6 +5,9 @@ import SwiftUI
 struct HabitEditView: View {
     let habit: Habit?
     var template: HabitDraft?
+    /// Set when the editor is pushed inside another navigation stack (the template picker):
+    /// it then doesn't add its own stack, and finishing closes the whole sheet.
+    var onFinish: (() -> Void)?
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -24,7 +27,19 @@ struct HabitEditView: View {
     private var palette: HabitColor { HabitColor(index: draft.colorIndex) }
 
     var body: some View {
-        NavigationStack {
+        if onFinish != nil {
+            form
+        } else {
+            NavigationStack { form }
+                .interactiveDismissDisabled(hasChanges)
+        }
+    }
+
+    private func finish() {
+        if let onFinish { onFinish() } else { dismiss() }
+    }
+
+    private var form: some View {
             Form {
                 if isNew {
                     kindSection
@@ -48,8 +63,10 @@ struct HabitEditView: View {
             .navigationTitle(isNew ? "New Habit" : "Edit Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) { dismiss() }
+                if onFinish == nil {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel", role: .cancel) { dismiss() }
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
@@ -65,8 +82,6 @@ struct HabitEditView: View {
                 Button("Create") { createGroup() }
             }
             .onAppear(perform: load)
-        }
-        .interactiveDismissDisabled(hasChanges)
     }
 
     // MARK: - Sections
@@ -437,7 +452,7 @@ struct HabitEditView: View {
         }
         draft.apply(to: target, groups: groups)
         ReminderScheduler.reschedule(target)
-        dismiss()
+        finish()
     }
 }
 
