@@ -5,6 +5,8 @@ include:
     enable: ${COIL_WIDGETS}
   - path: icloud.yml
     enable: ${COIL_ICLOUD}
+  - path: health.yml
+    enable: ${COIL_HEALTH}
 
 options:
   bundleIdPrefix: com.maxouni

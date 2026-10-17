@@ -1,0 +1,12 @@
+# Apple Health integration. Turn on with `COIL_HEALTH=true xcodegen` (see docs/HEALTH.md).
+targets:
+  Coil:
+    entitlements:
+      path: Coil/Coil.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+    settings:
+      base:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) HEALTHKIT
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "Coil reads the Health data you choose (like steps, sleep or mindful minutes) to check off habits linked to it. Your data stays on your device."

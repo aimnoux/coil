@@ -17,4 +17,5 @@ targets:
           - remote-notification
     settings:
       base:
-        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) ICLOUD
+        # OTHER_SWIFT_FLAGS (not SWIFT_ACTIVE_COMPILATION_CONDITIONS) so it combines with health.yml.
+        OTHER_SWIFT_FLAGS: $(inherited) -DICLOUD

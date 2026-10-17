@@ -18,7 +18,12 @@ targets:
       - Widgets
       - Coil/Domain
       - Coil/Model
-      - Coil/Support
+      - path: Coil/Support
+        excludes:
+          - UndoCenter.swift
+      - Coil/Services/HealthSync.swift
+      - Coil/Services/TimerService.swift
+      - Coil/Services/ReminderScheduler.swift
       - Coil/Intents
       - Coil/Views/Components/ScoreRing.swift
       - Coil/Views/Components/CheckmarkSymbol.swift

@@ -452,82 +452,11 @@ struct HabitEditView: View {
         }
         draft.apply(to: target, groups: groups)
         ReminderScheduler.reschedule(target)
+        if target.healthMetric != nil {
+            // Ask for access right away and fill in recent days.
+            Task { await HealthSync.syncAll(in: context) }
+        }
         finish()
-    }
-}
-
-/// Editable form of a yes/no habit's frequency.
-struct ScheduleDraft: Equatable {
-    enum Kind: String, CaseIterable, Identifiable {
-        case everyDay, everyNDays, perWeek, perMonth, custom
-        var id: String { rawValue }
-
-        var title: LocalizedStringKey {
-            switch self {
-            case .everyDay: "Every day"
-            case .everyNDays: "Every few days"
-            case .perWeek: "Times per week"
-            case .perMonth: "Times per month"
-            case .custom: "Custom"
-            }
-        }
-    }
-
-    var kind: Kind = .everyDay
-    var times = 3
-    var days = 2
-
-    init() {}
-
-    init(_ frequency: Frequency) {
-        switch frequency.preset {
-        case .everyDay:
-            kind = .everyDay
-        case .everyNDays(let n):
-            kind = .everyNDays
-            days = n
-        case .timesPerWeek(let n):
-            kind = .perWeek
-            times = n
-        case .timesPerMonth(let n):
-            kind = .perMonth
-            times = n
-        case .custom(let n, let d):
-            kind = .custom
-            times = n
-            days = d
-        }
-    }
-
-    var frequency: Frequency {
-        switch kind {
-        case .everyDay: .daily
-        case .everyNDays: Frequency(1, days)
-        case .perWeek: Frequency(min(times, 7), 7)
-        case .perMonth: Frequency(min(times, 30), 30)
-        case .custom: Frequency(min(times, days), days)
-        }
-    }
-}
-
-/// The period a measurable habit's target applies to.
-enum TargetPeriod: Int, CaseIterable, Identifiable {
-    case day = 1, week = 7, month = 30
-
-    var id: Int { rawValue }
-
-    init(_ frequency: Frequency) {
-        self = TargetPeriod(rawValue: frequency.denominator) ?? .day
-    }
-
-    var frequency: Frequency { Frequency(1, rawValue) }
-
-    var title: LocalizedStringKey {
-        switch self {
-        case .day: "Every day"
-        case .week: "Every week"
-        case .month: "Every month"
-        }
     }
 }
 

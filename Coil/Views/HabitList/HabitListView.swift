@@ -94,6 +94,7 @@ struct HabitListView: View {
                 HabitCache.shared.invalidateAll()
                 TimerService.finishExpiredCountdowns(in: context)
                 ReminderScheduler.rescheduleAll(in: context)
+                Task { await HealthSync.syncAll(in: context) }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
