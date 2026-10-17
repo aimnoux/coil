@@ -95,6 +95,7 @@ struct HabitListView: View {
                 TimerService.finishExpiredCountdowns(in: context)
                 ReminderScheduler.rescheduleAll(in: context)
                 Task { await HealthSync.syncAll(in: context) }
+                AutoBackup.runIfDue(in: context)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in

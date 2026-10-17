@@ -9,12 +9,21 @@ targets:
           - iCloud.com.maxouni.coil
         com.apple.developer.icloud-services:
           - CloudKit
+          - CloudDocuments
+        com.apple.developer.ubiquity-container-identifiers:
+          - iCloud.com.maxouni.coil
         aps-environment: development
     info:
       path: Coil/Info.plist
       properties:
         UIBackgroundModes:
           - remote-notification
+        # Backups in iCloud Drive appear in a "Coil" folder in the Files app.
+        NSUbiquitousContainers:
+          iCloud.com.maxouni.coil:
+            NSUbiquitousContainerIsDocumentScopePublic: true
+            NSUbiquitousContainerName: Coil
+            NSUbiquitousContainerSupportedFolderLevels: Any
     settings:
       base:
         # OTHER_SWIFT_FLAGS (not SWIFT_ACTIVE_COMPILATION_CONDITIONS) so it combines with health.yml.

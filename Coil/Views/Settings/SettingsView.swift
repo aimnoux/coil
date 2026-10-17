@@ -161,6 +161,15 @@ struct SettingsView: View {
             } label: {
                 Label("Import Backup", systemImage: "square.and.arrow.down")
             }
+            NavigationLink {
+                AutoBackupView()
+            } label: {
+                LabeledContent {
+                    Text(AutoBackup.frequency == .off ? String(localized: "Off") : String(localized: "On"))
+                } label: {
+                    Label("Automatic Backups", systemImage: "clock.arrow.2.circlepath")
+                }
+            }
         } header: {
             Text("Data")
         } footer: {
