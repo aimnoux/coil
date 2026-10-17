@@ -20,7 +20,10 @@ struct StreakWidget: Widget {
 
 struct StreakWidgetView: View {
     let entry: HabitsEntry
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var environmentFamily
+    /// Lets the debug gallery render a specific size outside WidgetKit.
+    var familyOverride: WidgetFamily? = nil
+    private var family: WidgetFamily { familyOverride ?? environmentFamily }
 
     var body: some View {
         if let habit = entry.habits.first {
@@ -91,7 +94,10 @@ struct ProgressWidget: Widget {
 
 struct ProgressWidgetView: View {
     let entry: HabitsEntry
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var environmentFamily
+    /// Lets the debug gallery render a specific size outside WidgetKit.
+    var familyOverride: WidgetFamily? = nil
+    private var family: WidgetFamily { familyOverride ?? environmentFamily }
 
     var body: some View {
         if let habit = entry.habits.first {
@@ -188,7 +194,10 @@ nonisolated struct HeatmapProvider: TimelineProvider {
 
 struct HeatmapWidgetView: View {
     let entry: HeatmapEntry
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var environmentFamily
+    /// Lets the debug gallery render a specific size outside WidgetKit.
+    var familyOverride: WidgetFamily? = nil
+    private var family: WidgetFamily { familyOverride ?? environmentFamily }
 
     var body: some View {
         let weeksShown = family == .systemLarge ? 20 : 18
@@ -230,6 +239,6 @@ struct HeatmapWidgetView: View {
         guard day <= entry.today else { return .clear }
         guard let value = entry.values[day] else { return Color(.quaternarySystemFill) }
         if value == 0 { return Color(.systemFill) }
-        return Color.accentColor.opacity(0.25 + 0.75 * value)
+        return Color.coilAccent.opacity(0.25 + 0.75 * value)
     }
 }

@@ -9,7 +9,7 @@ struct HabitControl: ControlWidget {
             ControlWidgetToggle(value.name, isOn: value.isDone, action: SetHabitDoneIntent(habitID: value.id)) { isOn in
                 Label(isOn ? String(localized: "Done") : String(localized: "Not done"), systemImage: value.icon)
             }
-            .tint(.accentColor)
+            .tint(Color.coilAccent)
         }
         .displayName("Check Off Habit")
         .description("Mark a habit as done for today.")

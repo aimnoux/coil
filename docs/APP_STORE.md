@@ -124,10 +124,10 @@ APPLE ЗДОРОВЬЕ
 
 ## Ссылки
 
-- **Privacy Policy URL** (обязательно): `https://aimnoux.github.io/coil-app/privacy.html` — после публикации
-  сайта скриптом `scripts/publish-site.sh твой@email` (он создаёт отдельный публичный репозиторий `coil-app`
-  с GitHub Pages, потому что основной репозиторий приватный). Эта же ссылка уже стоит в приложении
-  (Настройки → О приложении).
+- **Privacy Policy URL** (обязательно): `https://aimnoux.github.io/coil-app/privacy.html` — уже опубликована
+  (публичный репозиторий `aimnoux/coil-app` с GitHub Pages; основной репозиторий остаётся приватным). Контакт на
+  странице — GitHub Issues; чтобы указать email, перезапустите `scripts/publish-site.sh твой@email`.
+  Эта же ссылка стоит в приложении (Настройки → О приложении).
 - **Support URL** (обязательно): `https://aimnoux.github.io/coil-app/support.html`.
 - **Marketing URL** (необязательно): `https://aimnoux.github.io/coil-app/`.
 

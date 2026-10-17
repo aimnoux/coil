@@ -44,7 +44,10 @@ nonisolated struct HabitProvider: AppIntentTimelineProvider {
 
 struct HabitWidgetView: View {
     let entry: HabitsEntry
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var environmentFamily
+    /// Lets the debug gallery render a specific size outside WidgetKit.
+    var familyOverride: WidgetFamily? = nil
+    private var family: WidgetFamily { familyOverride ?? environmentFamily }
 
     var body: some View {
         if let habit = entry.habits.first {

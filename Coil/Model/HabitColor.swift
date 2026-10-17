@@ -57,6 +57,11 @@ nonisolated struct HabitColor: Hashable, Identifiable {
 }
 
 nonisolated extension Color {
+    /// Coil's muted lavender accent; widgets use it because they don't get the app's AccentColor asset.
+    static let coilAccent = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(hex: 0xA4B0EB) : UIColor(hex: 0x7682C4)
+    })
+
     init(hex: UInt32) {
         self.init(
             red: Double((hex >> 16) & 0xFF) / 255,

@@ -87,7 +87,14 @@ xcodebuild -scheme Coil -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
 - `-sampleData` — демо-привычки во временной базе в памяти (реальные данные не трогаются);
 - `-seedSampleData` — заполнить демо-привычками пустую реальную базу (например, чтобы посмотреть виджеты);
 - `-screenshotHabit N`, `-screenshotEditor YES`, `-screenshotSelect YES` — сразу открыть нужный экран
-  (только Debug, для скриншотов).
+  (только Debug, для скриншотов);
+- `-debugReminders YES` — вывести в консоль все запланированные напоминания;
+- `-seedHealth YES` (сборка с `COIL_HEALTH=true`) — записать в «Здоровье» симулятора неделю шагов и привязанную привычку;
+- `-renderWidgets YES` (сборка с `COIL_WIDGETS=true`) — отрисовать все виджеты с реальными данными в
+  `Documents/WidgetGallery` приложения.
+
+Сайт с политикой конфиденциальности опубликован: https://aimnoux.github.io/coil-app/privacy.html
+(`scripts/publish-site.sh [email]` переопубликует его; без email контактом служат GitHub Issues).
 
 Скрипты:
 - `python3 scripts/make_icon.py Coil/Resources/Assets.xcassets/AppIcon.appiconset` — перерисовать иконку (нужны numpy и Pillow);

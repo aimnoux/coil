@@ -540,6 +540,10 @@ extension HabitListView {
             Task { await HealthSync.seedForTesting(in: context) }
         }
         #endif
+        if arguments.bool(forKey: "renderWidgets"),
+           let renderer = NSClassFromString("CoilWidgetGalleryRenderer") as? NSObject.Type {
+            renderer.perform(NSSelectorFromString("render"))
+        }
         if arguments.bool(forKey: "debugReminders") {
             // Prints the scheduled reminders so they can be checked from the command line.
             Task {

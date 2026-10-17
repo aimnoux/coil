@@ -37,7 +37,10 @@ nonisolated struct HabitsListProvider: TimelineProvider {
 
 struct HabitsListWidgetView: View {
     let entry: HabitsEntry
-    @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetFamily) private var environmentFamily
+    /// Lets the debug gallery render a specific size outside WidgetKit.
+    var familyOverride: WidgetFamily? = nil
+    private var family: WidgetFamily { familyOverride ?? environmentFamily }
 
     private var limit: Int { family == .systemLarge ? 7 : 3 }
     private var dayCount: Int { family == .systemLarge ? 5 : 4 }

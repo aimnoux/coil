@@ -3,6 +3,14 @@
 # See docs/WIDGETS.md.
 targets:
   Coil:
+    sources:
+      # Debug-only: widget views compiled into the app for WidgetGalleryRenderer.
+      - Widgets/WidgetData.swift
+      - Widgets/HabitWidget.swift
+      - Widgets/HabitsListWidget.swift
+      - Widgets/HabitChartWidget.swift
+      - Widgets/MoreWidgets.swift
+      - Widgets/WidgetGalleryRenderer.swift
     entitlements:
       path: Coil/Coil.entitlements
       properties:
@@ -15,7 +23,9 @@ targets:
     type: app-extension
     platform: iOS
     sources:
-      - Widgets
+      - path: Widgets
+        excludes:
+          - WidgetGalleryRenderer.swift
       - Coil/Domain
       - Coil/Model
       - path: Coil/Support
