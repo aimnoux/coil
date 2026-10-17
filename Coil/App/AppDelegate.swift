@@ -53,11 +53,13 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let action = response.actionIdentifier
         // The day the reminder was delivered, so "Done" on yesterday's reminder marks yesterday.
         let deliveredAt = response.notification.date
-        guard let idString = response.notification.request.content.userInfo[ReminderScheduler.habitIDKey] as? String,
+        let userInfo = response.notification.request.content.userInfo
+        let plannedDay = userInfo[ReminderScheduler.dayKey] as? Int
+        guard let idString = userInfo[ReminderScheduler.habitIDKey] as? String,
               let id = UUID(uuidString: idString)
         else { return }
         await MainActor.run {
-            handle(action: action, habitID: id, day: Day(deliveredAt))
+            handle(action: action, habitID: id, day: plannedDay.map(Day.init(index:)) ?? Day(deliveredAt))
         }
     }
 
@@ -70,9 +72,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         case ReminderScheduler.doneAction:
             habit.setRecord(.yes, on: day, in: context)
             try? context.save()
+            ReminderScheduler.habitCompleted(habit, on: day)
         case ReminderScheduler.snoozeAction:
             let minutes = UserDefaults.standard.object(forKey: SettingsKey.snoozeMinutes) as? Int ?? 15
-            ReminderScheduler.snooze(habit, minutes: minutes)
+            ReminderScheduler.snooze(habit, minutes: minutes, day: day)
         default:
             Router.shared.habitToOpen = habit.id
         }

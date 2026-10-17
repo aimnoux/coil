@@ -76,6 +76,7 @@ struct HabitListView: View {
             if phase == .active {
                 today = .today()
                 HabitCache.shared.invalidateAll()
+                ReminderScheduler.rescheduleAll(in: context)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in
@@ -345,8 +346,8 @@ struct HabitListView: View {
         withAnimation(.snappy) {
             habit.setRecord(next, on: day, in: context)
         }
-        if day == today, next?.state == .yes {
-            ReminderScheduler.removeDeliveredReminders(for: habit)
+        if next?.state == .yes {
+            ReminderScheduler.habitCompleted(habit, on: day)
         }
     }
 
