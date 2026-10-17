@@ -6,6 +6,7 @@ import WidgetKit
 struct CoilApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @AppStorage(SettingsKey.theme) private var theme = AppTheme.system
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -23,5 +24,11 @@ struct CoilApp: App {
                 }
         }
         .modelContainer(Persistence.shared)
+        .onChange(of: scenePhase) { _, phase in
+            // Write everything before iOS suspends or closes the app.
+            if phase != .active, Persistence.shared.mainContext.hasChanges {
+                try? Persistence.shared.mainContext.save()
+            }
+        }
     }
 }

@@ -138,8 +138,10 @@ final class Habit {
     }
 
     /// Marks entries as changed so cached statistics are recomputed.
+    @MainActor
     func touch() {
         revision &+= 1
+        if let modelContext { Persistence.saveSoon(modelContext) }
     }
 
     var createdDay: Day { Day(createdAt) }
@@ -237,6 +239,7 @@ final class Habit {
     }
 
     /// Sets or clears (`nil`) the record for a day, removing any duplicates. A note on the day is kept.
+    @MainActor
     func setRecord(_ record: EntryRecord?, on day: Day, in context: ModelContext, source: EntrySource = .manual) {
         touch()
         let entry = uniqueEntry(on: day, in: context)
@@ -256,6 +259,7 @@ final class Habit {
     }
 
     /// Sets the note for a day; an empty note on a day without a checkmark removes the entry.
+    @MainActor
     func setNote(_ note: String, on day: Day, in context: ModelContext) {
         touch()
         let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)

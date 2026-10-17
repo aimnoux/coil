@@ -1,6 +1,9 @@
 import SwiftData
 import SwiftUI
 import UserNotifications
+import os
+
+nonisolated private let log = Logger(subsystem: "com.maxouni.coil", category: "notifications")
 
 /// Routes navigation requests (from notifications) to the habit list.
 @Observable
@@ -57,7 +60,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let plannedDay = userInfo[ReminderScheduler.dayKey] as? Int
         guard let idString = userInfo[ReminderScheduler.habitIDKey] as? String,
               let id = UUID(uuidString: idString)
-        else { return }
+        else {
+            log.error("Notification without a habit id: \(userInfo.keys.map { "\($0)" }, privacy: .public)")
+            return
+        }
+        log.info("Notification action \(action, privacy: .public) for \(idString, privacy: .public), day \(plannedDay ?? -1)")
         await MainActor.run {
             handle(action: action, habitID: id, day: plannedDay.map(Day.init(index:)) ?? Day(deliveredAt))
         }
@@ -66,12 +73,16 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     private func handle(action: String, habitID: UUID, day: Day) {
         let context = Persistence.shared.mainContext
         let descriptor = FetchDescriptor<Habit>(predicate: #Predicate { $0.id == habitID })
-        guard let habit = try? context.fetch(descriptor).first else { return }
+        guard let habit = try? context.fetch(descriptor).first else {
+            log.error("No habit for notification \(habitID.uuidString, privacy: .public)")
+            return
+        }
 
         switch action {
         case ReminderScheduler.doneAction:
             habit.setRecord(.yes, on: day, in: context)
-            try? context.save()
+            do { try context.save() } catch { log.error("Save failed: \(error.localizedDescription, privacy: .public)") }
+            log.info("Marked \(habit.name, privacy: .public) done on day \(day.index)")
             ReminderScheduler.habitCompleted(habit, on: day)
         case ReminderScheduler.snoozeAction:
             let minutes = UserDefaults.standard.object(forKey: SettingsKey.snoozeMinutes) as? Int ?? 15

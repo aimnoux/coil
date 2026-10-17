@@ -87,6 +87,19 @@ enum Persistence {
         }
     }
 
+    private static var pendingSave: Task<Void, Never>?
+
+    /// Saves shortly after a change, so a check-in survives even if the app is closed right away.
+    /// Changes in quick succession are written together.
+    static func saveSoon(_ context: ModelContext) {
+        pendingSave?.cancel()
+        pendingSave = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled, context.hasChanges else { return }
+            try? context.save()
+        }
+    }
+
     /// An in-memory container with demo data for SwiftUI previews.
     static var preview: ModelContainer {
         let container = makeContainer(inMemory: true)

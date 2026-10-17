@@ -2,18 +2,24 @@
 # Publishes site/ (privacy policy, support, landing page) to a separate PUBLIC GitHub repository
 # with GitHub Pages, because the app repository is private.
 #
-# Usage: scripts/publish-site.sh you@example.com [repo-name]
+# Usage: scripts/publish-site.sh [you@example.com] [repo-name]
+# Without an email, the pages point people to GitHub Issues of the public site repository.
 # Result: https://<github-user>.github.io/<repo-name>/privacy.html
 set -euo pipefail
 
-EMAIL="${1:?Pass the contact email shown on the pages}"
+EMAIL="${1:-}"
 REPO="${2:-coil-app}"
 USER="$(gh api user --jq .login)"
 WORK="$(mktemp -d)"
 
 cp -R "$(dirname "$0")/../site/." "$WORK/"
-# Fill in the contact address.
-find "$WORK" -name '*.html' -exec sed -i '' "s/CONTACT_EMAIL/${EMAIL}/g" {} +
+if [ -n "$EMAIL" ]; then
+  find "$WORK" -name '*.html' -exec sed -i '' "s/CONTACT_EMAIL/${EMAIL}/g" {} +
+else
+  ISSUES="https://github.com/$USER/$REPO/issues"
+  find "$WORK" -name '*.html' -exec sed -i '' \
+    -e "s#mailto:CONTACT_EMAIL#${ISSUES}#g" -e "s#>CONTACT_EMAIL<#>GitHub Issues<#g" {} +
+fi
 
 cd "$WORK"
 git init -q -b main

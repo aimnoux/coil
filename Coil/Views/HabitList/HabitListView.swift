@@ -1,5 +1,6 @@
 import SwiftData
 import SwiftUI
+import UserNotifications
 
 /// The main screen: every habit with its strength and checkmarks for the last few days.
 struct HabitListView: View {
@@ -533,6 +534,19 @@ extension HabitListView {
         }
         if arguments.bool(forKey: "screenshotEditor") {
             editorHabit = HabitEditorTarget(habit: habits.first)
+        }
+        if arguments.bool(forKey: "debugReminders") {
+            // Prints the scheduled reminders so they can be checked from the command line.
+            Task {
+                try? await Task.sleep(for: .seconds(3))
+                let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
+                print("COIL-REMINDERS count=\(pending.count)")
+                for habit in habits { print("COIL-HABIT \(habit.name) | \(habit.id.uuidString) | today=\(Day.today().index)") }
+                for request in pending.sorted(by: { $0.identifier < $1.identifier }) {
+                    let date = (request.trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate()
+                    print("COIL-REMINDER \(request.content.title) | \(date.map { $0.formatted(date: .abbreviated, time: .shortened) } ?? "-")")
+                }
+            }
         }
         if arguments.bool(forKey: "screenshotInsights") {
             showingInsights = true
