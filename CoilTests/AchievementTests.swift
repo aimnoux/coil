@@ -60,3 +60,30 @@ struct AchievementTests {
         #expect(list.first { $0.kind == .allDoneInADay }?.unlocked == today)
     }
 }
+
+struct SummaryTests {
+    let today = Day(year: 2026, month: 10, day: 17)
+
+    @Test func periodRateSkipsNeutralDaysAndUnfinishedToday() {
+        let start = today.advanced(by: -6)
+        let data = HabitData(
+            createdDay: start,
+            entries: [start: .yes, start.advanced(by: 1): .yes, start.advanced(by: 2): .skip],
+            pausedDays: [start.advanced(by: 3)]
+        )
+        let stats = HabitStats(data: data, today: today)
+        let result = SummaryEngine.result(stats, in: start...today)
+        // 7 days − skip − pause − today (not done yet) = 4 considered, 2 kept.
+        #expect(result.considered == 4)
+        #expect(result.kept == 2)
+        #expect(result.rate == 0.5)
+    }
+
+    @Test func dailyCompletionIsTheShareOfActiveHabits() {
+        let a = HabitStats(data: HabitData(createdDay: today.advanced(by: -1), entries: [today: .yes]), today: today)
+        let b = HabitStats(data: HabitData(createdDay: today.advanced(by: -1), entries: [:]), today: today)
+        let map = SummaryEngine.dailyCompletion([a, b], from: today.advanced(by: -1), to: today)
+        #expect(map[today] == 0.5)
+        #expect(map[today.advanced(by: -1)] == 0)
+    }
+}

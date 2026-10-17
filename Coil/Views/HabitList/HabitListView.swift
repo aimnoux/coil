@@ -38,6 +38,7 @@ struct HabitListView: View {
     @State private var habitToDelete: Habit?
     @State private var showingSettings = false
     @State private var addingHabit = false
+    @State private var showingInsights = false
     @State private var hint: LocalizedStringKey?
 
     var body: some View {
@@ -63,6 +64,9 @@ struct HabitListView: View {
         }
         .sheet(isPresented: $addingHabit) {
             TemplatePickerView()
+        }
+        .sheet(isPresented: $showingInsights) {
+            InsightsView()
         }
         .confirmationDialog(
             "Delete this habit?",
@@ -248,6 +252,9 @@ struct HabitListView: View {
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
             Button("Settings", systemImage: "gearshape") { showingSettings = true }
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Button("Statistics", systemImage: "chart.bar.xaxis") { showingInsights = true }
         }
         if editMode.isEditing {
             ToolbarItem(placement: .topBarTrailing) {
@@ -521,6 +528,9 @@ extension HabitListView {
         }
         if arguments.bool(forKey: "screenshotEditor") {
             editorHabit = HabitEditorTarget(habit: habits.first)
+        }
+        if arguments.bool(forKey: "screenshotInsights") {
+            showingInsights = true
         }
         if arguments.bool(forKey: "screenshotTemplates") {
             addingHabit = true
