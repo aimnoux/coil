@@ -535,6 +535,11 @@ extension HabitListView {
         if arguments.bool(forKey: "screenshotEditor") {
             editorHabit = HabitEditorTarget(habit: habits.first)
         }
+        #if HEALTHKIT
+        if arguments.bool(forKey: "seedHealth") {
+            Task { await HealthSync.seedForTesting(in: context) }
+        }
+        #endif
         if arguments.bool(forKey: "debugReminders") {
             // Prints the scheduled reminders so they can be checked from the command line.
             Task {

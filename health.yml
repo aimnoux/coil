@@ -10,3 +10,5 @@ targets:
       base:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) HEALTHKIT
         INFOPLIST_KEY_NSHealthShareUsageDescription: "Coil reads the Health data you choose (like steps, sleep or mindful minutes) to check off habits linked to it. Your data stays on your device."
+        # Only used by the debug-only -seedHealth launch argument to write test data in the simulator.
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: "Coil writes sample step counts only in debug builds for testing."

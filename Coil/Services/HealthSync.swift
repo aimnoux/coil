@@ -192,6 +192,40 @@ enum HealthSync {
         }
         return [:]
     }
+    #if DEBUG
+    /// `-seedHealth`: writes a week of step counts into the simulator's Health data and adds a
+    /// "Steps" habit linked to it, so the integration can be tried without a real device.
+    @MainActor
+    static func seedForTesting(in context: ModelContext) async {
+        let steps = HKQuantityType(.stepCount)
+        try? await store.requestAuthorization(toShare: [steps], read: [steps])
+        let today = Day.today()
+        let samples: [HKQuantitySample] = (0..<7).map { offset in
+            let day = today.advanced(by: -offset).date()
+            let count = Double([9_412, 6_120, 11_034, 8_250, 4_380, 12_900, 7_700][offset])
+            return HKQuantitySample(
+                type: steps,
+                quantity: HKQuantity(unit: .count(), doubleValue: count),
+                start: day.addingTimeInterval(9 * 3600),
+                end: day.addingTimeInterval(18 * 3600)
+            )
+        }
+        try? await store.save(samples)
+        let habits = (try? context.fetch(FetchDescriptor<Habit>())) ?? []
+        if !habits.contains(where: { $0.healthMetric == .steps }) {
+            let habit = Habit(name: "Steps", kind: .measurable)
+            habit.healthMetric = .steps
+            habit.unit = String(localized: "steps")
+            habit.targetValue = 8000
+            habit.iconName = "figure.walk"
+            habit.colorIndex = 7
+            habit.createdAt = today.advanced(by: -6).date()
+            habit.position = -1
+            context.insert(habit)
+        }
+        await syncAll(in: context)
+    }
+    #endif
     #else
     @MainActor
     static func syncAll(in context: ModelContext, today: Day = .today()) async {}
