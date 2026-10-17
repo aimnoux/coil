@@ -15,6 +15,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         UNUserNotificationCenter.current().delegate = self
+        useRoundedNavigationTitles()
         Task {
             // Registering categories before the user has decided can trigger the permission prompt
             // on launch, so only do it once notifications are allowed.
@@ -23,6 +24,19 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
             }
         }
         return true
+    }
+
+    /// Navigation bar titles are UIKit text, so `.fontDesign(.rounded)` doesn't reach them.
+    private func useRoundedNavigationTitles() {
+        func rounded(_ style: UIFont.TextStyle, weight: UIFont.Weight) -> UIFont {
+            let base = UIFont.preferredFont(forTextStyle: style)
+            let font = UIFont.systemFont(ofSize: base.pointSize, weight: weight)
+            guard let descriptor = font.fontDescriptor.withDesign(.rounded) else { return font }
+            return UIFont(descriptor: descriptor, size: base.pointSize)
+        }
+        let appearance = UINavigationBar.appearance()
+        appearance.largeTitleTextAttributes = [.font: rounded(.largeTitle, weight: .bold)]
+        appearance.titleTextAttributes = [.font: rounded(.headline, weight: .semibold)]
     }
 
     nonisolated func userNotificationCenter(

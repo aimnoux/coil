@@ -16,6 +16,7 @@ nonisolated struct WidgetHabit: Identifiable, Sendable {
     let week: [Checkmark]
 
     var color: Color { HabitColor(index: colorIndex).color }
+    var ink: Color { HabitColor(index: colorIndex).ink }
     var today: Checkmark { week.last ?? .unknown }
 
     @MainActor

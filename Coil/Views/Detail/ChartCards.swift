@@ -4,7 +4,7 @@ import SwiftUI
 /// Habit strength over time.
 struct ScoreChartCard: View {
     let stats: HabitStats
-    let color: Color
+    let palette: HabitColor
     let firstWeekday: Int
 
     @AppStorage("scoreChartBucket") private var bucket = TimeBucket.week
@@ -22,7 +22,7 @@ struct ScoreChartCard: View {
                     )
                     .interpolationMethod(.monotone)
                     .foregroundStyle(
-                        LinearGradient(colors: [color.opacity(0.35), color.opacity(0.02)], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(colors: [palette.color.opacity(0.45), palette.color.opacity(0.03)], startPoint: .top, endPoint: .bottom)
                     )
                     LineMark(
                         x: .value("Date", point.start.date(), unit: bucket.calendarComponent),
@@ -30,14 +30,14 @@ struct ScoreChartCard: View {
                     )
                     .interpolationMethod(.monotone)
                     .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                    .foregroundStyle(color)
+                    .foregroundStyle(palette.ink)
                 }
                 if let last = points.last {
                     PointMark(
                         x: .value("Date", last.start.date(), unit: bucket.calendarComponent),
                         y: .value("Strength", last.score)
                     )
-                    .foregroundStyle(color)
+                    .foregroundStyle(palette.ink)
                     .symbolSize(50)
                 }
             }
@@ -61,7 +61,7 @@ struct ScoreChartCard: View {
 /// How many times the habit was done (or the total amount) per period.
 struct HistoryChartCard: View {
     let stats: HabitStats
-    let color: Color
+    let palette: HabitColor
     let firstWeekday: Int
     let isMeasurable: Bool
 
@@ -80,7 +80,7 @@ struct HistoryChartCard: View {
                         y: .value("Count", bar.value),
                         width: .ratio(0.7)
                     )
-                    .foregroundStyle(bar.start == bars.last?.start ? color : color.opacity(0.75))
+                    .foregroundStyle(bar.start == bars.last?.start ? palette.color : palette.color.opacity(0.6))
                     .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     .annotation(position: .top, spacing: 2) {
                         if bar.value > 0 {

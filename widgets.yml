@@ -21,6 +21,7 @@ targets:
       - Coil/Support
       - Coil/Intents
       - Coil/Views/Components/ScoreRing.swift
+      - Coil/Views/Components/CheckmarkSymbol.swift
       - Coil/Resources/Localizable.xcstrings
     info:
       path: Widgets/Info.plist

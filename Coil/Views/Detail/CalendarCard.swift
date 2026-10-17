@@ -92,7 +92,7 @@ struct CalendarCard: View {
                         if checkmark == .skip {
                             Image(systemName: "arrow.turn.up.right")
                                 .font(.system(size: 9, weight: .bold))
-                                .foregroundStyle(habit.color.color)
+                                .foregroundStyle(habit.color.ink)
                                 .offset(x: 6, y: -6)
                         }
                     }
@@ -144,6 +144,7 @@ struct CalendarCard: View {
 
     private func fill(for day: Day, checkmark: Checkmark) -> (background: Color, foreground: Color) {
         let color = habit.color.color
+        let ink = habit.color.ink
         if habit.isMeasurable {
             guard let amount = stats.amount(on: day) else {
                 return (Color(.tertiarySystemFill), .secondary)
@@ -154,12 +155,12 @@ struct CalendarCard: View {
                 type: habit.targetType
             )
             if performance >= 1 { return (color, .white) }
-            return (color.opacity(0.15 + 0.5 * performance), .primary)
+            return (color.opacity(0.15 + 0.45 * performance), ink)
         }
         switch checkmark {
         case .yesManual: return (color, .white)
-        case .yesAuto: return (color.opacity(0.4), .white)
-        case .skip: return (color.opacity(0.15), .primary)
+        case .yesAuto: return (color.opacity(0.35), ink)
+        case .skip: return (color.opacity(0.15), ink)
         case .no: return (Color(.systemFill), .secondary)
         case .unknown: return (Color(.tertiarySystemFill), .secondary)
         }

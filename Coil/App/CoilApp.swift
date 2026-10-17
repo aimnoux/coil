@@ -10,6 +10,7 @@ struct CoilApp: App {
     var body: some Scene {
         WindowGroup {
             HabitListView()
+                .fontDesign(.rounded)
                 .preferredColorScheme(theme.colorScheme)
                 .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { _ in
                     // Keep home screen widgets in step with changes made in the app.

@@ -83,7 +83,7 @@ struct HabitEditView: View {
         Section {
             TextField("Name", text: $name, prompt: Text(kind == .yesNo ? "Exercise" : "Read"))
                 .font(.headline)
-                .foregroundStyle(HabitColor(index: colorIndex).color)
+                .foregroundStyle(HabitColor(index: colorIndex).ink)
                 .focused($nameFocused)
                 .submitLabel(.next)
             TextField(

@@ -6,6 +6,7 @@ struct HabitsListWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "HabitsListWidget", provider: HabitsListProvider()) { entry in
             HabitsListWidgetView(entry: entry)
+                .fontDesign(.rounded)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Habits")
@@ -78,7 +79,6 @@ struct HabitsListWidgetView: View {
                 .frame(width: 18, height: 18)
             Text(habit.name)
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(habit.color)
                 .lineLimit(1)
             Spacer(minLength: 4)
             ForEach(Array(habit.week.suffix(dayCount).enumerated()), id: \.offset) { index, checkmark in
@@ -86,11 +86,7 @@ struct HabitsListWidgetView: View {
                     CheckButton(habit: habit, size: 26)
                         .frame(width: 30)
                 } else {
-                    Image(systemName: checkmark.isSatisfied ? "checkmark" : "xmark")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(checkmark.isSatisfied
-                            ? (checkmark == .yesAuto ? habit.color.opacity(0.45) : habit.color)
-                            : Color(.tertiaryLabel))
+                    CheckmarkSymbol(checkmark: checkmark, fill: habit.color, ink: habit.ink, size: 22)
                         .frame(width: 30)
                 }
             }

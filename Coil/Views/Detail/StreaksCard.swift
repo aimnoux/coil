@@ -3,7 +3,7 @@ import SwiftUI
 /// The longest streaks as proportional bars with their dates.
 struct StreaksCard: View {
     let stats: HabitStats
-    let color: Color
+    let palette: HabitColor
 
     var body: some View {
         let streaks = stats.bestStreaks(limit: 8)
@@ -32,12 +32,12 @@ struct StreaksCard: View {
             GeometryReader { proxy in
                 let width = max(36, proxy.size.width * fraction)
                 Capsule()
-                    .fill(isCurrent ? color : color.opacity(0.55))
+                    .fill(isCurrent ? palette.color : palette.color.opacity(0.45))
                     .frame(width: width)
                     .overlay {
                         Text(streak.length, format: .number)
                             .font(.caption.weight(.bold).monospacedDigit())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(palette.ink)
                     }
                     .frame(maxWidth: .infinity)
             }
@@ -55,7 +55,7 @@ struct StreaksCard: View {
 /// On which weekdays the habit gets done, month by month.
 struct FrequencyCard: View {
     let stats: HabitStats
-    let color: Color
+    let palette: HabitColor
     let firstWeekday: Int
 
     var body: some View {
@@ -99,7 +99,7 @@ struct FrequencyCard: View {
     private func dot(count: Int, max: Int) -> some View {
         let fraction = Double(count) / Double(max)
         return Circle()
-            .fill(count == 0 ? Color(.tertiarySystemFill) : color.opacity(0.35 + 0.65 * fraction))
+            .fill(count == 0 ? Color(.tertiarySystemFill) : palette.color.opacity(0.4 + 0.6 * fraction))
             .frame(width: count == 0 ? 5 : 6 + 12 * fraction, height: count == 0 ? 5 : 6 + 12 * fraction)
     }
 }

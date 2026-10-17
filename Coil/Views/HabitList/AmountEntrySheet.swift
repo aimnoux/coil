@@ -40,7 +40,7 @@ struct AmountEntrySheet: View {
                         if !habit.unit.isEmpty {
                             Text(habit.unit)
                                 .font(.headline)
-                                .foregroundStyle(habit.color.color)
+                                .foregroundStyle(habit.color.ink)
                         }
                         Text(Formatting.target(for: habit))
                     }
@@ -97,8 +97,8 @@ struct AmountEntrySheet: View {
             Image(systemName: systemImage)
                 .font(.title2.weight(.semibold))
                 .frame(width: 52, height: 52)
-                .background(habit.color.color.opacity(0.15), in: Circle())
-                .foregroundStyle(habit.color.color)
+                .background(habit.color.color.opacity(0.3), in: Circle())
+                .foregroundStyle(habit.color.ink)
         }
         .buttonStyle(.borderless)
         .buttonRepeatBehavior(.enabled)

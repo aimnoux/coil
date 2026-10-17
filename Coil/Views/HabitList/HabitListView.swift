@@ -25,6 +25,9 @@ struct HabitListView: View {
     @State private var editMode: EditMode = .inactive
     @State private var selection = Set<UUID>()
     @State private var confirmingBulkDelete = false
+    #if DEBUG
+    @State private var openedScreenshotScreen = false
+    #endif
     @State private var editorHabit: HabitEditorTarget?
     @State private var amountTarget: AmountEntryTarget?
     @State private var habitToDelete: Habit?
@@ -77,7 +80,13 @@ struct HabitListView: View {
         }
         .onOpenURL(perform: handle)
         #if DEBUG
-        .task { openScreenForScreenshots() }
+        .onChange(of: habits.isEmpty, initial: true) { _, isEmpty in
+            // Wait until the habits have loaded before opening a screen for screenshots.
+            if !isEmpty && !openedScreenshotScreen {
+                openedScreenshotScreen = true
+                openScreenForScreenshots()
+            }
+        }
         #endif
         .onChange(of: Router.shared.habitToOpen, initial: true) { _, id in
             guard let id, let habit = habits.first(where: { $0.id == id }) else { return }

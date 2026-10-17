@@ -3,7 +3,7 @@ import SwiftUI
 /// Current habit strength, its change over the last month and year, totals and streaks.
 struct OverviewCard: View {
     let stats: HabitStats
-    let color: Color
+    let palette: HabitColor
     let isMeasurable: Bool
     let unit: String
 
@@ -11,11 +11,11 @@ struct OverviewCard: View {
         Card("Overview") {
             HStack(spacing: 20) {
                 ZStack {
-                    ScoreRing(score: stats.currentScore, color: color, lineWidth: 9)
+                    ScoreRing(score: stats.currentScore, color: palette.color, lineWidth: 9)
                     VStack(spacing: 0) {
                         Text(Formatting.percent(stats.currentScore))
                             .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundStyle(color)
+                            .foregroundStyle(palette.ink)
                             .contentTransition(.numericText())
                         Text("strength")
                             .font(.caption2)
@@ -59,7 +59,7 @@ struct OverviewCard: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(value)
                 .font(.title3.weight(.semibold).monospacedDigit())
-                .foregroundStyle(tinted ? color : .primary)
+                .foregroundStyle(tinted ? palette.ink : .primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(label)
@@ -117,7 +117,8 @@ struct TargetCard: View {
         let progress = target > 0 ? value / target : 1
         let isAtMost = habit.targetType == .atMost
         let good = isAtMost ? value <= target : progress >= 1
-        let color = isAtMost && !good ? Color.red : habit.color.color
+        // Going over an "at most" target shows in soft red.
+        let palette = isAtMost && !good ? HabitColor(index: 0) : habit.color
 
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -126,12 +127,12 @@ struct TargetCard: View {
                 Spacer()
                 Text("\(Formatting.number(value)) / \(Formatting.number(target.rounded(toPlaces: 1))) \(habit.unit)")
                     .font(.subheadline.monospacedDigit())
-                    .foregroundStyle(good ? color : .secondary)
+                    .foregroundStyle(good ? palette.ink : .secondary)
             }
             GeometryReader { proxy in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(color.opacity(0.15))
-                    Capsule().fill(color)
+                    Capsule().fill(palette.color.opacity(0.22))
+                    Capsule().fill(palette.color)
                         .frame(width: proxy.size.width * min(1, max(0, progress)))
                 }
             }

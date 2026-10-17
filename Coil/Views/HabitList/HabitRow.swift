@@ -18,12 +18,12 @@ struct HabitRow: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack(spacing: 12) {
-                ScoreRing(score: stats.currentScore, color: tint)
+                ScoreRing(score: stats.currentScore, color: fill)
                     .frame(width: 26, height: 26)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(habit.name)
                         .font(.body.weight(.medium))
-                        .foregroundStyle(habit.isArchived ? AnyShapeStyle(.secondary) : AnyShapeStyle(tint))
+                        .foregroundStyle(habit.isArchived ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                         .lineLimit(2)
                     if habit.isArchived {
                         Label("Archived", systemImage: "archivebox")
@@ -50,8 +50,13 @@ struct HabitRow: View {
         .padding(.vertical, 4)
     }
 
-    private var tint: Color {
-        habit.isArchived ? .secondary : habit.color.color
+    /// Archived habits are drawn in neutral gray.
+    private var fill: Color {
+        habit.isArchived ? Color(.systemGray3) : habit.color.color
+    }
+
+    private var ink: Color {
+        habit.isArchived ? Color(.secondaryLabel) : habit.color.ink
     }
 
     @ViewBuilder
@@ -71,11 +76,12 @@ struct HabitRow: View {
                         amount: stats.amount(on: day),
                         unit: habit.unit,
                         checkmark: checkmark,
-                        color: tint,
+                        fill: fill,
+                        ink: ink,
                         showQuestionMarks: showQuestionMarks
                     )
                 } else {
-                    CheckmarkSymbol(checkmark: checkmark, color: tint, showQuestionMarks: showQuestionMarks)
+                    CheckmarkSymbol(checkmark: checkmark, fill: fill, ink: ink, showQuestionMarks: showQuestionMarks)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -95,39 +101,38 @@ struct HabitRow: View {
     }
 }
 
-/// The value shown for one day of a measurable habit.
+/// The value shown for one day of a measurable habit: a soft pill when the target is met.
 struct AmountLabel: View {
     let amount: Double?
     let unit: String
     let checkmark: Checkmark
-    let color: Color
+    let fill: Color
+    let ink: Color
     let showQuestionMarks: Bool
 
     var body: some View {
-        VStack(spacing: 0) {
-            if checkmark == .skip {
-                Image(systemName: "arrow.turn.up.right")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(color.opacity(0.7))
-            } else if let amount {
+        if checkmark == .skip {
+            CheckmarkSymbol(checkmark: .skip, fill: fill, ink: ink)
+        } else if let amount {
+            let met = checkmark.isSatisfied
+            VStack(spacing: -1) {
                 Text(Formatting.compact(amount))
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(checkmark.isSatisfied ? color : Color(.secondaryLabel))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(Color(.secondaryLabel))
+                        .font(.system(size: 8, weight: .medium, design: .rounded))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
+                        .opacity(0.8)
                 }
-            } else {
-                Image(systemName: showQuestionMarks ? "questionmark" : "minus")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Color(.tertiaryLabel))
             }
+            .foregroundStyle(met ? ink : Color(.secondaryLabel))
+            .frame(width: 38, height: 34)
+            .background(met ? fill.opacity(0.32) : Color.clear, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        } else {
+            CheckmarkSymbol(checkmark: .unknown, fill: fill, ink: ink, showQuestionMarks: showQuestionMarks)
         }
-        .padding(.horizontal, 2)
     }
 }

@@ -7,6 +7,7 @@ struct HabitWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "HabitWidget", intent: SelectHabitIntent.self, provider: HabitProvider()) { entry in
             HabitWidgetView(entry: entry)
+                .fontDesign(.rounded)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Habit")
@@ -71,7 +72,7 @@ struct HabitWidgetView: View {
                     ScoreRing(score: habit.score, color: habit.color, lineWidth: 6)
                     Text(Formatting.percent(habit.score))
                         .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .foregroundStyle(habit.color)
+                        .foregroundStyle(habit.ink)
                 }
                 .frame(width: 52, height: 52)
                 Spacer()
@@ -80,7 +81,6 @@ struct HabitWidgetView: View {
             Spacer()
             Text(habit.name)
                 .font(.headline)
-                .foregroundStyle(habit.color)
                 .lineLimit(2)
             Label {
                 Text("\(habit.streak) days")
@@ -145,17 +145,17 @@ struct CheckButton: View {
     private func label(done: Bool, text: String?) -> some View {
         ZStack {
             Circle()
-                .fill(done ? habit.color : habit.color.opacity(0.15))
+                .fill(done ? habit.color : habit.color.opacity(0.25))
             if let text {
                 Text(text)
                     .font(.system(size: size * 0.32, weight: .bold, design: .rounded))
-                    .foregroundStyle(done ? .white : habit.color)
+                    .foregroundStyle(done ? .white : habit.ink)
                     .minimumScaleFactor(0.5)
                     .padding(4)
             } else {
                 Image(systemName: "checkmark")
                     .font(.system(size: size * 0.42, weight: .bold))
-                    .foregroundStyle(done ? .white : habit.color.opacity(0.6))
+                    .foregroundStyle(done ? .white : habit.ink.opacity(0.6))
             }
         }
         .frame(width: size, height: size)

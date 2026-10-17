@@ -9,7 +9,7 @@ struct ScoreRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(color.opacity(0.18), lineWidth: lineWidth)
+                .stroke(color.opacity(0.28), lineWidth: lineWidth)
             Circle()
                 .trim(from: 0, to: max(0.001, min(1, score)))
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))

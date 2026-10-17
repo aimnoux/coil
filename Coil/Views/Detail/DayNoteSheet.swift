@@ -79,7 +79,7 @@ struct DayNotesCard: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(Formatting.fullDate(item.day))
                                     .font(.caption.weight(.semibold))
-                                    .foregroundStyle(habit.color.color)
+                                    .foregroundStyle(habit.color.ink)
                                 Text(item.note)
                                     .font(.subheadline)
                                     .foregroundStyle(.primary)

@@ -7,6 +7,7 @@ struct HabitChartWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "HabitChartWidget", intent: SelectHabitIntent.self, provider: HabitChartProvider()) { entry in
             HabitChartWidgetView(entry: entry)
+                .fontDesign(.rounded)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
         .configurationDisplayName("Habit Strength")
@@ -75,12 +76,11 @@ struct HabitChartWidgetView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(habit.name)
                         .font(.headline)
-                        .foregroundStyle(habit.color)
                         .lineLimit(2)
                     Spacer(minLength: 0)
                     Text(Formatting.percent(habit.score))
                         .font(.system(size: 30, weight: .bold, design: .rounded))
-                        .foregroundStyle(habit.color)
+                        .foregroundStyle(habit.ink)
                     Text("strength")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -104,7 +104,7 @@ struct HabitChartWidgetView: View {
                     LineMark(x: .value("Date", point.date), y: .value("Strength", point.score))
                         .interpolationMethod(.monotone)
                         .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                        .foregroundStyle(habit.color)
+                        .foregroundStyle(habit.ink)
                 }
                 .chartYScale(domain: 0...1)
                 .chartYAxis(.hidden)

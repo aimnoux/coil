@@ -19,17 +19,17 @@ struct HabitDetailView: View {
     var body: some View {
         let stats = habit.stats(today: today)
         let firstWeekday = FirstWeekday.resolve(storedFirstWeekday)
-        let color = habit.color.color
+        let palette = habit.color
 
         ScrollView {
             VStack(spacing: 16) {
                 DetailHeader(habit: habit)
-                OverviewCard(stats: stats, color: color, isMeasurable: habit.isMeasurable, unit: habit.unit)
+                OverviewCard(stats: stats, palette: palette, isMeasurable: habit.isMeasurable, unit: habit.unit)
                 if habit.isMeasurable {
                     TargetCard(habit: habit, stats: stats, firstWeekday: firstWeekday)
                 }
-                ScoreChartCard(stats: stats, color: color, firstWeekday: firstWeekday)
-                HistoryChartCard(stats: stats, color: color, firstWeekday: firstWeekday, isMeasurable: habit.isMeasurable)
+                ScoreChartCard(stats: stats, palette: palette, firstWeekday: firstWeekday)
+                HistoryChartCard(stats: stats, palette: palette, firstWeekday: firstWeekday, isMeasurable: habit.isMeasurable)
                 CalendarCard(
                     habit: habit,
                     stats: stats,
@@ -37,8 +37,8 @@ struct HabitDetailView: View {
                     onEditAmount: { day in amountTarget = AmountEntryTarget(habit: habit, day: day) },
                     onEditNote: { day in noteTarget = DayNoteTarget(habit: habit, day: day) }
                 )
-                StreaksCard(stats: stats, color: color)
-                FrequencyCard(stats: stats, color: color, firstWeekday: firstWeekday)
+                StreaksCard(stats: stats, palette: palette)
+                FrequencyCard(stats: stats, palette: palette, firstWeekday: firstWeekday)
                 DayNotesCard(habit: habit) { day in
                     noteTarget = DayNoteTarget(habit: habit, day: day)
                 }
@@ -56,7 +56,7 @@ struct HabitDetailView: View {
         .background(Color(.systemGroupedBackground))
         .navigationTitle(habit.name)
         .navigationBarTitleDisplayMode(.large)
-        .tint(color)
+        .tint(palette.ink)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") { editing = true }
