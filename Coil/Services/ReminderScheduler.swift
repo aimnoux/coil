@@ -57,9 +57,11 @@ enum ReminderScheduler {
     static func rescheduleAll(in context: ModelContext, today: Day = .today()) {
         let habits = (try? context.fetch(FetchDescriptor<Habit>())) ?? []
         let plan = makePlan(habits: habits, today: today, now: Date())
-        center.getPendingNotificationRequests { pending in
-            let stale = pending.map(\.identifier).filter { $0.hasPrefix("reminder-") }
+        Task { @MainActor in
             let center = UNUserNotificationCenter.current()
+            let stale = await center.pendingNotificationRequests()
+                .map(\.identifier)
+                .filter { $0.hasPrefix("reminder-") }
             center.removePendingNotificationRequests(withIdentifiers: stale)
             for request in plan { center.add(request) }
         }

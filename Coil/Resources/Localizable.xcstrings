@@ -13,6 +13,31 @@
     "%@ / %@ %@": {
       "shouldTranslate": false
     },
+    "%@ – %@": {
+      "shouldTranslate": false
+    },
+    "%@: %lld clean": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld дн. без срыва"
+          }
+        }
+      }
+    },
+    "%@: %lld in a row": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$lld дн. подряд"
+          }
+        }
+      }
+    },
     "%@: strength %@, streak %lld days. %@": {
       "extractionState": "manual",
       "localizations": {
@@ -20,6 +45,115 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@: сила %2$@, серия %3$lld дн. %4$@"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "shouldTranslate": false
+    },
+    "%lld check-ins": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-in"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld check-ins"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld отметки"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld отметок"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld отметка"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld отметки"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld clean days. Keep going!": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld clean day. Keep going!"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld clean days. Keep going!"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дня без срыва. Так держать!"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дней без срыва. Так держать!"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld день без срыва. Так держать!"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дня без срыва. Так держать!"
+                }
+              }
+            }
           }
         }
       }
@@ -77,6 +211,59 @@
         }
       }
     },
+    "%lld days clean": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day clean"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld days clean"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дня без срыва"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дней без срыва"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld день без срыва"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld дня без срыва"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld days, %@ – %@": {
       "extractionState": "manual",
       "localizations": {
@@ -84,6 +271,138 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld дн., %2$@ – %3$@"
+          }
+        }
+      }
+    },
+    "%lld habits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld habit"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld habits"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld привычки"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld привычек"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld привычка"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld привычки"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld kept": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "выполнено: %lld"
+          }
+        }
+      }
+    },
+    "%lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld мин"
+          }
+        }
+      }
+    },
+    "%lld missed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "пропущено: %lld"
+          }
+        }
+      }
+    },
+    "%lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld из %2$lld"
+          }
+        }
+      }
+    },
+    "%lld times": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld раза"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld раз"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld раз"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld раза"
+                }
+              }
+            }
           }
         }
       }
@@ -205,6 +524,63 @@
         }
       }
     },
+    "%lld%% strength": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сила %lld%%"
+          }
+        }
+      }
+    },
+    "%lld-day challenge": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Челлендж на %lld дн."
+          }
+        }
+      }
+    },
+    "%lld-day streak": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Серия %lld дня"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Серия %lld дней"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Серия %lld день"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Серия %lld дня"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "0": {
       "shouldTranslate": false
     },
@@ -215,6 +591,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "О приложении"
+          }
+        }
+      }
+    },
+    "Achievements": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Достижения"
+          }
+        }
+      }
+    },
+    "Active Energy": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активная энергия"
+          }
+        }
+      }
+    },
+    "Active days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Активных дней"
+          }
+        }
+      }
+    },
+    "Add": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить"
           }
         }
       }
@@ -241,6 +661,28 @@
         }
       }
     },
+    "Add Time": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить время"
+          }
+        }
+      }
+    },
+    "Add Time Manually": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавить время вручную"
+          }
+        }
+      }
+    },
     "Add a habit in Coil": {
       "extractionState": "manual",
       "localizations": {
@@ -259,6 +701,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Добавлено привычек: %1$lld, обновлено: %2$lld, импортировано отметок: %3$lld."
+          }
+        }
+      }
+    },
+    "All": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все"
+          }
+        }
+      }
+    },
+    "All active habits are paused for these days: strength and streaks stay as they are, and reminders are skipped.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все активные привычки встанут на паузу на эти дни: сила и серии сохранятся, напоминания не придут."
           }
         }
       }
@@ -340,6 +804,17 @@
         }
       }
     },
+    "Apple Health": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Здоровье"
+          }
+        }
+      }
+    },
     "Archive": {
       "extractionState": "manual",
       "localizations": {
@@ -358,6 +833,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "В архиве"
+          }
+        }
+      }
+    },
+    "Archived “%@”": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» в архиве"
           }
         }
       }
@@ -384,6 +870,94 @@
         }
       }
     },
+    "Automatic Backups": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Автобэкапы"
+          }
+        }
+      }
+    },
+    "Average": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В среднем"
+          }
+        }
+      }
+    },
+    "Awards": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Награды"
+          }
+        }
+      }
+    },
+    "Back Up": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создавать копию"
+          }
+        }
+      }
+    },
+    "Back Up Now": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать копию сейчас"
+          }
+        }
+      }
+    },
+    "Backup saved.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копия сохранена."
+          }
+        }
+      }
+    },
+    "Backups are made when you open Coil and are saved in the Files app (On My iPhone → Coil → Backups) and in iCloud Drive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копии создаются при открытии Coil и сохраняются в приложении «Файлы» (На iPhone → Coil → Backups) и в iCloud Drive."
+          }
+        }
+      }
+    },
+    "Backups are made when you open Coil and are saved in the Files app: On My iPhone → Coil → Backups.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копии создаются при открытии Coil и сохраняются в приложении «Файлы»: На iPhone → Coil → Backups."
+          }
+        }
+      }
+    },
     "Best Streaks": {
       "extractionState": "manual",
       "localizations": {
@@ -391,6 +965,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Лучшие серии"
+          }
+        }
+      }
+    },
+    "Best habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лучшая привычка"
           }
         }
       }
@@ -461,6 +1046,39 @@
         }
       }
     },
+    "Challenge": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Челлендж"
+          }
+        }
+      }
+    },
+    "Challenge completed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Челлендж пройден"
+          }
+        }
+      }
+    },
+    "Check Off Habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить привычку"
+          }
+        }
+      }
+    },
     "Check it off when you do it. For example: did you exercise today?": {
       "extractionState": "manual",
       "localizations": {
@@ -483,6 +1101,17 @@
         }
       }
     },
+    "Check off the habit for the first time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметьте привычку в первый раз."
+          }
+        }
+      }
+    },
     "Check off today's habits from the Home Screen.": {
       "extractionState": "manual",
       "localizations": {
@@ -490,6 +1119,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Отмечайте привычки прямо с экрана «Домой»."
+          }
+        }
+      }
+    },
+    "Checkmark": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "отметку"
           }
         }
       }
@@ -538,6 +1178,39 @@
         }
       }
     },
+    "Clean Streak": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без срыва"
+          }
+        }
+      }
+    },
+    "Clean days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чистых дней"
+          }
+        }
+      }
+    },
+    "Clean sweep": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Всё сделано"
+          }
+        }
+      }
+    },
     "Clear Entry": {
       "extractionState": "manual",
       "localizations": {
@@ -560,6 +1233,9 @@
         }
       }
     },
+    "Coil": {
+      "shouldTranslate": false
+    },
     "Coil is free, has no ads and collects no data. Inspired by Loop Habit Tracker.": {
       "extractionState": "manual",
       "localizations": {
@@ -571,6 +1247,17 @@
         }
       }
     },
+    "Collapsed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Свёрнуто"
+          }
+        }
+      }
+    },
     "Color": {
       "extractionState": "manual",
       "localizations": {
@@ -578,6 +1265,83 @@
           "stringUnit": {
             "state": "translated",
             "value": "Цвет"
+          }
+        }
+      }
+    },
+    "Color changed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цвет изменён"
+          }
+        }
+      }
+    },
+    "Come back after a break of a week or more and keep going for 7 days.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вернитесь после перерыва от недели и продержитесь 7 дней подряд."
+          }
+        }
+      }
+    },
+    "Comeback": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Возвращение"
+          }
+        }
+      }
+    },
+    "Complete a %lld-day challenge without missing a day.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пройдите челлендж на %lld дн. без пропусков."
+          }
+        }
+      }
+    },
+    "Complete every habit in one day.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выполните все привычки за один день."
+          }
+        }
+      }
+    },
+    "Complete the habit %lld times.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выполните привычку %lld раз."
+          }
+        }
+      }
+    },
+    "Completed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пройден"
           }
         }
       }
@@ -611,6 +1375,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Количество"
+          }
+        }
+      }
+    },
+    "Create": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создать"
+          }
+        }
+      }
+    },
+    "Create Your Own": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Своя привычка"
+          }
+        }
+      }
+    },
+    "Create your first habit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создайте первую привычку."
+          }
+        }
+      }
+    },
+    "Creativity": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Творчество"
           }
         }
       }
@@ -681,6 +1489,17 @@
         }
       }
     },
+    "Day %lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "День %1$lld из %2$lld"
+          }
+        }
+      }
+    },
     "Day Notes": {
       "extractionState": "manual",
       "localizations": {
@@ -688,6 +1507,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Заметки по дням"
+          }
+        }
+      }
+    },
+    "Days are filled in automatically from Apple Health. Your own changes are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дни заполняются автоматически из «Здоровья». Ваши ручные правки сохраняются."
+          }
+        }
+      }
+    },
+    "Days in a row — or days clean for a habit you're quitting.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дни подряд — или дни без срыва для привычки, которую вы бросаете."
           }
         }
       }
@@ -789,6 +1630,17 @@
         }
       }
     },
+    "Delete Session": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить сессию"
+          }
+        }
+      }
+    },
     "Delete this habit?": {
       "extractionState": "manual",
       "localizations": {
@@ -796,6 +1648,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Удалить эту привычку?"
+          }
+        }
+      }
+    },
+    "Deleted %lld habits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Deleted %lld habit"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Deleted %lld habits"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалено %lld привычки"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалено %lld привычек"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалена %lld привычка"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Удалено %lld привычки"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Deleted “%@”": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» удалена"
           }
         }
       }
@@ -855,6 +1771,17 @@
         }
       }
     },
+    "Done at %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порог, %@"
+          }
+        }
+      }
+    },
     "Done for this period": {
       "extractionState": "manual",
       "localizations": {
@@ -888,6 +1815,17 @@
         }
       }
     },
+    "Duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительность"
+          }
+        }
+      }
+    },
     "Edit": {
       "extractionState": "manual",
       "localizations": {
@@ -917,6 +1855,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Изменить заметку"
+          }
+        }
+      }
+    },
+    "Edit Session": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сессия"
+          }
+        }
+      }
+    },
+    "End": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Конец"
+          }
+        }
+      }
+    },
+    "Entry cleared": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметка удалена"
           }
         }
       }
@@ -996,6 +1967,17 @@
         }
       }
     },
+    "Every day counts as clean until you record a slip. For example: no smoking.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Каждый день засчитывается, пока вы не отметите срыв. Например: не курить."
+          }
+        }
+      }
+    },
     "Every few days": {
       "extractionState": "manual",
       "localizations": {
@@ -1040,6 +2022,28 @@
         }
       }
     },
+    "Exercise Minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Минуты упражнений"
+          }
+        }
+      }
+    },
+    "Expanded": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Развёрнуто"
+          }
+        }
+      }
+    },
     "Export CSV": {
       "extractionState": "manual",
       "localizations": {
@@ -1073,6 +2077,17 @@
         }
       }
     },
+    "Finished": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Завершён"
+          }
+        }
+      }
+    },
     "First Day of Week": {
       "extractionState": "manual",
       "localizations": {
@@ -1080,6 +2095,61 @@
           "stringUnit": {
             "state": "translated",
             "value": "Первый день недели"
+          }
+        }
+      }
+    },
+    "First habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Первая привычка"
+          }
+        }
+      }
+    },
+    "First step": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Первый шаг"
+          }
+        }
+      }
+    },
+    "Fitness": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Спорт"
+          }
+        }
+      }
+    },
+    "Flights Climbed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пролёты лестниц"
+          }
+        }
+      }
+    },
+    "Food": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Еда"
           }
         }
       }
@@ -1095,6 +2165,17 @@
         }
       }
     },
+    "Forgot to stop the timer? Set the time it really ended.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Забыли остановить таймер? Укажите, когда вы на самом деле закончили."
+          }
+        }
+      }
+    },
     "Frequency": {
       "extractionState": "manual",
       "localizations": {
@@ -1102,6 +2183,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Частота"
+          }
+        }
+      }
+    },
+    "From": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "С"
           }
         }
       }
@@ -1150,6 +2242,17 @@
         }
       }
     },
+    "Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Группа"
+          }
+        }
+      }
+    },
     "Group By": {
       "extractionState": "manual",
       "localizations": {
@@ -1157,6 +2260,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Группировать"
+          }
+        }
+      }
+    },
+    "Groups": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Группы"
+          }
+        }
+      }
+    },
+    "Groups split the habit list into sections, like Morning or Health.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Группы делят список привычек на разделы, например «Утро» или «Здоровье»."
+          }
+        }
+      }
+    },
+    "Groups split the habit list into sections. Deleting a group keeps its habits.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Группы делят список привычек на разделы. При удалении группы её привычки остаются."
           }
         }
       }
@@ -1205,28 +2341,6 @@
         }
       }
     },
-    "Habit archived": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Привычка в архиве"
-          }
-        }
-      }
-    },
-    "Habit restored": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Привычка восстановлена"
-          }
-        }
-      }
-    },
     "Habit strength": {
       "extractionState": "manual",
       "localizations": {
@@ -1271,6 +2385,17 @@
         }
       }
     },
+    "Habits from the backup are added back and their days merged with what you have now. Nothing is deleted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Привычки из копии вернутся, а их дни объединятся с текущими. Ничего не удаляется."
+          }
+        }
+      }
+    },
     "Habits restored": {
       "extractionState": "manual",
       "localizations": {
@@ -1293,6 +2418,28 @@
         }
       }
     },
+    "Health": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Здоровье"
+          }
+        }
+      }
+    },
+    "Heatmap": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Карта"
+          }
+        }
+      }
+    },
     "Hide Completed": {
       "extractionState": "manual",
       "localizations": {
@@ -1300,6 +2447,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Скрыть выполненные"
+          }
+        }
+      }
+    },
+    "Highlights": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Главное"
           }
         }
       }
@@ -1315,6 +2473,17 @@
         }
       }
     },
+    "Home": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дом"
+          }
+        }
+      }
+    },
     "How did it go?": {
       "extractionState": "manual",
       "localizations": {
@@ -1322,6 +2491,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Как всё прошло?"
+          }
+        }
+      }
+    },
+    "How long did you practise yoga?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сколько минут йоги?"
           }
         }
       }
@@ -1348,6 +2528,17 @@
         }
       }
     },
+    "How many of your habits you did each day.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сколько привычек вы выполнили в каждый день."
+          }
+        }
+      }
+    },
     "How many pages did you read today?": {
       "extractionState": "manual",
       "localizations": {
@@ -1366,6 +2557,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сколько страниц прочитали?"
+          }
+        }
+      }
+    },
+    "Icon": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Иконка"
           }
         }
       }
@@ -1436,13 +2638,167 @@
         }
       }
     },
-    "Its whole history will be deleted. This can't be undone.": {
+    "Its whole history will be deleted. You can undo this for a few seconds.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вся история привычки будет удалена. Это нельзя отменить."
+            "value": "Вся история привычки будет удалена. Несколько секунд это можно отменить."
+          }
+        }
+      }
+    },
+    "Keep": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Хранить"
+          }
+        }
+      }
+    },
+    "Keep going — your first medal is close.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжайте — первая награда совсем близко."
+          }
+        }
+      }
+    },
+    "Keep the habit %lld days in a row.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Соблюдайте привычку %lld дн. подряд."
+          }
+        }
+      }
+    },
+    "Keep the habit every day of a calendar month.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Соблюдайте привычку каждый день календарного месяца."
+          }
+        }
+      }
+    },
+    "L": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "л"
+          }
+        }
+      }
+    },
+    "Last 10": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние 10"
+          }
+        }
+      }
+    },
+    "Last 12 Months": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние 12 месяцев"
+          }
+        }
+      }
+    },
+    "Last 30": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние 30"
+          }
+        }
+      }
+    },
+    "Last 5": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние 5"
+          }
+        }
+      }
+    },
+    "Last Backup": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последняя копия"
+          }
+        }
+      }
+    },
+    "Last slip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последний срыв"
+          }
+        }
+      }
+    },
+    "Learning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обучение"
+          }
+        }
+      }
+    },
+    "Length": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Длительность"
+          }
+        }
+      }
+    },
+    "Less": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Меньше"
           }
         }
       }
@@ -1465,6 +2821,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Лаймовый"
+          }
+        }
+      }
+    },
+    "Longest current streak": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Самая длинная серия"
           }
         }
       }
@@ -1513,6 +2880,17 @@
         }
       }
     },
+    "Mark a habit as done for today.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметьте привычку выполненной сегодня."
+          }
+        }
+      }
+    },
     "Mark as Done": {
       "extractionState": "manual",
       "localizations": {
@@ -1546,6 +2924,39 @@
         }
       }
     },
+    "Milestones": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вехи"
+          }
+        }
+      }
+    },
+    "Mind": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разум"
+          }
+        }
+      }
+    },
+    "Mindful Minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Минуты осознанности"
+          }
+        }
+      }
+    },
     "Mint": {
       "extractionState": "manual",
       "localizations": {
@@ -1553,6 +2964,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Мятный"
+          }
+        }
+      }
+    },
+    "Missed a day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Есть пропуск"
+          }
+        }
+      }
+    },
+    "Money": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Деньги"
           }
         }
       }
@@ -1579,6 +3012,28 @@
         }
       }
     },
+    "Morning": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Утро"
+          }
+        }
+      }
+    },
+    "Most productive day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Самый продуктивный день"
+          }
+        }
+      }
+    },
     "Name": {
       "extractionState": "manual",
       "localizations": {
@@ -1586,6 +3041,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Название"
+          }
+        }
+      }
+    },
+    "Nature": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Природа"
+          }
+        }
+      }
+    },
+    "Needs attention": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Требует внимания"
+          }
+        }
+      }
+    },
+    "New Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новая группа"
+          }
+        }
+      }
+    },
+    "New Group…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новая группа…"
           }
         }
       }
@@ -1601,6 +3100,28 @@
         }
       }
     },
+    "Next": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дальше"
+          }
+        }
+      }
+    },
+    "Next Goals": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Следующие цели"
+          }
+        }
+      }
+    },
     "No Habits Yet": {
       "extractionState": "manual",
       "localizations": {
@@ -1608,6 +3129,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Привычек пока нет"
+          }
+        }
+      }
+    },
+    "No Icon": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без иконки"
+          }
+        }
+      }
+    },
+    "No Sessions Yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сессий пока нет"
           }
         }
       }
@@ -1634,6 +3177,17 @@
         }
       }
     },
+    "No smoking": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не курить"
+          }
+        }
+      }
+    },
     "No streaks yet. Check off the habit on consecutive days to start one.": {
       "extractionState": "manual",
       "localizations": {
@@ -1641,6 +3195,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Серий пока нет. Отмечайте привычку несколько дней подряд, чтобы начать серию."
+          }
+        }
+      }
+    },
+    "No sugar": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Без сахара"
+          }
+        }
+      }
+    },
+    "None": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет"
           }
         }
       }
@@ -1733,6 +3309,17 @@
         }
       }
     },
+    "OK": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОК"
+          }
+        }
+      }
+    },
     "Off": {
       "extractionState": "manual",
       "localizations": {
@@ -1788,6 +3375,28 @@
         }
       }
     },
+    "Other": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Другое"
+          }
+        }
+      }
+    },
+    "Overall": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В целом"
+          }
+        }
+      }
+    },
     "Overview": {
       "extractionState": "manual",
       "localizations": {
@@ -1795,6 +3404,116 @@
           "stringUnit": {
             "state": "translated",
             "value": "Обзор"
+          }
+        }
+      }
+    },
+    "Pause": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пауза"
+          }
+        }
+      }
+    },
+    "Pause Habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пауза"
+          }
+        }
+      }
+    },
+    "Pause removed": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пауза удалена"
+          }
+        }
+      }
+    },
+    "Paused": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "На паузе"
+          }
+        }
+      }
+    },
+    "Paused days don't lower habit strength or break the streak, and reminders are skipped.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дни на паузе не снижают силу привычки и не прерывают серию, напоминания не приходят."
+          }
+        }
+      }
+    },
+    "Pauses": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Паузы"
+          }
+        }
+      }
+    },
+    "Pause…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пауза…"
+          }
+        }
+      }
+    },
+    "People": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Люди"
+          }
+        }
+      }
+    },
+    "Perfect days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Идеальных дней"
+          }
+        }
+      }
+    },
+    "Perfect month": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Идеальный месяц"
           }
         }
       }
@@ -1843,6 +3562,17 @@
         }
       }
     },
+    "Previous": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Назад"
+          }
+        }
+      }
+    },
     "Privacy Policy": {
       "extractionState": "manual",
       "localizations": {
@@ -1850,6 +3580,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Политика конфиденциальности"
+          }
+        }
+      }
+    },
+    "Progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прогресс"
           }
         }
       }
@@ -1887,6 +3628,50 @@
         }
       }
     },
+    "Quit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Бросить"
+          }
+        }
+      }
+    },
+    "Quit · %lld days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отказ · %lld дн."
+          }
+        }
+      }
+    },
+    "Quitting": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отказ"
+          }
+        }
+      }
+    },
+    "Reach %lld%% habit strength.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Достигните силы привычки %lld%%."
+          }
+        }
+      }
+    },
     "Read": {
       "extractionState": "manual",
       "localizations": {
@@ -1894,6 +3679,61 @@
           "stringUnit": {
             "state": "translated",
             "value": "Чтение"
+          }
+        }
+      }
+    },
+    "Recently Earned": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Недавно получено"
+          }
+        }
+      }
+    },
+    "Record": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Рекорд"
+          }
+        }
+      }
+    },
+    "Record Slip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить срыв"
+          }
+        }
+      }
+    },
+    "Record a Slip Today": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить срыв сегодня"
+          }
+        }
+      }
+    },
+    "Record a slip today?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить срыв сегодня?"
           }
         }
       }
@@ -1953,6 +3793,28 @@
         }
       }
     },
+    "Reminders are skipped on days when the habit is already done or paused. Swipe a time to remove it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Напоминание не придёт, если привычка уже выполнена или на паузе. Смахните время, чтобы удалить его."
+          }
+        }
+      }
+    },
+    "Rename Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переименовать группу"
+          }
+        }
+      }
+    },
     "Repeat": {
       "extractionState": "manual",
       "localizations": {
@@ -1964,6 +3826,39 @@
         }
       }
     },
+    "Restore": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить"
+          }
+        }
+      }
+    },
+    "Restore this backup?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить эту копию?"
+          }
+        }
+      }
+    },
+    "Restored “%@”": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» восстановлена"
+          }
+        }
+      }
+    },
     "Rose": {
       "extractionState": "manual",
       "localizations": {
@@ -1971,6 +3866,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Розовый светлый"
+          }
+        }
+      }
+    },
+    "Running": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Идёт"
           }
         }
       }
@@ -1997,6 +3903,17 @@
         }
       }
     },
+    "Saved Backups": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сохранённые копии"
+          }
+        }
+      }
+    },
     "Score": {
       "extractionState": "manual",
       "localizations": {
@@ -2004,6 +3921,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сила"
+          }
+        }
+      }
+    },
+    "Search %lld templates": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поиск по %lld шаблонам"
           }
         }
       }
@@ -2037,6 +3965,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Выбрать и упорядочить"
+          }
+        }
+      }
+    },
+    "Sessions": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сессии"
+          }
+        }
+      }
+    },
+    "Set Habit Done": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отметить привычку"
           }
         }
       }
@@ -2151,6 +4101,50 @@
         }
       }
     },
+    "Sleep": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сон"
+          }
+        }
+      }
+    },
+    "Sleep & Rest": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сон и отдых"
+          }
+        }
+      }
+    },
+    "Slip recorded": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Срыв отмечен"
+          }
+        }
+      }
+    },
+    "Slips": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Срывов"
+          }
+        }
+      }
+    },
     "Sort By": {
       "extractionState": "manual",
       "localizations": {
@@ -2173,6 +4167,83 @@
         }
       }
     },
+    "Stand Hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Часы с разминкой"
+          }
+        }
+      }
+    },
+    "Start": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Старт"
+          }
+        }
+      }
+    },
+    "Start a stopwatch or timer from the habit screen. Every run is saved and can be edited later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запускайте секундомер или таймер на экране привычки. Каждая сессия сохраняется, её можно потом поправить."
+          }
+        }
+      }
+    },
+    "Start from a blank habit": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Начать с пустой привычки"
+          }
+        }
+      }
+    },
+    "Start the timer on the habit screen.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запустите таймер на экране привычки."
+          }
+        }
+      }
+    },
+    "Statistics": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статистика"
+          }
+        }
+      }
+    },
+    "Statistics appear once you track a habit.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статистика появится, когда вы начнёте вести привычку."
+          }
+        }
+      }
+    },
     "Status": {
       "extractionState": "manual",
       "localizations": {
@@ -2180,6 +4251,83 @@
           "stringUnit": {
             "state": "translated",
             "value": "Статус"
+          }
+        }
+      }
+    },
+    "Stay clean for %lld days in a row.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продержитесь %lld дн. без срыва."
+          }
+        }
+      }
+    },
+    "Stayed away from sweets today?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обошлись сегодня без сладкого?"
+          }
+        }
+      }
+    },
+    "Stayed smoke-free today?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня без сигарет?"
+          }
+        }
+      }
+    },
+    "Steps": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Шаги"
+          }
+        }
+      }
+    },
+    "Still running": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ещё идёт"
+          }
+        }
+      }
+    },
+    "Stop": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стоп"
+          }
+        }
+      }
+    },
+    "Stopwatch": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Секундомер"
           }
         }
       }
@@ -2217,6 +4365,17 @@
         }
       }
     },
+    "Summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Итоги"
+          }
+        }
+      }
+    },
     "System": {
       "extractionState": "manual",
       "localizations": {
@@ -2250,6 +4409,17 @@
         }
       }
     },
+    "Tap a day to see what you did.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите на день, чтобы увидеть, что было сделано."
+          }
+        }
+      }
+    },
     "Target": {
       "extractionState": "manual",
       "localizations": {
@@ -2257,6 +4427,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Цель"
+          }
+        }
+      }
+    },
+    "Target, min": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цель, мин"
           }
         }
       }
@@ -2279,6 +4460,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сообщает силу привычки и текущую серию."
+          }
+        }
+      }
+    },
+    "The challenge starts today. Keep the habit every scheduled day until the end to complete it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Челлендж начинается сегодня. Чтобы пройти его, соблюдайте привычку каждый день до конца."
           }
         }
       }
@@ -2327,13 +4519,13 @@
         }
       }
     },
-    "Their whole history will be deleted. This can't be undone.": {
+    "Their whole history will be deleted. You can undo this for a few seconds.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вся их история будет удалена. Это нельзя отменить."
+            "value": "Вся их история будет удалена. Несколько секунд это можно отменить."
           }
         }
       }
@@ -2404,6 +4596,17 @@
         }
       }
     },
+    "Threshold": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порог"
+          }
+        }
+      }
+    },
     "Time": {
       "extractionState": "manual",
       "localizations": {
@@ -2415,6 +4618,17 @@
         }
       }
     },
+    "Time %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Время %lld"
+          }
+        }
+      }
+    },
     "Time to keep your streak going.": {
       "extractionState": "manual",
       "localizations": {
@@ -2422,6 +4636,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Пора продолжить серию."
+          }
+        }
+      }
+    },
+    "Time tracked": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учтено времени"
+          }
+        }
+      }
+    },
+    "Time's up! %lld minutes done.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Время вышло! %lld мин позади."
+          }
+        }
+      }
+    },
+    "Timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Таймер"
           }
         }
       }
@@ -2470,6 +4717,17 @@
         }
       }
     },
+    "To": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "По"
+          }
+        }
+      }
+    },
     "Today": {
       "extractionState": "manual",
       "localizations": {
@@ -2481,6 +4739,17 @@
         }
       }
     },
+    "Today %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сегодня %@"
+          }
+        }
+      }
+    },
     "Today on the Right": {
       "extractionState": "manual",
       "localizations": {
@@ -2488,6 +4757,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сегодня справа"
+          }
+        }
+      }
+    },
+    "Today's progress towards a habit's target.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прогресс привычки к цели за сегодня."
           }
         }
       }
@@ -2510,6 +4790,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Всего"
+          }
+        }
+      }
+    },
+    "Track %lld habits.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Track %lld habit."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Track %lld habits."
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ведите %lld привычки."
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ведите %lld привычек."
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ведите %lld привычку."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ведите %lld привычки."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Track Time": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Учёт времени"
           }
         }
       }
@@ -2558,6 +4902,17 @@
         }
       }
     },
+    "Undo": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отменить"
+          }
+        }
+      }
+    },
     "Unit": {
       "extractionState": "manual",
       "localizations": {
@@ -2565,6 +4920,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Единица"
+          }
+        }
+      }
+    },
+    "Unlocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Получено"
+          }
+        }
+      }
+    },
+    "Vacation Mode": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Режим отпуска"
+          }
+        }
+      }
+    },
+    "Vacation, sick, travel…": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отпуск, болезнь, поездка…"
           }
         }
       }
@@ -2580,6 +4968,17 @@
         }
       }
     },
+    "View": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вид"
+          }
+        }
+      }
+    },
     "Wake up early": {
       "extractionState": "manual",
       "localizations": {
@@ -2587,6 +4986,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ранний подъём"
+          }
+        }
+      }
+    },
+    "Walking + Running Distance": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дистанция ходьбы и бега"
+          }
+        }
+      }
+    },
+    "Water": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вода"
           }
         }
       }
@@ -2602,6 +5023,17 @@
         }
       }
     },
+    "What did you do?": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чем занимались?"
+          }
+        }
+      }
+    },
     "Why this habit matters, tips, anything": {
       "extractionState": "manual",
       "localizations": {
@@ -2613,6 +5045,28 @@
         }
       }
     },
+    "Work": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Работа"
+          }
+        }
+      }
+    },
+    "Workouts": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тренировки"
+          }
+        }
+      }
+    },
     "Year": {
       "extractionState": "manual",
       "localizations": {
@@ -2620,6 +5074,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Год"
+          }
+        }
+      }
+    },
+    "Year in Numbers": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Год в цифрах"
           }
         }
       }
@@ -2642,6 +5107,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Да или нет"
+          }
+        }
+      }
+    },
+    "Yoga": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Йога"
+          }
+        }
+      }
+    },
+    "Your clean streak starts again tomorrow. Slips are part of the process.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Серия начнётся заново завтра. Срывы — часть пути."
           }
         }
       }
@@ -2675,6 +5162,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "чаш."
+          }
+        }
+      }
+    },
+    "days clean": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "дней без срыва"
+          }
+        }
+      }
+    },
+    "days in a row": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "дней подряд"
+          }
+        }
+      }
+    },
+    "days without a slip": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "дней без срыва"
           }
         }
       }
@@ -2732,6 +5252,17 @@
         }
       }
     },
+    "floors": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "этажей"
+          }
+        }
+      }
+    },
     "glasses": {
       "extractionState": "manual",
       "localizations": {
@@ -2743,6 +5274,17 @@
         }
       }
     },
+    "h": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ч"
+          }
+        }
+      }
+    },
     "iCloud Sync": {
       "extractionState": "manual",
       "localizations": {
@@ -2750,6 +5292,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Синхронизация iCloud"
+          }
+        }
+      }
+    },
+    "kcal": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ккал"
+          }
+        }
+      }
+    },
+    "km": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "км"
+          }
+        }
+      }
+    },
+    "min": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "мин"
+          }
+        }
+      }
+    },
+    "of %@ %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "из %1$@ %2$@"
           }
         }
       }
@@ -2809,6 +5395,17 @@
         }
       }
     },
+    "steps": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "шагов"
+          }
+        }
+      }
+    },
     "strength": {
       "extractionState": "manual",
       "localizations": {
@@ -2816,6 +5413,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "сила"
+          }
+        }
+      }
+    },
+    "than the month before": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "чем месяцем ранее"
+          }
+        }
+      }
+    },
+    "than the week before": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "чем неделей ранее"
+          }
+        }
+      }
+    },
+    "workouts": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "тренировок"
           }
         }
       }

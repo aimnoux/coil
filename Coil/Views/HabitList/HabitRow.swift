@@ -109,7 +109,8 @@ struct HabitRow: View {
                         .frame(width: 4, height: 4)
                 } else if habit.isMeasurable {
                     AmountLabel(
-                        amount: stats.amount(on: day),
+                        // Timed habits show whole minutes.
+                        amount: stats.amount(on: day).map { habit.isTimed ? $0.rounded() : $0 },
                         unit: habit.unit,
                         checkmark: checkmark,
                         fill: fill,
