@@ -270,6 +270,11 @@ nonisolated struct HabitStats: Sendable {
         return ChallengeProgress(day: elapsed, total: total, kept: kept, missed: missed, isOver: today > range.upperBound)
     }
 
+    /// Days done (or clean, for quit habits) since the start.
+    var satisfiedDayCount: Int {
+        checkmarks.filter(\.isSatisfied).count
+    }
+
     /// Number of recorded slips for a quit habit.
     var slipCount: Int {
         data.entries.values.filter { $0.state == .no }.count

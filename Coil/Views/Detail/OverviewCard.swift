@@ -6,6 +6,7 @@ struct OverviewCard: View {
     let palette: HabitColor
     let isMeasurable: Bool
     let unit: String
+    var isQuit = false
 
     var body: some View {
         Card("Overview") {
@@ -30,7 +31,11 @@ struct OverviewCard: View {
                         metric(Formatting.signedPercent(yearChange), "Year", tinted: yearChange != 0)
                     }
                     GridRow {
-                        metric(totalText, isMeasurable ? "Total" : "Times done")
+                        if isQuit {
+                            metric("\(stats.satisfiedDayCount)", "Clean days")
+                        } else {
+                            metric(totalText, isMeasurable ? "Total" : "Times done")
+                        }
                         metric(streakText(stats.currentStreak?.length), "Streak")
                     }
                 }

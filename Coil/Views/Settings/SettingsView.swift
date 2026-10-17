@@ -21,6 +21,7 @@ struct SettingsView: View {
     @State private var importing = false
     @State private var importMessage: ImportMessage?
     @State private var sharedFiles: SharedFiles?
+    @State private var pausingAll = false
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,9 @@ struct SettingsView: View {
             .alert(item: $importMessage) { message in
                 Alert(title: Text(message.title), message: Text(message.body))
             }
+            .sheet(isPresented: $pausingAll) {
+                PauseSheet(habit: nil)
+            }
             .sheet(item: $sharedFiles) { files in
                 ShareSheet(files: files)
                     .presentationDetents([.medium, .large])
@@ -65,6 +69,11 @@ struct SettingsView: View {
                 GroupsView()
             } label: {
                 Label("Groups", systemImage: "folder")
+            }
+            Button {
+                pausingAll = true
+            } label: {
+                Label("Vacation Mode", systemImage: "beach.umbrella")
             }
             Picker("Theme", systemImage: "circle.lefthalf.filled", selection: $theme) {
                 ForEach(AppTheme.allCases) { theme in

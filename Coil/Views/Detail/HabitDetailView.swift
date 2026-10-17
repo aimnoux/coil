@@ -15,6 +15,7 @@ struct HabitDetailView: View {
     @State private var amountTarget: AmountEntryTarget?
     @State private var noteTarget: DayNoteTarget?
     @State private var sharedFiles: SharedFiles?
+    @State private var addingPause = false
 
     var body: some View {
         let stats = habit.stats(today: today)
@@ -24,7 +25,13 @@ struct HabitDetailView: View {
         ScrollView {
             VStack(spacing: 16) {
                 DetailHeader(habit: habit)
-                OverviewCard(stats: stats, palette: palette, isMeasurable: habit.isMeasurable, unit: habit.unit)
+                if habit.isQuit {
+                    QuitCard(habit: habit, stats: stats)
+                }
+                if let challenge = habit.challenge {
+                    ChallengeCard(habit: habit, stats: stats, range: challenge)
+                }
+                OverviewCard(stats: stats, palette: palette, isMeasurable: habit.isMeasurable, unit: habit.unit, isQuit: habit.isQuit)
                 if habit.isMeasurable {
                     TargetCard(habit: habit, stats: stats, firstWeekday: firstWeekday)
                 }
@@ -39,6 +46,7 @@ struct HabitDetailView: View {
                 )
                 StreaksCard(stats: stats, palette: palette)
                 FrequencyCard(stats: stats, palette: palette, firstWeekday: firstWeekday)
+                PausesCard(habit: habit) { addingPause = true }
                 DayNotesCard(habit: habit) { day in
                     noteTarget = DayNoteTarget(habit: habit, day: day)
                 }
@@ -68,6 +76,7 @@ struct HabitDetailView: View {
                             sharedFiles = SharedFiles(urls: [url])
                         }
                     }
+                    Button("Pause…", systemImage: "pause.circle") { addingPause = true }
                     Button(habit.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox") {
                         habit.isArchived.toggle()
                         ReminderScheduler.reschedule(habit)
@@ -89,6 +98,9 @@ struct HabitDetailView: View {
         }
         .sheet(item: $noteTarget) { target in
             DayNoteSheet(habit: target.habit, day: target.day)
+        }
+        .sheet(isPresented: $addingPause) {
+            PauseSheet(habit: habit)
         }
         .sheet(item: $sharedFiles) { files in
             ShareSheet(files: files)
@@ -125,7 +137,9 @@ private struct DetailHeader: View {
                     .foregroundStyle(.secondary)
             }
             FlowLayout(spacing: 8) {
-                if habit.isMeasurable {
+                if habit.isQuit {
+                    Chip(text: String(localized: "Quitting"), systemImage: "nosign")
+                } else if habit.isMeasurable {
                     Chip(text: Formatting.target(for: habit), systemImage: "target")
                 } else {
                     Chip(text: Formatting.frequency(habit.frequency), systemImage: "calendar")
