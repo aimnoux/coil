@@ -7,5 +7,9 @@ struct CoilWidgets: WidgetBundle {
         HabitWidget()
         HabitsListWidget()
         HabitChartWidget()
+        StreakWidget()
+        ProgressWidget()
+        HeatmapWidget()
+        HabitControl()
     }
 }

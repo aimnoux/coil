@@ -7,6 +7,10 @@ nonisolated struct WidgetHabit: Identifiable, Sendable {
     let name: String
     let colorIndex: Int
     let isMeasurable: Bool
+    let isQuit: Bool
+    let iconName: String
+    /// Target for one day (the period target spread over its days).
+    let dailyTarget: Double
     let unit: String
     let score: Double
     let streak: Int
@@ -26,6 +30,9 @@ nonisolated struct WidgetHabit: Identifiable, Sendable {
         name = habit.name
         colorIndex = habit.colorIndex
         isMeasurable = habit.isMeasurable
+        isQuit = habit.isQuit
+        iconName = habit.iconName
+        dailyTarget = habit.targetValue / Double(max(1, habit.frequency.denominator))
         unit = habit.unit
         score = stats.currentScore
         streak = stats.currentStreak?.length ?? 0
@@ -39,6 +46,9 @@ nonisolated struct WidgetHabit: Identifiable, Sendable {
         self.name = name
         self.colorIndex = colorIndex
         isMeasurable = false
+        isQuit = false
+        iconName = ""
+        dailyTarget = 0
         unit = ""
         self.score = score
         streak = 12

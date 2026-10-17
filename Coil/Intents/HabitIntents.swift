@@ -176,3 +176,47 @@ struct SelectHabitIntent: WidgetConfigurationIntent {
         self.habit = habit
     }
 }
+
+/// Sets whether a yes/no habit is done today; used by the Control Center button.
+struct SetHabitDoneIntent: SetValueIntent {
+    static let title: LocalizedStringResource = "Set Habit Done"
+    static let isDiscoverable = false
+
+    @Parameter(title: "Habit ID")
+    var habitID: String
+
+    @Parameter(title: "Done")
+    var value: Bool
+
+    init() {}
+
+    init(habitID: UUID) {
+        self.habitID = habitID.uuidString
+    }
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        guard let id = UUID(uuidString: habitID), let habit = try HabitStore.habit(id: id) else {
+            return .result()
+        }
+        let today = Day.today()
+        if habit.isQuit {
+            // For quit habits the button records (or removes) a slip.
+            habit.setRecord(value ? nil : .no, on: today, in: HabitStore.context)
+        } else {
+            habit.setRecord(value ? .yes : nil, on: today, in: HabitStore.context)
+        }
+        try HabitStore.save()
+        return .result()
+    }
+}
+
+/// Lets the user pick which habit a Control Center button toggles.
+struct SelectHabitControlIntent: ControlConfigurationIntent {
+    static let title: LocalizedStringResource = "Choose Habit"
+
+    @Parameter(title: "Habit")
+    var habit: HabitEntity?
+
+    init() {}
+}
