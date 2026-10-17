@@ -123,6 +123,7 @@ struct HabitEditView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Icon")
                 TextField("Name", text: $draft.name, prompt: Text(namePrompt))
+                    .accessibilityIdentifier("habit-name-field")
                     .font(.headline)
                     .focused($nameFocused)
                     .submitLabel(.next)

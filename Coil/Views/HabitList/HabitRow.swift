@@ -51,6 +51,7 @@ struct HabitRow: View {
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Shows statistics")
+            .accessibilityIdentifier("habit-\(habit.name)")
 
             ForEach(days, id: \.self) { day in
                 cell(for: day)
@@ -132,6 +133,7 @@ struct HabitRow: View {
             }
         )
         .sensoryFeedback(.selection, trigger: checkmark)
+        .accessibilityIdentifier("day-\(habit.name)-\(day.distance(to: stats.today))")
         .accessibilityLabel(Text(Formatting.fullDate(day)))
         .accessibilityValue(habit.isMeasurable
             ? Text(stats.amount(on: day).map { "\(Formatting.number($0)) \(habit.unit)" } ?? "—")

@@ -16,7 +16,10 @@ enum Persistence {
     /// Launch with `-sampleData` to use a throwaway in-memory store filled with demo habits.
     static let usesSampleData = ProcessInfo.processInfo.arguments.contains("-sampleData")
 
-    static let shared: ModelContainer = makeContainer(inMemory: usesSampleData)
+    /// UI tests launch with `-uiTesting` to get an empty in-memory store.
+    static let isUITesting = ProcessInfo.processInfo.arguments.contains("-uiTesting")
+
+    static let shared: ModelContainer = makeContainer(inMemory: usesSampleData || isUITesting)
 
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
         let schema = Schema([Habit.self, Entry.self, HabitGroup.self, HabitPause.self, TimerSession.self])
