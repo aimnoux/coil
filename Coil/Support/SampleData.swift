@@ -76,6 +76,23 @@ enum SampleData {
             [9, 23, 51].contains(offset) ? .no : nil
         }
 
+        // A timed habit with stopwatch sessions.
+        let yoga = Habit(name: String(localized: "Yoga"), kind: .measurable)
+        yoga.question = String(localized: "How long did you practise yoga?")
+        yoga.colorIndex = 7
+        yoga.iconName = "figure.yoga"
+        yoga.isTimed = true
+        yoga.timerMinutes = 20
+        yoga.unit = String(localized: "min")
+        yoga.targetValue = 20
+        yoga.createdAt = today.advanced(by: -40).date()
+        yoga.position = 99
+        context.insert(yoga)
+        for offset in 1...40 where random.next() < 0.7 {
+            let start = today.advanced(by: -offset).date().addingTimeInterval(7 * 3600 + random.next() * 3600)
+            TimerService.addSession(to: yoga, start: start, end: start.addingTimeInterval((12 + random.next() * 18) * 60), in: context)
+        }
+
         // Icons, groups, a challenge and a short pause, so every feature shows up.
         let all = (try? context.fetch(FetchDescriptor<Habit>())) ?? []
         func habit(_ color: Int) -> Habit? { all.first { $0.colorIndex == color } }
@@ -92,6 +109,7 @@ enum SampleData {
             (16, "cup.and.saucer", health),
             (15, "nosign", health),
             (14, "phone", morning),
+            (7, "figure.yoga", morning),
         ]
         for (color, icon, group) in setup {
             habit(color)?.iconName = icon

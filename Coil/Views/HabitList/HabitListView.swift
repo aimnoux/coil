@@ -34,6 +34,7 @@ struct HabitListView: View {
     #endif
     @State private var editorHabit: HabitEditorTarget?
     @State private var amountTarget: AmountEntryTarget?
+    @State private var timedTarget: AmountEntryTarget?
     @State private var habitToDelete: Habit?
     @State private var showingSettings = false
     @State private var addingHabit = false
@@ -53,6 +54,9 @@ struct HabitListView: View {
         }
         .sheet(item: $amountTarget) { target in
             AmountEntrySheet(habit: target.habit, day: target.day)
+        }
+        .sheet(item: $timedTarget) { target in
+            TimedDaySheet(habit: target.habit, day: target.day)
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
@@ -84,6 +88,7 @@ struct HabitListView: View {
             if phase == .active {
                 today = .today()
                 HabitCache.shared.invalidateAll()
+                TimerService.finishExpiredCountdowns(in: context)
                 ReminderScheduler.rescheduleAll(in: context)
             }
         }
@@ -367,6 +372,10 @@ struct HabitListView: View {
     // MARK: - Actions
 
     private func tap(_ habit: Habit, stats: HabitStats, day: Day) {
+        if habit.isTimed {
+            timedTarget = AmountEntryTarget(habit: habit, day: day)
+            return
+        }
         if habit.isMeasurable {
             amountTarget = AmountEntryTarget(habit: habit, day: day)
             return

@@ -31,7 +31,11 @@ struct HabitRow: View {
                         .font(.body.weight(.medium))
                         .foregroundStyle(habit.isArchived ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                         .lineLimit(2)
-                    if let subtitle {
+                    if let running = habit.isTimed ? TimerService.activeSession(of: habit) : nil {
+                        RunningTimerLabel(session: running)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(habit.color.ink)
+                    } else if let subtitle {
                         subtitle
                             .font(.caption)
                             .foregroundStyle(.secondary)

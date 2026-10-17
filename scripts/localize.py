@@ -266,6 +266,8 @@ RU = {
     "No sugar": "Без сахара",
     "Stayed away from sweets today?": "Обошлись сегодня без сладкого?",
     "Morning": "Утро",
+    "Yoga": "Йога",
+    "How long did you practise yoga?": "Сколько минут йоги?",
     "Health": "Здоровье",
     "Did you meditate today?": "Медитировали сегодня?",
     "How many pages did you read?": "Сколько страниц прочитали?",

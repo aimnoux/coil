@@ -28,6 +28,9 @@ struct HabitDetailView: View {
                 if habit.isQuit {
                     QuitCard(habit: habit, stats: stats)
                 }
+                if habit.isTimed {
+                    TimerCard(habit: habit, today: today)
+                }
                 if let challenge = habit.challenge {
                     ChallengeCard(habit: habit, stats: stats, range: challenge)
                 }
@@ -93,7 +96,11 @@ struct HabitDetailView: View {
             HabitEditView(habit: habit)
         }
         .sheet(item: $amountTarget) { target in
-            AmountEntrySheet(habit: target.habit, day: target.day)
+            if target.habit.isTimed {
+                TimedDaySheet(habit: target.habit, day: target.day)
+            } else {
+                AmountEntrySheet(habit: target.habit, day: target.day)
+            }
         }
         .sheet(item: $noteTarget) { target in
             DayNoteSheet(habit: target.habit, day: target.day)
