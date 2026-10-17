@@ -17,8 +17,10 @@ iOS-трекер привычек. Цель v1 — функционально п
   - никаких `@Attribute(.unique)`;
   - все связи опциональные, без delete rule `.deny`;
   - после релиза поля не переименовывать и не удалять.
-- Логика (сила привычки, серии, частота) — в `Coil/Domain`, чистые типы без SwiftData, с тестами.
-  Вьюхи получают `HabitStats` через `habit.stats(today:)`.
+- Логика (сила привычки, серии, частота, паузы, «бросить», челленджи, достижения, итоги) — в `Coil/Domain`,
+  чистые типы без SwiftData, с тестами. Вьюхи получают `HabitStats` через `habit.stats(today:)`.
+- Статистика кэшируется (`HabitCache`) по `Habit.revision`. Любой код, который меняет отметки, паузы или
+  сессии напрямую (не через `setRecord`/`setNote`), обязан вызвать `habit.touch()`.
 - Дни хранятся как `Day` (индекс дня от 2001-01-01), не как `Date`, чтобы не зависеть от часового пояса.
 - В проекте `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`. Типы, которые нужны вне главного актора
   (domain, Transferable, Codable для бэкапов, данные виджетов), помечены `nonisolated`.
@@ -31,8 +33,12 @@ iOS-трекер привычек. Цель v1 — функционально п
   После добавления/удаления файлов или правки `project.yml` — запустить `xcodegen`.
 - Платные возможности подключаются include-файлами по переменным окружения:
   - `widgets.yml` (`COIL_WIDGETS=true`) — расширение `CoilWidgets` + App Group;
-  - `icloud.yml` (`COIL_ICLOUD=true`) — CloudKit, флаг компиляции `ICLOUD`.
-  По умолчанию оба выключены, чтобы приложение подписывалось бесплатным Apple ID.
+  - `icloud.yml` (`COIL_ICLOUD=true`) — CloudKit и iCloud Drive, флаг `-DICLOUD` через `OTHER_SWIFT_FLAGS`;
+  - `health.yml` (`COIL_HEALTH=true`) — HealthKit, флаг `HEALTHKIT` через `SWIFT_ACTIVE_COMPILATION_CONDITIONS`
+    (разные ключи, чтобы include-файлы не перезаписывали друг друга).
+  По умолчанию все выключены, чтобы приложение подписывалось бесплатным Apple ID.
+- Виджет компилирует папки `Coil/Domain`, `Coil/Model`, `Coil/Support` (кроме `UndoCenter.swift`) и часть
+  `Services` — новые файлы в этих папках не должны зависеть от экранов (`Views`).
 - Bundle ID: `com.maxouni.coil`. App Group: `group.com.maxouni.coil`. iCloud: `iCloud.com.maxouni.coil`.
 - Минимальная iOS: 18.0. Только iPhone, портретная ориентация.
 - Тесты — Swift Testing, таргет `CoilTests`. В тестах держать ссылку на `ModelContainer`,

@@ -23,7 +23,7 @@ struct HabitListView: View {
     @State private var today = Day.today()
     @State private var listWidth: CGFloat = 400
     /// Room kept for the habit name; grows with Dynamic Type so names stay readable.
-    @ScaledMetric(relativeTo: .body) private var nameWidth: CGFloat = 120
+    @ScaledMetric(relativeTo: .body) private var nameWidth: CGFloat = 130
     /// How many days the checkmark columns are scrolled back from today.
     @State private var dayOffset = 0
     @State private var editMode: EditMode = .inactive

@@ -194,7 +194,7 @@ struct SettingsView: View {
     private var aboutSection: some View {
         Section {
             LabeledContent("Version", value: appVersion)
-            Link(destination: URL(string: "https://github.com/aimnoux/coil/blob/main/docs/privacy-policy.md")!) {
+            Link(destination: URL(string: "https://aimnoux.github.io/coil-app/privacy.html")!) {
                 Label("Privacy Policy", systemImage: "hand.raised")
             }
         } header: {
