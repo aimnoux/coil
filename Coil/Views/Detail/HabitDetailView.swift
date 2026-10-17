@@ -49,6 +49,7 @@ struct HabitDetailView: View {
                 )
                 StreaksCard(stats: stats, palette: palette)
                 FrequencyCard(stats: stats, palette: palette, firstWeekday: firstWeekday)
+                AchievementsCard(habit: habit, stats: stats)
                 PausesCard(habit: habit) { addingPause = true }
                 DayNotesCard(habit: habit) { day in
                     noteTarget = DayNoteTarget(habit: habit, day: day)

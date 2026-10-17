@@ -10,7 +10,8 @@ final class UndoCenter {
     struct Item: Identifiable {
         let id = UUID()
         let message: String
-        let action: () -> Void
+        let action: (() -> Void)?
+        var systemImage: String?
     }
 
     private(set) var current: Item?
@@ -29,7 +30,19 @@ final class UndoCenter {
     func undo() {
         guard let item = current else { return }
         withAnimation(.snappy) { current = nil }
-        item.action()
+        item.action?()
+    }
+
+    /// A short congratulation, e.g. for a new achievement (no undo button).
+    func celebrate(_ message: String, systemImage: String) {
+        let item = Item(message: message, action: nil, systemImage: systemImage)
+        withAnimation(.bouncy) { current = item }
+        Task {
+            try? await Task.sleep(for: .seconds(3.5))
+            if current?.id == item.id {
+                withAnimation(.snappy) { current = nil }
+            }
+        }
     }
 
     func dismiss() {
@@ -95,13 +108,22 @@ struct UndoToast: View {
     var body: some View {
         if let item = center.current {
             HStack(spacing: 12) {
+                if let symbol = item.systemImage {
+                    Image(systemName: symbol)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(Color(hex: 0xE6C46A))
+                        .symbolEffect(.bounce, value: item.id)
+                }
                 Text(item.message)
                     .font(.subheadline.weight(.medium))
                     .lineLimit(2)
                 Spacer(minLength: 8)
-                Button("Undo") { center.undo() }
-                    .font(.subheadline.weight(.bold))
+                if item.action != nil {
+                    Button("Undo") { center.undo() }
+                        .font(.subheadline.weight(.bold))
+                }
             }
+            .sensoryFeedback(.success, trigger: item.systemImage != nil)
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
             .background(.regularMaterial, in: Capsule())

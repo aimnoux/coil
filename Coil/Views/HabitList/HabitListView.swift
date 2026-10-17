@@ -384,9 +384,11 @@ struct HabitListView: View {
             ? EntryCycle.nextForQuit(after: stats.checkmark(on: day))
             : EntryCycle.next(after: stats.checkmark(on: day), skipEnabled: skipEnabled, showQuestionMarks: showQuestionMarks)
         let previous = habit.record(on: day)
+        let earnedBefore = Celebration.unlockedKinds(habit)
         withAnimation(.snappy) {
             habit.setRecord(next, on: day, in: context)
         }
+        Celebration.check(habit, before: earnedBefore)
         // Shake to undo an accidental tap.
         undoManager?.registerUndo(withTarget: habit) { habit in
             MainActor.assumeIsolated {
