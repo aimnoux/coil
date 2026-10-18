@@ -239,3 +239,62 @@ struct ChallengeTests {
         #expect(progress.fraction == 1)
     }
 }
+
+struct RestDayTests {
+    let today = Day(year: 2026, month: 10, day: 18) // Sunday
+
+    @Test func weekendsAreRestDaysForAWeekdayHabit() {
+        let weekdays = 0b011_1110
+        let friday = today.advanced(by: -2), saturday = today.advanced(by: -1)
+        var entries: [Day: EntryRecord] = [:]
+        for i in 2...6 { entries[today.advanced(by: -i)] = EntryRecord(state: .yes, amount: 480) } // Mon–Fri
+        let data = HabitData(kind: .measurable, targetValue: 480, createdDay: today.advanced(by: -6),
+                             entries: entries, activeWeekdays: weekdays)
+        let stats = HabitStats(data: data, today: today)
+        #expect(stats.checkmark(on: saturday) == .rest)
+        #expect(stats.checkmark(on: today) == .rest)
+        #expect(stats.checkmark(on: friday) == .yesManual)
+        // Rest days neither lower strength nor break the streak.
+        #expect(stats.score(on: today) == stats.score(on: friday))
+        #expect(stats.currentStreak?.length == 5)
+        #expect(stats.isCompletedToday)
+    }
+
+    @Test func workingOnARestDayStillCounts() {
+        let data = HabitData(createdDay: today.advanced(by: -3), entries: [today: .yes], activeWeekdays: 0b011_1110)
+        #expect(HabitStats(data: data, today: today).checkmark(on: today) == .yesManual)
+    }
+
+    @Test func customTargetPeriod() {
+        var draft = HabitDraft()
+        draft.kind = .measurable
+        draft.targetPeriod = .custom
+        draft.targetDays = 3
+        #expect(draft.frequency == Frequency(1, 3))
+        #expect(TargetPeriod(Frequency(1, 3)) == .custom)
+        #expect(ActiveDays(mask: 0b011_1110) == .weekdays)
+        #expect(ActiveDays(mask: 0b000_0101) == .custom)
+    }
+}
+
+@MainActor
+struct TimerDurationTests {
+    @Test func sessionsUnderAMinuteAreDropped() {
+        let container = Persistence.makeContainer(inMemory: true)
+        let context = container.mainContext
+        let habit = Habit(name: "Work", kind: .measurable)
+        habit.isTimed = true
+        context.insert(habit)
+        let start = Date()
+        let session = TimerService.start(habit, in: context, at: start)
+        TimerService.stop(session, in: context, at: start.addingTimeInterval(40))
+        #expect(habit.liveSessions.isEmpty)
+        #expect(habit.record(on: Day(start)) == nil)
+    }
+
+    @Test func hoursMinutesFormat() {
+        #expect(Formatting.hoursMinutes(45) == String(localized: "45 min"))
+        #expect(Formatting.hoursMinutes(151) == "2h31m")
+        #expect(Formatting.hoursMinutes(120) == "2h")
+    }
+}

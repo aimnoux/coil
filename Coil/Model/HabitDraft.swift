@@ -15,6 +15,10 @@ struct HabitDraft {
     var targetValue: Double? = nil
     var targetType: TargetType = .atLeast
     var targetPeriod: TargetPeriod = .day
+    /// Length of a custom target period, in days.
+    var targetDays = 2
+    /// Days of the week the habit is done on (bit 0 = Sunday).
+    var activeWeekdays = 0b111_1111
     var isTimed = false
     var timerMinutes = 0
     var reminderEnabled = false
@@ -41,6 +45,8 @@ struct HabitDraft {
         targetValue = habit.targetValue
         targetType = habit.targetType
         targetPeriod = TargetPeriod(habit.frequency)
+        targetDays = max(2, habit.frequency.denominator)
+        activeWeekdays = habit.activeWeekdays == 0 ? 0b111_1111 : habit.activeWeekdays
         isTimed = habit.isTimed
         timerMinutes = habit.timerMinutes
         reminderEnabled = habit.reminderEnabled
@@ -55,7 +61,7 @@ struct HabitDraft {
     var frequency: Frequency {
         switch kind {
         case .yesNo: schedule.frequency
-        case .measurable: targetPeriod.frequency
+        case .measurable: targetPeriod == .custom ? Frequency(1, max(1, targetDays)) : targetPeriod.frequency
         case .quit: .daily
         }
     }
@@ -64,6 +70,7 @@ struct HabitDraft {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
             && (kind != .measurable || (targetValue ?? -1) >= 0)
             && (!reminderEnabled || (reminderDays != 0 && !reminderTimes.isEmpty))
+            && activeWeekdays != 0
     }
 
     /// Writes the draft into a habit. Changing the challenge length restarts it today.
@@ -85,6 +92,7 @@ struct HabitDraft {
         } else {
             habit.isTimed = false
         }
+        habit.activeWeekdays = kind == .quit ? 0b111_1111 : activeWeekdays
         habit.reminderEnabled = reminderEnabled
         habit.reminderMinutes = reminderTimes
         habit.reminderDays = reminderDays
@@ -155,12 +163,13 @@ struct ScheduleDraft: Equatable {
 
 /// The period a measurable habit's target applies to.
 enum TargetPeriod: Int, CaseIterable, Identifiable {
-    case day = 1, week = 7, month = 30
+    /// `custom` is a target over any number of days (stored in the draft).
+    case day = 1, week = 7, month = 30, custom = 0
 
     var id: Int { rawValue }
 
     init(_ frequency: Frequency) {
-        self = TargetPeriod(rawValue: frequency.denominator) ?? .day
+        self = TargetPeriod(rawValue: frequency.denominator) ?? .custom
     }
 
     var frequency: Frequency { Frequency(1, rawValue) }
@@ -170,6 +179,44 @@ enum TargetPeriod: Int, CaseIterable, Identifiable {
         case .day: "Every day"
         case .week: "Every week"
         case .month: "Every month"
+        case .custom: "Every few days"
+        }
+    }
+}
+
+/// Which days of the week a habit is done on.
+enum ActiveDays: Hashable, CaseIterable, Identifiable {
+    case everyDay, weekdays, weekends, custom
+
+    var id: Self { self }
+
+    static let weekdayMask = 0b011_1110   // Monday … Friday
+    static let weekendMask = 0b100_0001   // Saturday and Sunday
+
+    init(mask: Int) {
+        switch mask {
+        case 0b111_1111, 0: self = .everyDay
+        case Self.weekdayMask: self = .weekdays
+        case Self.weekendMask: self = .weekends
+        default: self = .custom
+        }
+    }
+
+    var mask: Int? {
+        switch self {
+        case .everyDay: 0b111_1111
+        case .weekdays: Self.weekdayMask
+        case .weekends: Self.weekendMask
+        case .custom: nil
+        }
+    }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .everyDay: "All days"
+        case .weekdays: "Weekdays"
+        case .weekends: "Weekends"
+        case .custom: "Choose days"
         }
     }
 }

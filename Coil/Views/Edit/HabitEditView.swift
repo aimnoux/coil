@@ -19,6 +19,7 @@ struct HabitEditView: View {
     @State private var notificationsDenied = false
     @State private var loaded = false
     @State private var choosingIcon = false
+    @State private var choosingDays = false
     @State private var newGroupName = ""
     @State private var creatingGroup = false
     @FocusState private var nameFocused: Bool
@@ -206,7 +207,7 @@ struct HabitEditView: View {
             }
             switch draft.schedule.kind {
             case .everyDay:
-                EmptyView()
+                activeDaysRows
             case .everyNDays:
                 Stepper(value: $draft.schedule.days, in: 2...365) {
                     LabeledContent("Every", value: String(localized: "\(draft.schedule.days) days"))
@@ -230,7 +231,7 @@ struct HabitEditView: View {
         } header: {
             Text("Frequency")
         } footer: {
-            Text("Habit strength takes the frequency into account: a weekly habit isn't hurt by the days it isn't due.")
+            Text("Habit strength takes the frequency into account: a weekly habit isn't hurt by the days it isn't due. Days that aren't selected don't count at all.")
         }
     }
 
@@ -257,11 +258,17 @@ struct HabitEditView: View {
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
             }
-            Picker("Period", selection: $draft.targetPeriod) {
+            Picker("Period", selection: $draft.targetPeriod.animation()) {
                 ForEach(TargetPeriod.allCases) { period in
                     Text(period.title).tag(period)
                 }
             }
+            if draft.targetPeriod == .custom {
+                Stepper(value: $draft.targetDays, in: 2...365) {
+                    LabeledContent("Every", value: String(localized: "\(draft.targetDays) days"))
+                }
+            }
+            activeDaysRows
         } header: {
             Text("Target")
         } footer: {
@@ -272,6 +279,28 @@ struct HabitEditView: View {
                     ? "The day counts as done once you reach the target."
                     : "The day counts as done as long as you stay under the target.")
             }
+        }
+    }
+
+    /// "All days / Weekdays / Weekends / Choose days" plus the weekday toggles.
+    @ViewBuilder
+    private var activeDaysRows: some View {
+        Picker("Days", selection: Binding(
+            get: { choosingDays ? .custom : ActiveDays(mask: draft.activeWeekdays) },
+            set: { choice in
+                withAnimation {
+                    if let mask = choice.mask {
+                        draft.activeWeekdays = mask
+                    }
+                    // "Choose days" keeps the toggles open even if the pick matches a preset.
+                    choosingDays = choice == .custom
+                }
+            }
+        )) {
+            ForEach(ActiveDays.allCases) { Text($0.title).tag($0) }
+        }
+        if choosingDays || ActiveDays(mask: draft.activeWeekdays) == .custom {
+            WeekdayPicker(mask: $draft.activeWeekdays, tint: palette.color)
         }
     }
 

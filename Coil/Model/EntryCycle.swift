@@ -4,7 +4,7 @@ import Foundation
 enum EntryCycle {
     static func next(after checkmark: Checkmark, skipEnabled: Bool, showQuestionMarks: Bool) -> EntryRecord? {
         switch checkmark {
-        case .unknown, .yesAuto, .paused:
+        case .unknown, .yesAuto, .paused, .rest:
             .yes
         case .yesManual:
             skipEnabled ? .skip : .no

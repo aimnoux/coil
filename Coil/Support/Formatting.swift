@@ -87,8 +87,28 @@ enum Formatting {
         let comparison = habit.targetType == .atLeast
             ? String(localized: "At least")
             : String(localized: "At most")
-        let unit = habit.unit.isEmpty ? "" : " \(habit.unit)"
-        return "\(comparison) \(number(habit.targetValue))\(unit) \(targetPeriod(habit.frequency))"
+        let amount = habit.isTimed
+            ? hoursMinutes(habit.targetValue)
+            : number(habit.targetValue) + (habit.unit.isEmpty ? "" : " \(habit.unit)")
+        var text = "\(comparison) \(amount) \(targetPeriod(habit.frequency))"
+        if let days = activeDays(habit.activeWeekdays) { text += " · " + days }
+        return text
+    }
+
+    /// "Weekdays", "Weekends" or "Mon, Wed, Fri"; `nil` when the habit runs every day.
+    static func activeDays(_ mask: Int) -> String? {
+        switch ActiveDays(mask: mask) {
+        case .everyDay: return nil
+        case .weekdays: return String(localized: "Weekdays")
+        case .weekends: return String(localized: "Weekends")
+        case .custom:
+            let first = Calendar.current.firstWeekday
+            return (0..<7)
+                .map { (first - 1 + $0) % 7 + 1 }
+                .filter { mask & (1 << ($0 - 1)) != 0 }
+                .map(shortWeekday)
+                .joined(separator: ", ")
+        }
     }
 
     static func reminder(for habit: Habit) -> String? {

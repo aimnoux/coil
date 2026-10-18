@@ -5,6 +5,9 @@ import UserNotifications
 /// Starts and stops stopwatch/timer sessions for timed habits and keeps each day's
 /// total in sync with its sessions.
 enum TimerService {
+    /// Sessions shorter than this are dropped when the timer stops.
+    static let minimumDuration: TimeInterval = 60
+
     /// The running session of a habit, if any.
     static func activeSession(of habit: Habit) -> TimerSession? {
         habit.liveSessions.first(where: \.isRunning)
@@ -44,7 +47,12 @@ enum TimerService {
         }
         session.end = max(end, session.start)
         cancelFinishedNotification(for: session)
-        recompute(habit, days: [Day(session.start)], in: context)
+        let day = Day(session.start)
+        // A tap-and-stop by accident isn't worth keeping.
+        if session.duration() < minimumDuration {
+            context.delete(session)
+        }
+        recompute(habit, days: [day], in: context)
     }
 
     /// Stops countdowns that ran out while the app was closed.
@@ -138,6 +146,14 @@ extension Formatting {
         return hours > 0
             ? String(format: "%d:%02d:%02d", hours, minutes, seconds)
             : String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    /// "45 min" under an hour, "2h31m" (or "2h") from an hour on.
+    static func hoursMinutes(_ minutes: Double) -> String {
+        let total = Int(minutes.rounded())
+        guard total >= 60 else { return String(localized: "\(total) min") }
+        let h = total / 60, m = total % 60
+        return m == 0 ? "\(h)h" : "\(h)h\(m)m"
     }
 
     /// "45 min" or "1 h 20 min".

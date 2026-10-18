@@ -145,7 +145,8 @@ enum ReminderScheduler {
             let doneToday = habit.stats(today: today).isCompletedToday && !habit.isQuit
             for offset in 0..<daysAhead {
                 let day = today.advanced(by: offset)
-                guard habit.remindsOn(weekday: day.weekday), !habit.isPaused(on: day) else { continue }
+                guard habit.remindsOn(weekday: day.weekday), habit.isActive(weekday: day.weekday),
+                      !habit.isPaused(on: day) else { continue }
                 if offset == 0 && doneToday { continue }
                 for minute in habit.reminderMinutes {
                     if offset == 0 && minute <= nowMinute { continue }

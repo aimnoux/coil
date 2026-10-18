@@ -112,6 +112,7 @@ struct HabitRow: View {
                         // Timed habits show whole minutes.
                         amount: stats.amount(on: day).map { habit.isTimed ? $0.rounded() : $0 },
                         unit: habit.unit,
+                        isTimed: habit.isTimed,
                         checkmark: checkmark,
                         fill: fill,
                         ink: ink,
@@ -146,6 +147,8 @@ struct HabitRow: View {
 struct AmountLabel: View {
     let amount: Double?
     let unit: String
+    /// Minutes of a timed habit: shown as "45 / min" under an hour and "2h31m" from an hour on.
+    var isTimed = false
     let checkmark: Checkmark
     let fill: Color
     let ink: Color
@@ -156,12 +159,13 @@ struct AmountLabel: View {
             CheckmarkSymbol(checkmark: .skip, fill: fill, ink: ink)
         } else if let amount {
             let met = checkmark.isSatisfied
+            let long = isTimed && amount >= 60
             VStack(spacing: -1) {
-                Text(Formatting.compact(amount))
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                Text(long ? Formatting.hoursMinutes(amount) : Formatting.compact(amount))
+                    .font(.system(size: long ? 12 : 14, weight: .semibold, design: .rounded))
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
-                if !unit.isEmpty {
+                if !unit.isEmpty && !long {
                     Text(unit)
                         .font(.system(size: 8, weight: .medium, design: .rounded))
                         .lineLimit(1)

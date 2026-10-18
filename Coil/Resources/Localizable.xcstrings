@@ -641,6 +641,17 @@
         }
       }
     },
+    "Add time you didn't track with the timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте время, которое не засекали таймером."
+          }
+        }
+      }
+    },
     "Added %lld habits, updated %lld, imported %lld entries.": {
       "extractionState": "manual",
       "localizations": {
@@ -670,6 +681,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Все активные привычки встанут на паузу на эти дни: сила и серии сохранятся, напоминания не придут."
+          }
+        }
+      }
+    },
+    "All days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Все дни"
           }
         }
       }
@@ -1114,6 +1136,17 @@
         }
       }
     },
+    "Choose days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбрать дни"
+          }
+        }
+      }
+    },
     "Choose the habit to show.": {
       "extractionState": "manual",
       "localizations": {
@@ -1458,6 +1491,17 @@
         }
       }
     },
+    "Days": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дни"
+          }
+        }
+      }
+    },
     "Days are filled in automatically from Apple Health. Your own changes are kept.": {
       "extractionState": "manual",
       "localizations": {
@@ -1762,17 +1806,6 @@
         }
       }
     },
-    "Duration": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Длительность"
-          }
-        }
-      }
-    },
     "Edit": {
       "extractionState": "manual",
       "localizations": {
@@ -1813,17 +1846,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сессия"
-          }
-        }
-      }
-    },
-    "End": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Конец"
           }
         }
       }
@@ -2112,13 +2134,13 @@
         }
       }
     },
-    "Forgot to stop the timer? Set the time it really ended.": {
+    "Forgot to stop the timer? Set how long it really took.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Забыли остановить таймер? Укажите, когда вы на самом деле закончили."
+            "value": "Забыли остановить таймер? Укажите, сколько времени ушло на самом деле."
           }
         }
       }
@@ -2299,13 +2321,13 @@
         }
       }
     },
-    "Habit strength takes the frequency into account: a weekly habit isn't hurt by the days it isn't due.": {
+    "Habit strength takes the frequency into account: a weekly habit isn't hurt by the days it isn't due. Days that aren't selected don't count at all.": {
       "extractionState": "manual",
       "localizations": {
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Сила привычки учитывает частоту: еженедельная привычка не слабеет в дни, когда её не нужно выполнять."
+            "value": "Сила привычки учитывает частоту: еженедельная привычка не слабеет в дни, когда её не нужно делать. Невыбранные дни не учитываются вовсе."
           }
         }
       }
@@ -2427,6 +2449,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Дом"
+          }
+        }
+      }
+    },
+    "Hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Часы"
           }
         }
       }
@@ -2911,6 +2944,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Мятный"
+          }
+        }
+      }
+    },
+    "Minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Минуты"
           }
         }
       }
@@ -3773,6 +3817,17 @@
         }
       }
     },
+    "Rest day": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выходной"
+          }
+        }
+      }
+    },
     "Restore": {
       "extractionState": "manual",
       "localizations": {
@@ -4264,17 +4319,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Шаги"
-          }
-        }
-      }
-    },
-    "Still running": {
-      "extractionState": "manual",
-      "localizations": {
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ещё идёт"
           }
         }
       }
@@ -4988,6 +5032,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Неделя"
+          }
+        }
+      }
+    },
+    "Weekdays": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Будни"
+          }
+        }
+      }
+    },
+    "Weekends": {
+      "extractionState": "manual",
+      "localizations": {
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выходные"
           }
         }
       }

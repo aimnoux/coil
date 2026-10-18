@@ -61,6 +61,7 @@ nonisolated struct BackupFile: Codable, Sendable {
         var timerMinutes: Int? = nil
         var healthMetric: String? = nil
         var healthThreshold: Double? = nil
+        var activeWeekdays: Int? = nil
         var pauses: [BackupPause]? = nil
         var sessions: [BackupSession]? = nil
     }
@@ -148,6 +149,7 @@ enum Backup {
             item.timerMinutes = habit.timerMinutes
             item.healthMetric = habit.healthMetricRaw
             item.healthThreshold = habit.healthThreshold
+            item.activeWeekdays = habit.activeWeekdays
             item.pauses = habit.livePauses.map {
                 BackupFile.BackupPause(
                     start: CSVExport.isoDate($0.range.lowerBound),
@@ -255,6 +257,7 @@ enum Backup {
             if let minutes = item.timerMinutes { habit.timerMinutes = minutes }
             if let metric = item.healthMetric { habit.healthMetricRaw = metric }
             if let threshold = item.healthThreshold { habit.healthThreshold = threshold }
+            if let days = item.activeWeekdays { habit.activeWeekdays = days }
 
             let knownPauses = Set(habit.livePauses.map { "\($0.startDay)-\($0.endDay)" })
             for pause in item.pauses ?? [] {

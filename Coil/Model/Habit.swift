@@ -33,6 +33,8 @@ final class Habit {
     /// Reminder times as minutes after midnight, comma separated ("480,780").
     /// Empty means the single time in `reminderHour`/`reminderMinute` (older data).
     var reminderTimesRaw: String = ""
+    /// Weekdays the habit is done on (bit 0 = Sunday … bit 6 = Saturday); other days are rest days.
+    var activeWeekdays: Int = 0b111_1111
     /// A challenge: complete the habit for this many days starting at `challengeStartDay`. 0 = none.
     var challengeDays: Int = 0
     var challengeStartDay: Int = 0
@@ -132,6 +134,11 @@ final class Habit {
         (sessions ?? []).filter { !$0.isDeleted }
     }
 
+    /// Whether the given weekday (1 = Sunday … 7 = Saturday) is one of the habit's days.
+    func isActive(weekday: Int) -> Bool {
+        isQuit || activeWeekdays == 0 || activeWeekdays & (1 << (weekday - 1)) != 0
+    }
+
     /// Whether the habit is paused on a given day.
     func isPaused(on day: Day) -> Bool {
         livePauses.contains { min($0.startDay, $0.endDay) <= day.index && day.index <= max($0.startDay, $0.endDay) }
@@ -209,7 +216,8 @@ final class Habit {
             targetType: targetType,
             createdDay: createdDay,
             entries: dayRecords.compactMapValues(\.record),
-            pausedDays: pausedDays
+            pausedDays: pausedDays,
+            activeWeekdays: isQuit ? 0b111_1111 : activeWeekdays
         )
     }
 

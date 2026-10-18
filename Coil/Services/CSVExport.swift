@@ -80,6 +80,7 @@ enum CSVExport {
         case .no: return "NO"
         case .unknown: return ""
         case .paused: return "PAUSED"
+        case .rest: return "REST"
         }
     }
 

@@ -92,9 +92,11 @@ nonisolated enum Checkmark: Hashable, Sendable {
     case unknown
     /// The habit was paused (vacation, sickness): neutral for strength and streaks.
     case paused
+    /// Not one of the habit's days (e.g. a weekend for a weekdays-only habit): neutral too.
+    case rest
 
     var isSatisfied: Bool { self == .yesManual || self == .yesAuto }
 
     /// Days that neither count nor break a streak.
-    var isNeutral: Bool { self == .skip || self == .paused }
+    var isNeutral: Bool { self == .skip || self == .paused || self == .rest }
 }

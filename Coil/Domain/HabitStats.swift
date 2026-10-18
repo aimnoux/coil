@@ -11,6 +11,8 @@ nonisolated struct HabitData: Sendable {
     var entries: [Day: EntryRecord]
     /// Days on which the habit was paused.
     var pausedDays: Set<Day>
+    /// Weekdays the habit is done on, bit 0 = Sunday … bit 6 = Saturday. Other days are rest days.
+    var activeWeekdays: Int
 
     init(
         kind: HabitKind = .yesNo,
@@ -19,7 +21,8 @@ nonisolated struct HabitData: Sendable {
         targetType: TargetType = .atLeast,
         createdDay: Day,
         entries: [Day: EntryRecord] = [:],
-        pausedDays: Set<Day> = []
+        pausedDays: Set<Day> = [],
+        activeWeekdays: Int = 0b111_1111
     ) {
         self.kind = kind
         self.frequency = frequency
@@ -28,6 +31,13 @@ nonisolated struct HabitData: Sendable {
         self.createdDay = createdDay
         self.entries = entries
         self.pausedDays = pausedDays
+        self.activeWeekdays = activeWeekdays == 0 ? 0b111_1111 : activeWeekdays
+    }
+}
+
+nonisolated extension HabitData {
+    func isActive(weekday: Int) -> Bool {
+        activeWeekdays & (1 << (weekday - 1)) != 0
     }
 }
 
@@ -177,6 +187,12 @@ nonisolated struct HabitStats: Sendable {
             }
             if paused[i] && states[i] != .yes && !(data.kind == .quit && states[i] == .no) {
                 checkmarks[i] = .paused
+            } else if !data.isActive(weekday: start.advanced(by: i).weekday) && data.kind != .quit {
+                // A rest day only counts if the habit was actually done (a bonus, never a miss).
+                let doneAnyway = data.kind == .measurable
+                    ? states[i] == .yes && performance[i] >= 1
+                    : states[i] == .yes
+                if !doneAnyway { checkmarks[i] = .rest }
             }
         }
 
@@ -220,7 +236,7 @@ nonisolated struct HabitStats: Sendable {
         guard let i = offset(day) else {
             return data.pausedDays.contains(day) ? .paused : .unknown
         }
-        if data.kind == .measurable, data.entries[day] == nil, checkmarks[i] != .paused {
+        if data.kind == .measurable, data.entries[day] == nil, !checkmarks[i].isNeutral {
             // Show measurable days without data as unknown, even if the window is satisfied.
             return .unknown
         }

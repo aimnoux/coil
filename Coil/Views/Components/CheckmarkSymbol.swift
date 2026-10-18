@@ -38,6 +38,10 @@ struct CheckmarkSymbol: View {
             case .no:
                 glyph("xmark", scale: 0.3, weight: .semibold)
                     .foregroundStyle(Color(.tertiaryLabel))
+            case .rest:
+                Capsule()
+                    .fill(Color(.quaternaryLabel))
+                    .frame(width: size * 0.3, height: 2)
             case .paused:
                 Circle().fill(Color(.tertiarySystemFill))
                 glyph("pause.fill", scale: 0.3, weight: .semibold)
@@ -72,6 +76,7 @@ extension Checkmark {
         case .no: "Not done"
         case .unknown: "No entry"
         case .paused: "Paused"
+        case .rest: "Rest day"
         }
     }
 }

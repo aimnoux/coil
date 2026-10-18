@@ -89,7 +89,7 @@ struct TimerCard: View {
                 TimerControl(habit: habit)
                     .frame(maxWidth: .infinity)
                 LabeledContent("Today") {
-                    Text(Formatting.duration(total))
+                    Text(Formatting.hoursMinutes(total / 60))
                         .monospacedDigit()
                 }
                 .font(.subheadline)
@@ -114,23 +114,27 @@ struct TimerCard: View {
 
 struct SessionRow: View {
     let session: TimerSession
+    /// Show the day (in lists that mix days); the time of day is never shown.
+    var showsDay = true
     let onEdit: () -> Void
 
     var body: some View {
         Button(action: onEdit) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(session.start.formatted(.dateTime.day().month(.abbreviated).hour().minute()))
-                        .font(.subheadline)
+                    if showsDay {
+                        Text(Formatting.fullDate(Day(session.start)))
+                            .font(.subheadline)
+                    }
                     if !session.note.isEmpty {
                         Text(session.note)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(showsDay ? .caption : .subheadline)
+                            .foregroundStyle(showsDay ? .secondary : .primary)
                             .lineLimit(1)
                     }
                 }
                 Spacer()
-                Text(session.isRunning ? String(localized: "Running") : Formatting.duration(session.duration()))
+                Text(session.isRunning ? String(localized: "Running") : Formatting.hoursMinutes(session.duration() / 60))
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(.secondary)
                 Image(systemName: "chevron.right")
@@ -163,7 +167,7 @@ struct SessionHistoryView: View {
                 let sessions = (byDay[day] ?? []).sorted { $0.start < $1.start }
                 Section {
                     ForEach(sessions) { session in
-                        SessionRow(session: session) { editing = session }
+                        SessionRow(session: session, showsDay: false) { editing = session }
                     }
                     .onDelete { offsets in
                         for index in offsets { TimerService.delete(sessions[index], in: context) }
@@ -172,7 +176,7 @@ struct SessionHistoryView: View {
                     HStack {
                         Text(Formatting.fullDate(day))
                         Spacer()
-                        Text(Formatting.duration(sessions.reduce(0) { $0 + $1.duration() }))
+                        Text(Formatting.hoursMinutes(sessions.reduce(0) { $0 + $1.duration() } / 60))
                     }
                 }
             }
@@ -190,7 +194,7 @@ struct SessionHistoryView: View {
     }
 }
 
-/// Edits a session's start, end and note — or adds a new one (`session == nil`).
+/// Adds time by hand or edits a session's length — only how long, not when.
 struct SessionEditSheet: View {
     let habit: Habit
     let session: TimerSession?
@@ -199,28 +203,39 @@ struct SessionEditSheet: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
-    @State private var start = Date().addingTimeInterval(-30 * 60)
-    @State private var end = Date()
-    @State private var isRunning = false
+    @State private var hours: Double = 0
+    @State private var minutes: Double = 30
     @State private var note = ""
+
+    private var total: TimeInterval { (hours * 60 + minutes) * 60 }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    DatePicker("Start", selection: $start)
-                    if isRunning {
-                        Toggle("Still running", isOn: $isRunning)
-                    } else {
-                        DatePicker("End", selection: $end, in: start...)
+                    Text(Formatting.hoursMinutes(total / 60))
+                        .font(.system(size: 44, weight: .semibold, design: .rounded).monospacedDigit())
+                        .frame(maxWidth: .infinity)
+                        .contentTransition(.numericText())
+                        .listRowBackground(Color.clear)
+                }
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        LabeledContent("Hours", value: "\(Int(hours))")
+                        Slider(value: $hours, in: 0...12, step: 1)
+                            .tint(habit.color.ink)
                     }
-                    LabeledContent("Duration") {
-                        Text(Formatting.duration((isRunning ? Date() : end).timeIntervalSince(start)))
-                            .monospacedDigit()
+                    VStack(alignment: .leading, spacing: 6) {
+                        LabeledContent("Minutes", value: "\(Int(minutes))")
+                        Slider(value: $minutes, in: 0...45, step: 15)
+                            .tint(habit.color.ink)
                     }
                 } footer: {
-                    Text("Forgot to stop the timer? Set the time it really ended.")
+                    Text(session == nil
+                         ? "Add time you didn't track with the timer."
+                         : "Forgot to stop the timer? Set how long it really took.")
                 }
+                .sensoryFeedback(.selection, trigger: total)
                 Section {
                     TextField("Note", text: $note, prompt: Text("What did you do?"), axis: .vertical)
                 }
@@ -241,20 +256,15 @@ struct SessionEditSheet: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
-                        .disabled(!isRunning && end < start)
+                        .disabled(total < 60)
                 }
             }
             .onAppear {
-                guard let session else {
-                    // New sessions default to half an hour ending now (or at noon on a past day).
-                    let reference = day == .today() ? Date() : day.date().addingTimeInterval(12 * 3600)
-                    start = reference.addingTimeInterval(-30 * 60)
-                    end = reference
-                    return
-                }
-                start = session.start
-                end = session.end ?? Date()
-                isRunning = session.isRunning
+                guard let session else { return }
+                let length = Int(session.duration() / 60)
+                hours = Double(min(12, length / 60))
+                // The slider moves in quarter hours; keep the nearest quarter.
+                minutes = Double(min(45, Int((Double(length % 60) / 15).rounded()) * 15))
                 note = session.note
             }
         }
@@ -263,9 +273,12 @@ struct SessionEditSheet: View {
 
     private func save() {
         if let session {
-            TimerService.update(session, start: start, end: isRunning ? nil : end, note: note, in: context)
+            TimerService.update(session, start: session.start, end: session.start.addingTimeInterval(total), note: note, in: context)
         } else {
-            TimerService.addSession(to: habit, start: start, end: end, note: note, in: context)
+            // Only the length matters; the session is placed on the chosen day.
+            let start = day == .today() ? Date().addingTimeInterval(-total) : day.date().addingTimeInterval(12 * 3600)
+            let anchored = Day(start) == day ? start : day.date()
+            TimerService.addSession(to: habit, start: anchored, end: anchored.addingTimeInterval(total), note: note, in: context)
         }
         dismiss()
     }
@@ -293,14 +306,14 @@ struct TimedDaySheet: View {
                 let sessions = TimerService.sessions(of: habit, on: day)
                 Section {
                     ForEach(sessions) { session in
-                        SessionRow(session: session) { editing = session }
+                        SessionRow(session: session, showsDay: false) { editing = session }
                     }
                     Button("Add Time Manually", systemImage: "plus") { adding = true }
                 } header: {
                     HStack {
                         Text("Sessions")
                         Spacer()
-                        Text(Formatting.duration(sessions.reduce(0) { $0 + $1.duration() }))
+                        Text(Formatting.hoursMinutes(sessions.reduce(0) { $0 + $1.duration() } / 60))
                     }
                 }
             }

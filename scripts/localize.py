@@ -492,6 +492,17 @@ RU = {
     "than the week before": "чем неделей ранее",
     "workouts": "тренировок",
     "Stay strong today.": "Держитесь сегодня.",
+    "Rest day": "Выходной",
+    "Days": "Дни",
+    "All days": "Все дни",
+    "Weekdays": "Будни",
+    "Weekends": "Выходные",
+    "Choose days": "Выбрать дни",
+    "Hours": "Часы",
+    "Minutes": "Минуты",
+    "Add time you didn't track with the timer.": "Добавьте время, которое не засекали таймером.",
+    "Forgot to stop the timer? Set how long it really took.": "Забыли остановить таймер? Укажите, сколько времени ушло на самом деле.",
+    "Habit strength takes the frequency into account: a weekly habit isn't hurt by the days it isn't due. Days that aren't selected don't count at all.": "Сила привычки учитывает частоту: еженедельная привычка не слабеет в дни, когда её не нужно делать. Невыбранные дни не учитываются вовсе.",
     "Sign in to iCloud in the Settings app to sync your habits. Until then they are stored only on this device.": "Войдите в iCloud в приложении «Настройки», чтобы синхронизировать привычки. Пока они хранятся только на этом устройстве.",
 
 }

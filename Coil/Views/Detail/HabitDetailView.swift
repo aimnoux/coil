@@ -148,7 +148,11 @@ private struct DetailHeader: View {
                 } else if habit.isMeasurable {
                     Chip(text: Formatting.target(for: habit), systemImage: "target")
                 } else {
-                    Chip(text: Formatting.frequency(habit.frequency), systemImage: "calendar")
+                    Chip(
+                        text: [Formatting.frequency(habit.frequency), Formatting.activeDays(habit.activeWeekdays)]
+                            .compactMap { $0 }.joined(separator: " · "),
+                        systemImage: "calendar"
+                    )
                 }
                 if let reminder = Formatting.reminder(for: habit) {
                     Chip(text: reminder, systemImage: "bell")

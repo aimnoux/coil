@@ -59,6 +59,6 @@ final class HabitCache {
     private func settingsSignature(_ habit: Habit) -> String {
         let pauses = habit.livePauses.map { "\($0.startDay)-\($0.endDay)" }.sorted().joined(separator: ",")
         return "\(habit.kindRaw)|\(habit.frequencyNumerator)/\(habit.frequencyDenominator)|\(habit.targetValue)|"
-            + "\(habit.targetTypeRaw)|\(habit.createdDay.index)|\(pauses)"
+            + "\(habit.targetTypeRaw)|\(habit.createdDay.index)|\(habit.activeWeekdays)|\(pauses)"
     }
 }

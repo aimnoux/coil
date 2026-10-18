@@ -157,7 +157,7 @@ struct CalendarCard: View {
             if performance >= 1 { return (color, .white) }
             return (color.opacity(0.15 + 0.45 * performance), ink)
         }
-        if checkmark == .paused {
+        if checkmark == .paused || checkmark == .rest {
             return (Color(.quaternarySystemFill), .secondary)
         }
         if habit.isQuit {
@@ -173,7 +173,7 @@ struct CalendarCard: View {
         case .yesAuto: return (color.opacity(0.35), ink)
         case .skip: return (color.opacity(0.15), ink)
         case .no: return (Color(.systemFill), .secondary)
-        case .unknown, .paused: return (Color(.tertiarySystemFill), .secondary)
+        case .unknown, .paused, .rest: return (Color(.tertiarySystemFill), .secondary)
         }
     }
 
